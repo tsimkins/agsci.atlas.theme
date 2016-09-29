@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 import os
 
 version = open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 
-    'agsci', 'atlas', 'version.txt')).read().strip()
+    'agsci', 'atlas', 'theme', 'version.txt')).read().strip()
 
-setup(name='agsci.atlas',
+setup(name='agsci.atlas.theme',
     version=version,
     description="",
     long_description=open("README.txt").read() + "\n" +
@@ -21,14 +21,15 @@ setup(name='agsci.atlas',
     url='http://agsci.psu.edu/',
     license='GPL',
     packages=find_packages(exclude=['ez_setup']),
-    namespace_packages=['agsci'],
+    namespace_packages=['agsci', 'agsci.atlas'],
     include_package_data=True,
     zip_safe=False,
     install_requires=[
       'setuptools',
-      # -*- Extra requirements: -*-
+      'plone.app.theming',
       ],
     entry_points="""
-      # -*- Entry points: -*-
+        [z3c.autoinclude.plugin]
+        target = plone
       """,
     )

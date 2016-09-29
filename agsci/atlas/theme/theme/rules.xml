@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules
+    xmlns="http://namespaces.plone.org/diazo"
+    xmlns:css="http://namespaces.plone.org/diazo/css"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">`
+
+    <theme href="theme.html" />
+
+    <notheme css:if-not-content="body.userrole-anonymous"/>
+
+    <!-- Portal Columns -->
+    
+    
+    <!-- title -->
+    <replace 
+        css:content-children="title" 
+        css:theme-children="title" />
+
+    <!-- section title -->
+        
+    <replace 
+        css:content-children="#section-title" 
+        css:theme-children=".jumbotron div" />
+        
+    <!-- left column -->
+
+    <replace 
+        css:content-children="#portal-column-one" 
+        css:theme-children=".container .left-column"
+        css:if-content="#portal-column-one" />
+
+    <drop 
+        css:theme=".container .left-column"
+        css:if-not-content="#portal-column-one" />
+
+    <!-- right column -->
+
+    <drop 
+        css:theme=".container .right-column"
+        css:if-not-content="#portal-column-two" />
+
+    <replace 
+        css:content-children="#portal-column-two" 
+        css:theme-children=".container .right-column"
+        css:if-content="#portal-column-two" />
+
+    <!-- content column -->
+    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr.sl">
+        <xsl:attribute name="class">content-column col-md-8</xsl:attribute>
+    </before>
+    
+    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr">
+        <xsl:attribute name="class">content-column col-md-10</xsl:attribute>
+    </before>
+
+    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sl">
+        <xsl:attribute name="class">content-column col-md-10</xsl:attribute>
+    </before>
+
+
+    <!-- page title -->
+
+    <replace 
+        css:content-children="h1.documentFirstHeading" 
+        css:theme-children=".container .title h1" />
+
+    <!-- page description -->
+
+    <replace 
+        css:content-children="#content > .documentDescription" 
+        css:theme-children=".container .description" />
+
+    <!-- lead image -->
+
+    <replace 
+        css:content-children="#content > .contentLeadImageContainer" 
+        css:theme-children=".container .leadimage" />
+
+    <!-- content -->
+
+    <replace 
+        css:content-children="#content #content-core > div" 
+        css:theme-children=".container .content" />
+
+</rules>

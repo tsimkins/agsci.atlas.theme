@@ -1,5 +1,1 @@
-from zope.i18nmessageid import MessageFactory
-atlasMessageFactory = MessageFactory('agsci.atlas')
-
-def initialize(context):
-    pass
+__import__('pkg_resources').declare_namespace(__name__)

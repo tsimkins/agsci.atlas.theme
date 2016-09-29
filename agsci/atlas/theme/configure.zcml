@@ -1,13 +1,16 @@
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+           xmlns:plone="http://namespaces.plone.org/plone"
            i18n_domain="agsci.atlas">
 
     <genericsetup:registerProfile
         name="default"
-        title="agsci.atlas"
+        title="agsci.atlas.theme"
         directory="profiles/default"
         description=""
         provides="Products.GenericSetup.interfaces.EXTENSION"
     />
+
+    <plone:static name="atlas_theme" directory="theme" type="theme" />
 
 </configure>
