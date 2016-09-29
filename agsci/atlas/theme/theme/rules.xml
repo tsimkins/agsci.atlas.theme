@@ -8,9 +8,11 @@
 
     <notheme css:if-not-content="body.userrole-anonymous"/>
 
-    <!-- Portal Columns -->
-    
-    
+    <merge 
+        css:content="body" 
+        css:theme="body"
+        attributes="class" />
+
     <!-- title -->
     <replace 
         css:content-children="title" 
@@ -21,7 +23,9 @@
     <replace 
         css:content-children="#section-title" 
         css:theme-children=".jumbotron" />
-        
+
+    <!-- Portal Columns -->
+
     <!-- left column -->
 
     <replace 
