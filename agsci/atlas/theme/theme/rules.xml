@@ -20,7 +20,7 @@
         
     <replace 
         css:content-children="#section-title" 
-        css:theme-children=".jumbotron div" />
+        css:theme-children=".jumbotron" />
         
     <!-- left column -->
 
@@ -62,7 +62,7 @@
 
     <replace 
         css:content-children="h1.documentFirstHeading" 
-        css:theme-children=".container .title h1" />
+        css:theme-children=".container h1.title" />
 
     <!-- page description -->
 
@@ -81,5 +81,11 @@
     <replace 
         css:content-children="#content #content-core > div" 
         css:theme-children=".container .content" />
+        
+    <!-- listing-bar -->
+
+    <replace 
+        css:content-children="#content .listingBar" 
+        css:theme-children=".container .listing-bar" />
 
 </rules>
