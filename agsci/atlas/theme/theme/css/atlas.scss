@@ -3,13 +3,20 @@ body {
     line-height: 1.2;
 }
 
+
+.hiddenStructure {
+    height: 1px;
+    position: absolute;
+    margin-left: -10000px;
+}
+
 .container,
 .container-fluid {
 
     .jumbotron {
-        padding: 0.5em 10000px;
+        padding: 0.5em 100%;
         font-size: 2em;
-        margin: 0.5em -10000px;
+        margin: 0.5em -100%;
         background-color: #F6F6F6;
         border-radius: 0;
         
@@ -31,10 +38,27 @@ body {
         img {
         }
     }
+    
+    .homepageimage {
+    	display: block;
+    	margin: 0;
+        width: 100%;
+    	text-align: left;
+    	padding: 0;
+    	background-repeat: no-repeat;
+    	background-size: 100%;
+    	background-position: center middle;
+    	background-color: #FFFFFF;
+    }
+}
+
+.container-homepageimage {
+    margin-bottom: 1em;
 }
 
 .left-column,
-.right-column {
+.right-column,
+.center-column {
     font-size: 0.9375em;
     .portletWrapper {
         .portletHeader {
@@ -45,6 +69,25 @@ body {
             }
         }
         .portlet {
+            
+            .portletItem {
+                margin-bottom: 1.25em;
+                
+                .rssImage {
+                    width: 20%;
+                    margin-left: 2%;
+                    float: right;
+                    
+                    img {
+                        width: 100%;
+                    }
+                }
+            }
+            
+            .portletFooter {
+                font-size: 0.875em;
+            }
+
             ul, ol {
                 padding: 0;
                 margin: 0;
@@ -54,7 +97,30 @@ body {
                 }
             }
             
+            .title {
+                font-size: 1.25em;
+            }
+            
+            .date {
+                font-size: 0.875em;
+                color: #575757;
+                margin-bottom: 0.25em;
+            }
+
+            .summary {
+                color: #333333;
+                font-size: 0.9375em;
+            }
+
             margin-bottom: 1.5em;
+        }
+        .portletNavigationTree {
+            .portletItem {
+                .navTreeLevel1 {
+                    padding-left: 1em;
+                    margin-bottom: 0.5em;
+                }
+            }
         }
     }
 }
@@ -71,6 +137,10 @@ body {
         }
         .tileDescription {
             font-size: 0.9375em;
+        }
+        .documentByLine {
+            color: #575757;
+            font-size: 0.875em;
         }
     }
     /* Next/Previous Links */
@@ -157,3 +227,7 @@ p {
     font-size: 0.875em;
 }
 
+.visualClear {
+    clear: both;
+    font-size: 1em;
+}

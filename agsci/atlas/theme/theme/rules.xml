@@ -24,6 +24,21 @@
         css:content-children="#section-title" 
         css:theme-children=".jumbotron" />
 
+    <drop 
+        css:theme-children=".container-section"
+        css:if-not-content="#section-title" />
+
+    <!-- Homepage Image -->
+    <merge 
+        css:content="#homepageimage" 
+        css:theme=".container .homepageimage"
+        attributes="data-image-heights data-image-urls"
+        css:if-content="#homepageimage" />
+
+    <drop 
+        css:theme-children=".container-homepageimage"
+        css:if-not-content="#homepageimage" />
+          
     <!-- Portal Columns -->
 
     <!-- left column -->
@@ -48,11 +63,18 @@
         css:theme-children=".container .right-column"
         css:if-content="#portal-column-two" />
 
+    <!-- center column -->
+
+    <drop 
+        css:theme=".container .center-column"
+        css:if-not-content="#centercolumn" />
+
+    <replace 
+        css:content-children="#centercolumn" 
+        css:theme-children=".container .center-column"
+        css:if-content="#centercolumn" />
+
     <!-- content column -->
-    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr.sl">
-        <xsl:attribute name="class">content-column col-md-8</xsl:attribute>
-    </before>
-    
     <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr">
         <xsl:attribute name="class">content-column col-md-10</xsl:attribute>
     </before>
@@ -61,6 +83,9 @@
         <xsl:attribute name="class">content-column col-md-10</xsl:attribute>
     </before>
 
+    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr.sl">
+        <xsl:attribute name="class">content-column col-md-8</xsl:attribute>
+    </before>
 
     <!-- page title -->
 
