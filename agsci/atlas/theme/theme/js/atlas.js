@@ -1,3 +1,16 @@
+function scaleHomepageImage() {
+    var maxHomepageImageWidth = 1140.0;
+    
+    var hpi = $(".homepageimage");
+
+    if (hpi) {
+        var ratio = hpi.width()/maxHomepageImageWidth; // Homepage image ratio
+        var _height = hpi.data('height');
+        var new_height = ratio*_height;
+        hpi.css("height", new_height + 'px');
+    }
+}
+
 $(document).ready(
     function () {
         
@@ -12,6 +25,15 @@ $(document).ready(
         
         hpi.css('background-image', "url(" + _url + ")");
         hpi.css('height', _height + 'px');
+        hpi.data('height', _height);
         
+        scaleHomepageImage();
+        
+    }
+);
+
+$(window).resize(
+    function () {
+        scaleHomepageImage();
     }
 );
