@@ -1,8 +1,9 @@
 body {
   font-size: 16px;
-  line-height: 1.2; }
+  line-height: 1.2;
+  font-family: "Gotham A", "Gotham B"; }
 
-.hiddenStructure {
+.hiddenStructure, .hidden {
   height: 1px;
   position: absolute;
   margin-left: -10000px; }
@@ -23,9 +24,6 @@ body {
     text-decoration: none;
     color: #337ab7;
     border-bottom: 1px solid #337ab7; }
-.container .logo,
-.container-fluid .logo {
-  padding: 0.75em 0 0.25em; }
 .container .homepageimage,
 .container-fluid .homepageimage {
   display: block;
@@ -37,6 +35,78 @@ body {
   background-size: 100%;
   background-position: center middle;
   background-color: #FFFFFF; }
+
+header {
+  padding: 0;
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  left: 0;
+  right: 0; }
+  header #page-header-container {
+    background-color: #262833;
+    width: 100%;
+    height: 55px; }
+    header #page-header-container .logo {
+      padding: 7px 15px 0.25em; }
+  header .header-note {
+    margin-top: 1px;
+    background-color: #ECECEC; }
+    header .header-note .container {
+      padding-top: 0.25em;
+      padding-bottom: 0.25em;
+      text-align: center; }
+
+footer {
+  padding: 0;
+  margin-top: 1em;
+  background-color: #262833; }
+  footer a, footer a:visited {
+    color: #FFFFFF; }
+  footer a:focus, footer a:hover {
+    color: #1B90C9; }
+  footer .footer {
+    padding-top: 4.75em; }
+    footer .footer p, footer .footer h3 {
+      color: #AEAEAE; }
+    footer .footer h3 {
+      font-size: 1.25em;
+      font-weight: normal;
+      margin-top: 0; }
+    footer .footer .footer-logo {
+      display: block;
+      margin-bottom: 2.5em; }
+      footer .footer .footer-logo img {
+        width: 240px; }
+    footer .footer .contact-info {
+      font-size: 0.875em; }
+      footer .footer .contact-info p {
+        line-height: 1.5; }
+      footer .footer .contact-info strong {
+        color: #FFFFFF; }
+    footer .footer .footer-social {
+      color: #1B90C9; }
+    footer .footer .item {
+      width: 25%;
+      padding-right: 2%;
+      float: left;
+      padding-top: 3em; }
+      footer .footer .item ul {
+        padding: 0; }
+        footer .footer .item ul li {
+          list-style-type: none;
+          font-size: 0.875em; }
+    footer .footer .item.contact-block {
+      padding-top: 0; }
+    footer .footer .bottom-footer ul {
+      padding: 0; }
+      footer .footer .bottom-footer ul li {
+        list-style-type: none;
+        font-size: 0.875em;
+        display: inline-block; }
+
+#main-container {
+  padding-top: 100px; }
 
 .container-homepageimage {
   padding-bottom: 1em; }

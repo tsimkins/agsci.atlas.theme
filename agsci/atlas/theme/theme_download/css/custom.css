@@ -1,0 +1,82 @@
+.aw-pq2-form__input-box {
+    display: block;
+}
+
+.aw-pq2-form__field_position_left {
+    float: none;
+}
+
+.aw-pq2-form__field_position_right {
+    float: none
+}
+
+.aw-pq2-form__field {
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+	margin: 0 0 19px 0;
+}
+.aw-pq2-form__input-box input[type=text], .aw-pq2-form__textarea{
+	width: 100%;
+	background: #ebebeb;
+	max-width: 100%;
+	border: 1px solid #ebebeb;
+}
+.aw-pq2-form__input-box input[type=text]:focus, .aw-pq2-form__textarea:focus{
+	border-color: #007cc3;
+	background: none;
+}
+.aw-pq2-form__label{
+	color: #213261;
+	font-size: 14px;
+	font-weight: 700;
+	text-transform: uppercase;
+	margin: 0 0 8px 0;
+}
+.aw-pq2-form__textarea{
+	max-height: 165px;
+	min-height: 165px;
+	padding: 8px;
+}
+.aw-pq2-form__field-checkbox .aw-pq2-form__label{
+	margin: 0;
+}
+.aw-pq2-form__input-box input[type=text]{
+	height: 40px;
+	line-height: 40px;
+}
+.aw-pq2-question-title h2{
+    display: block !important;
+	position: relative;
+}
+
+.aw-pq2-question-sort.pager {
+    float: none!important;
+    text-align: center;
+}
+
+.aw-pq2-question-sort.pager .limiter {
+    float: right;
+}
+
+.aw-pq2-question-sort.pager .limiter select {
+    vertical-align: middle;
+}
+
+.aw-pq2-question-sort.pager .limiter img {
+    display: inline;
+}
+
+.button.aw-pq2-form__button, .aw-pq2-form__note-wrapper{
+	float: right;
+}
+.button.aw-pq2-form__button{
+	letter-spacing: 2px;
+	padding: 7px 22px;
+}
+.aw-pq2-question-title.box-title{
+	margin: -2px 0 32px 0;
+}
+@media only screen and (max-width: 767px) {
+	.aw-pq2-list__question-expand{margin: 0;}
+}

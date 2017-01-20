@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules
+    xmlns="http://namespaces.plone.org/diazo"
+    xmlns:css="http://namespaces.plone.org/diazo/css"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">`
+
+    <theme href="theme.html" />
+
+    <notheme css:if-not-content="body.userrole-anonymous"/>
+
+    <merge 
+        css:content="body" 
+        css:theme="body"
+        attributes="class" />
+
+    <!-- title -->
+    <replace 
+        css:content-children="title" 
+        css:theme-children="title" />
+
+    <!-- section title -->
+        
+    <replace 
+        css:content-children="#section-title" 
+        css:theme-children=".jumbotron" />
+
+    <drop 
+        css:theme-children=".container-section"
+        css:if-not-content="#section-title" />
+
+    <!-- Homepage Image -->
+    <merge 
+        css:content="#homepageimage" 
+        css:theme=".container .homepageimage"
+        attributes="data-image-heights data-image-urls"
+        css:if-content="#homepageimage" />
+
+    <drop 
+        css:theme-children=".container-homepageimage"
+        css:if-not-content="#homepageimage" />
+          
+    <!-- Portal Columns -->
+
+    <!-- left column -->
+
+    <replace 
+        css:content-children="#portal-column-one" 
+        css:theme-children=".container .left-column"
+        css:if-content="#portal-column-one" />
+
+    <drop 
+        css:theme=".container .left-column"
+        css:if-not-content="#portal-column-one" />
+
+    <!-- right column -->
+
+    <drop 
+        css:theme=".container .right-column"
+        css:if-not-content="#portal-column-two" />
+
+    <replace 
+        css:content-children="#portal-column-two" 
+        css:theme-children=".container .right-column"
+        css:if-content="#portal-column-two" />
+
+    <!-- center column -->
+
+    <drop 
+        css:theme=".container .center-column"
+        css:if-not-content="#centercolumn" />
+
+    <replace 
+        css:content-children="#centercolumn" 
+        css:theme-children=".container .center-column"
+        css:if-content="#centercolumn" />
+
+    <!-- content column -->
+    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr">
+        <xsl:attribute name="class">content-column col-md-10</xsl:attribute>
+    </before>
+
+    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sl">
+        <xsl:attribute name="class">content-column col-md-10</xsl:attribute>
+    </before>
+
+    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr.sl">
+        <xsl:attribute name="class">content-column col-md-8</xsl:attribute>
+    </before>
+
+    <!-- breadcrumbs -->
+
+    <replace 
+        css:content-children="#portal-breadcrumbs" 
+        css:theme-children=".breadcrumbs" />
+
+    <!-- page title -->
+
+    <replace 
+        css:content-children="h1.documentFirstHeading" 
+        css:theme-children=".product-name h1" />
+
+    <!-- page description -->
+
+    <replace 
+        css:content-children="#content > .documentDescription" 
+        css:theme-children=".product-view .short-description" />
+
+    <!-- lead image -->
+
+    <before 
+        css:content-children="#content > .contentLeadImageContainer" 
+        css:theme-children=".product-shop > .std" />
+
+    <!-- content -->
+
+    <replace 
+        css:content-children="#content #content-core > div" 
+        css:theme-children=".product-shop > .std" />
+        
+    <!-- listing-bar -->
+
+    <replace 
+        css:content-children="#content .listingBar" 
+        css:theme-children=".container .listing-bar" />
+
+    <!-- Drop items -->
+    <drop css:theme=".product-details" />
+    <drop css:theme=".product-essential > .discussing" />
+
+</rules>

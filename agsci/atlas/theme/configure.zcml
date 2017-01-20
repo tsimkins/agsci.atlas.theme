@@ -11,6 +11,9 @@
         provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
-    <plone:static name="atlas_theme" directory="theme" type="theme" />
+    <!--
+        <plone:static name="atlas_theme" directory="theme" type="theme" />
+    -->
+    <plone:static name="atlas_theme" directory="theme_download" type="theme" />
 
 </configure>
