@@ -5,7 +5,7 @@ This is done outside of Plone, and is a bit of a kludge.  Will refine.
 ## Requirements
 
  * Python package **PyTidyLib**
- * Python package **BeautifulSoup**
+ * Python package **beautifulsoup4**
  * Modern version of Tidy ([git repository](https://github.com/htacg/tidy-html5)) in `/usr/local`
  
 ## Steps

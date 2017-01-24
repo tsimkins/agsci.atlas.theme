@@ -1,7 +1,7 @@
 from tidylib import Tidy
 from tidylib.tidy import BASE_OPTIONS
 from urlparse import urlparse
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup # BeautifulSoup 4
 from uuid import uuid4
 
 import json
@@ -86,13 +86,10 @@ changes.sort(key=lambda x: len(x[0]), reverse=True)
 
 
 # Get the HTML directly from the page
-original_html = urllib2.urlopen(ORIGINAL_URL).read()
-
-# Run it through tidy
-#html, errors = tidy_document(original_html)
+html = urllib2.urlopen(ORIGINAL_URL).read()
 
 # Soup it
-soup = BeautifulSoup(original_html)
+soup = BeautifulSoup(html, 'html.parser')
 attrs = ['src', 'href']
 
 # Included content
@@ -139,13 +136,13 @@ content_soup = BeautifulSoup("""
             </div>
         </div<
     </div>
-""".strip()).contents
+""".strip(), 'html.parser').contents
 
 # CSS and JS
 head_soup = BeautifulSoup("""
     <link rel="stylesheet" type="text/css" href="plone/css/atlas.css" />
     <script type="text/javascript" src="plone/js/atlas.js">
-""".strip()).contents
+""".strip(), 'html.parser').contents
 
 # Append CSS and body content
 for i in head_soup:
@@ -169,8 +166,9 @@ for el in soup.findAll():
                 if old_url == parsed_src_path:
                     el[attr] = new_url
                     break
-# Tidy again
-html, errors = tidy_document(repr(soup))
+
+# Tidy
+html, errors = tidy_document(unicode(soup))
 
 # Manual replaces
 replace_chars = [
@@ -182,4 +180,4 @@ replace_chars = [
 for (_f, _t) in replace_chars:
     html = html.replace(_f,_t)
 
-open('%s/theme.html' % OUTPUT, "w").write(html)
+open('%s/theme.html' % OUTPUT, "w").write(html.encode('utf-8'))
