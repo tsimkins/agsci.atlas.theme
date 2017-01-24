@@ -89,12 +89,74 @@ changes.sort(key=lambda x: len(x[0]), reverse=True)
 original_html = urllib2.urlopen(ORIGINAL_URL).read()
 
 # Run it through tidy
-html, errors = tidy_document(original_html)
+#html, errors = tidy_document(original_html)
 
 # Soup it
-soup = BeautifulSoup(html)
+soup = BeautifulSoup(original_html)
 attrs = ['src', 'href']
 
+# Included content
+content_soup = BeautifulSoup("""
+    <div id="plone" class="section">
+        <div class="section">
+            <div id="section-title" class="col col-md-12">
+                <!-- Section title -->
+            </div>
+        </div>
+        <div id="homepageimage-section" class="section">
+            <div class="col col-md-12">
+                <div id="homepageimage">
+                    <!-- Homepage image -->
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <div id="left-column" class="col col-md-2">
+                <!-- Left Column -->
+            </div>
+            <div id="content-column" class="col col-md-10">
+                <h1 class="documentFirstHeading">
+                    <!-- Page Title -->
+                </h1>
+                <p class="documentDescription">
+                    <!-- Page Description -->
+                </p>
+                <div class="leadimage">
+                    <!-- Lead Image -->
+                </div>
+                <!-- Content Column -->
+                <div id="content">
+                    <!-- Content -->
+                </div>
+                <div id="center-column">
+                    <!-- Center column -->
+                </div>
+            </div>
+            <div id="right-column" class="col col-md-2">
+                <!-- Right column -->
+            </div>
+        </div<
+    </div>
+""".strip()).contents
+
+# CSS and JS
+head_soup = BeautifulSoup("""
+    <link rel="stylesheet" type="text/css" href="plone/css/atlas.css" />
+    <script type="text/javascript" src="plone/js/atlas.js">
+""".strip()).contents
+
+# Append CSS and body content
+for i in head_soup:
+    soup.find('head').append(i)
+
+for i in content_soup:
+    soup.find('div', attrs={'class' : 'main'}).append(i)
+
+# Remove unused stuff
+soup.find('div', attrs={'class' : 'col-main'}).extract()
+soup.find('div', attrs={'class' : 'col-right sidebar'}).extract()
+
+# Fix src, href URLs
 for el in soup.findAll():
     for attr in attrs:
         src = el.get(attr, '')

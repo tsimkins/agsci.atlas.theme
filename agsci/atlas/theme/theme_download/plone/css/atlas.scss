@@ -1,0 +1,134 @@
+$columns: 12;
+$margin: 10px;
+$site_width: 1151px;
+$column_bg: #fff6f0;
+
+$column_content_width: ($site_width/$columns);
+
+.hiddenStructure {
+    position: absolute;
+    margin: 0 0 0 -10000px;
+}
+    
+
+.section {
+	clear: both;
+	padding: 0px;
+	margin: 0px;
+}
+
+.section:after {
+    display: table;
+    clear: both;
+    content: '';
+}
+
+/*  COLUMN SETUP  */
+.col {
+	display: block;
+	float:left;
+	margin: 1% 100%*($margin/$site_width);
+	background-color: $column_bg;
+}
+
+/*  GROUPING  */
+.group:before,
+.group:after { content:""; display:table; }
+.group:after { clear:both;}
+.group { zoom:1; /* For IE 6/7 */ }
+
+/* Column Widths */
+@for $i from 1 through $columns {
+    .col-md-#{$i} {
+        $column_width: ($i*$column_content_width) - (2*$margin);
+        width: 100%*($column_width/$site_width);
+    }
+}
+
+/*  GO FULL WIDTH BELOW 768 PIXELS */
+@media only screen and (max-width: 768px) {
+	.col, .section {  margin: 1% 0 1% 0%; }
+    
+    @for $i from 1 through $columns {
+        .col-md-#{$i} {
+            width: 100%;
+        }
+    }
+}
+
+#plone {
+    
+    #section-title {
+        font-size: 2em;
+        color: #333333;
+        
+        a {
+            color: #333333;
+        }
+    }
+    
+    .navTree {
+        ul {
+            margin-left: 1em;
+        }
+    }
+    
+    #homepageimage {
+    	display: block;
+    	text-align: left;
+    	background-repeat: no-repeat;
+    	background-size: 100%;
+    	background-position: center middle;
+    	background-color: #FFFFFF;
+    }
+    
+    .portletWrapper {
+        h2.portletHeader {
+            margin-bottom: 0.125em;
+        }
+
+        .portletItem {
+            margin-bottom: 0.25em;
+        }
+        
+        .portletFooter {
+            font-size: 0.875em;
+        }
+        
+        margin-bottom: 1em;
+    }
+    
+    #center-column {
+        .portletfeedmixer {
+            .portletItem {
+
+                .rssImage {
+                    max-width: 100%*(225px/(10*$column_content_width));
+                    float: right;
+                    margin-left: 100%*(10px/(10*$column_content_width));
+                    
+                    img {
+                        width: 100%;
+                    }
+                }
+                
+                .title {
+                    font-size: 1.25em;
+                    font-weight: bold;
+                }
+                
+                .portletItemDetails.date {
+                    font-size: 0.875em;
+                }
+                
+                margin: 2% 0;
+            }
+        }
+        
+        .portletItem:after {
+            clear: both;
+            content: '';
+            display: block;
+        }
+    }
+}

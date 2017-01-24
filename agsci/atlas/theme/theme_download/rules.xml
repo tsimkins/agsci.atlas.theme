@@ -22,21 +22,21 @@
         
     <replace 
         css:content-children="#section-title" 
-        css:theme-children=".jumbotron" />
+        css:theme-children="#section-title" />
 
     <drop 
-        css:theme-children=".container-section"
+        css:theme-children="#section-title"
         css:if-not-content="#section-title" />
 
     <!-- Homepage Image -->
     <merge 
         css:content="#homepageimage" 
-        css:theme=".container .homepageimage"
+        css:theme="#homepageimage"
         attributes="data-image-heights data-image-urls"
         css:if-content="#homepageimage" />
 
     <drop 
-        css:theme-children=".container-homepageimage"
+        css:theme-children="#homepageimage-section"
         css:if-not-content="#homepageimage" />
           
     <!-- Portal Columns -->
@@ -45,47 +45,82 @@
 
     <replace 
         css:content-children="#portal-column-one" 
-        css:theme-children=".container .left-column"
+        css:theme-children="#plone #left-column"
         css:if-content="#portal-column-one" />
 
     <drop 
-        css:theme=".container .left-column"
+        css:theme="#plone #left-column"
         css:if-not-content="#portal-column-one" />
 
-    <!-- right column -->
+    <!-- right column (standard site) -->
 
-    <drop 
-        css:theme=".container .right-column"
-        css:if-not-content="#portal-column-two" />
+    <rules
+        css:if-not-content="body.portaltype-homepage">
 
-    <replace 
-        css:content-children="#portal-column-two" 
-        css:theme-children=".container .right-column"
-        css:if-content="#portal-column-two" />
+        <drop 
+            css:theme="#plone #right-column"
+            css:if-not-content="#portal-column-two" />
+    
+        <replace 
+            css:content-children="#portal-column-two" 
+            css:theme-children="#plone #right-column"
+            css:if-content="#portal-column-two" />
+
+        <!-- content column -->
+        <before css:theme-children="#plone #content-column" 
+            css:if-content="#portal-column-content.sr">
+            <xsl:attribute name="class">col col-md-10</xsl:attribute>
+        </before>
+    
+        <before css:theme-children="#content-column" 
+            css:if-content="#portal-column-content.sl">
+            <xsl:attribute name="class">col col-md-10</xsl:attribute>
+        </before>
+    
+        <before css:theme-children="#content-column" 
+            css:if-content="#portal-column-content.sr.sl">
+            <xsl:attribute name="class">col col-md-8</xsl:attribute>
+        </before>
+
+    </rules>
+
+    <!-- right column (homepage) -->
+
+    <rules
+        css:if-content="body.portaltype-homepage">
+
+        <drop 
+            css:theme="#plone #right-column"
+            css:if-not-content="#rightcolumn" />
+    
+        <replace 
+            css:content-children="#rightcolumn" 
+            css:theme-children="#plone #right-column"
+            css:if-content="#rightcolumn" />
+
+        <!-- content column -->
+        <before css:theme-children="#plone #content-column" 
+            css:if-content="#centercolumn.sr">
+            <xsl:attribute name="class">col col-md-8</xsl:attribute>
+        </before>
+
+        <before css:theme-children="#plone #content-column" 
+            css:if-not-content="#centercolumn.sr">
+            <xsl:attribute name="class">col col-md-8</xsl:attribute>
+        </before>    
+
+    </rules>
 
     <!-- center column -->
 
     <drop 
-        css:theme=".container .center-column"
+        css:theme="#plone #center-column"
         css:if-not-content="#centercolumn" />
 
     <replace 
         css:content-children="#centercolumn" 
-        css:theme-children=".container .center-column"
+        css:theme-children="#plone #center-column"
         css:if-content="#centercolumn" />
-
-    <!-- content column -->
-    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr">
-        <xsl:attribute name="class">content-column col-md-10</xsl:attribute>
-    </before>
-
-    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sl">
-        <xsl:attribute name="class">content-column col-md-10</xsl:attribute>
-    </before>
-
-    <before css:theme-children=".content-column" css:if-content="#portal-column-content.sr.sl">
-        <xsl:attribute name="class">content-column col-md-8</xsl:attribute>
-    </before>
 
     <!-- breadcrumbs -->
 
@@ -97,13 +132,13 @@
 
     <replace 
         css:content-children="h1.documentFirstHeading" 
-        css:theme-children=".product-name h1" />
+        css:theme-children="#plone h1.documentFirstHeading" />
 
     <!-- page description -->
 
     <replace 
         css:content-children="#content > .documentDescription" 
-        css:theme-children=".product-view .short-description" />
+        css:theme-children="#plone p.documentDescription" />
 
     <!-- lead image -->
 
@@ -115,7 +150,7 @@
 
     <replace 
         css:content-children="#content #content-core > div" 
-        css:theme-children=".product-shop > .std" />
+        css:theme-children="#plone #content" />
         
     <!-- listing-bar -->
 
@@ -124,7 +159,14 @@
         css:theme-children=".container .listing-bar" />
 
     <!-- Drop items -->
+    <drop css:theme=".product-collateral" />
     <drop css:theme=".product-details" />
     <drop css:theme=".product-essential > .discussing" />
+
+    <drop css:theme=".col-main" />
+    <drop css:theme=".col-right" />
+
+    
+    
 
 </rules>
