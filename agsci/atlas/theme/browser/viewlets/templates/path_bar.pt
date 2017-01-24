@@ -1,0 +1,48 @@
+<div id="magento-breadcrumbs" 
+     class="breadcrumbs"
+     i18n:domain="plone"
+     tal:condition="not:view/hide_breadcrumbs|nothing"
+     tal:define="breadcrumbs view/breadcrumbs;">
+    <ul>
+        <li class="breadcrumbs-penn-state">
+            <a href="http://www.psu.edu">Penn State</a>
+            <span>| </span>
+        </li>    
+   
+        <li class="breadcrumbs-parent"
+            tal:define="parent_url context/custom_parent_url|nothing;
+                        parent_breadcrumb context/custom_parent_breadcrumb|nothing;"
+            tal:condition="python: parent_url and parent_breadcrumb">
+            <a tal:content="parent_breadcrumb"
+               tal:attributes="href parent_url">[Custom Parent Title]</a>
+            <span>| </span>
+        </li>
+    
+        <li class="breadcrumbs-home"
+            tal:define="breadcrumb_title context/custom_breadcrumb|context/@@plone_portal_state/portal_title;
+                        is_site_homepage view/isSiteHomepage"
+            tal:attributes="class python: is_site_homepage and 'homepage' or ''">
+            <a tal:content="breadcrumb_title"
+               tal:omit-tag="is_site_homepage"
+               tal:attributes="href view/navigation_root_url">Home</a>
+            <span>| </span>
+        </li>
+        <li tal:repeat="crumb breadcrumbs">
+            <tal:item tal:define="is_last repeat/crumb/end;
+                                  url crumb/absolute_url;
+                                  title crumb/Title">
+                <a href="#"
+                   tal:omit-tag="not: url"
+                   tal:condition="python:not is_last"
+                   tal:attributes="href url"
+                   tal:content="title">
+                    crumb
+                </a>
+                <span tal:condition="not: is_last">| </span>
+                <strong class="breadcrumbs-current"
+                      tal:condition="is_last"
+                      tal:content="title" />
+             </tal:item>
+        </li>
+    </ul>
+</div>

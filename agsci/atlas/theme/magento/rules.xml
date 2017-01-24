@@ -69,12 +69,12 @@
         <!-- content column -->
         <before css:theme-children="#plone #content-column" 
             css:if-content="#portal-column-content.sr">
-            <xsl:attribute name="class">col col-md-10</xsl:attribute>
+            <xsl:attribute name="class">col col-md-12</xsl:attribute>
         </before>
     
         <before css:theme-children="#content-column" 
             css:if-content="#portal-column-content.sl">
-            <xsl:attribute name="class">col col-md-10</xsl:attribute>
+            <xsl:attribute name="class">col col-md-12</xsl:attribute>
         </before>
     
         <before css:theme-children="#content-column" 
@@ -106,7 +106,7 @@
 
         <before css:theme-children="#plone #content-column" 
             css:if-not-content="#centercolumn.sr">
-            <xsl:attribute name="class">col col-md-8</xsl:attribute>
+            <xsl:attribute name="class">col col-md-12</xsl:attribute>
         </before>    
 
     </rules>
@@ -125,7 +125,7 @@
     <!-- breadcrumbs -->
 
     <replace 
-        css:content-children="#portal-breadcrumbs" 
+        css:content-children="#magento-breadcrumbs" 
         css:theme-children=".breadcrumbs" />
 
     <!-- page title -->
@@ -144,12 +144,12 @@
 
     <before 
         css:content-children="#content > .contentLeadImageContainer" 
-        css:theme-children=".product-shop > .std" />
+        css:theme-children="#content-column .leadimage" />
 
     <!-- content -->
 
     <replace 
-        css:content-children="#content #content-core > div" 
+        css:content-children="#content #content-core" 
         css:theme-children="#plone #content" />
         
     <!-- listing-bar -->
@@ -166,7 +166,13 @@
     <drop css:theme=".col-main" />
     <drop css:theme=".col-right" />
 
+    <drop css:theme=".subscription > p" />
     
-    
+    <!-- Subscription empty -->
+    <append css:theme=".subscription">
+        <p>
+            &#0160;
+        </p>
+    </append>
 
 </rules>

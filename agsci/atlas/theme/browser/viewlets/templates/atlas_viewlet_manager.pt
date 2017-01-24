@@ -1,0 +1,8 @@
+<!-- 
+    This is a hidden structure, since it presents information specifically
+    for the Diazo transform.
+-->
+
+<div class="zhiddenStructure">
+    <div tal:replace="structure provider:agsci.atlas.theme.viewlets" />
+</div>

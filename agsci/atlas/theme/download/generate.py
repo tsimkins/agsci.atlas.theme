@@ -99,26 +99,28 @@ attrs = ['src', 'href']
 content_soup = BeautifulSoup("""
     <div id="plone" class="section">
         <div class="section">
-            <div id="section-title" class="col col-md-12">
+            <div id="section-title" class="col col-md-16">
                 <!-- Section title -->
             </div>
         </div>
         <div id="homepageimage-section" class="section">
-            <div class="col col-md-12">
+            <div class="col col-md-16">
                 <div id="homepageimage">
                     <!-- Homepage image -->
                 </div>
             </div>
         </div>
         <div class="section">
-            <div id="left-column" class="col col-md-2">
+            <div id="left-column" class="col col-md-4">
                 <!-- Left Column -->
             </div>
-            <div id="content-column" class="col col-md-10">
-                <h1 class="documentFirstHeading">
-                    <!-- Page Title -->
-                </h1>
-                <p class="documentDescription">
+            <div id="content-column" class="col col-md-8">
+                <div class="product-name">
+                    <h1 class="documentFirstHeading">
+                        <!-- Page Title -->
+                    </h1>
+                </div>
+                <p class="documentDescription short-description">
                     <!-- Page Description -->
                 </p>
                 <div class="leadimage">
@@ -132,7 +134,7 @@ content_soup = BeautifulSoup("""
                     <!-- Center column -->
                 </div>
             </div>
-            <div id="right-column" class="col col-md-2">
+            <div id="right-column" class="col col-md-4">
                 <!-- Right column -->
             </div>
         </div<

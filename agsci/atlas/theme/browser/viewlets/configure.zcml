@@ -1,0 +1,39 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+           xmlns:plone="http://namespaces.plone.org/plone"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:five="http://namespaces.zope.org/five"
+           i18n_domain="agsci.atlas">
+
+    <!-- Atlas viewletmanager -->
+
+    <browser:viewletManager
+        name="agsci.atlas.theme.viewlets"
+        provides=".IAtlasViewletManager"
+        class=".AtlasViewletManager"
+        layer="Products.agCommon.browser.interfaces.IThemeSpecific"
+        permission="zope2.View"
+        />
+
+    <browser:viewlet
+        name="agsci.atlas.theme.viewletmanager"
+        manager="plone.app.layout.viewlets.interfaces.IPortalFooter"
+        class=".AtlasViewlet"
+        layer="Products.agCommon.browser.interfaces.IThemeSpecific"
+        permission="zope2.View"
+        template="templates/atlas_viewlet_manager.pt"
+        />
+
+    <!-- The breadcrumbs -->
+
+    <browser:viewlet
+        name="atlas.path_bar"
+        manager=".IAtlasViewletManager"
+        class=".PathBarViewlet"
+        template="templates/path_bar.pt"
+        layer="Products.agCommon.browser.interfaces.IThemeSpecific"
+        permission="zope2.View"
+    />
+
+
+</configure>

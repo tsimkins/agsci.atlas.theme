@@ -1,3 +1,4 @@
+/* $column_bg: #fff6f0; */
 .hiddenStructure {
   position: absolute;
   margin: 0 0 0 -10000px; }
@@ -17,7 +18,7 @@
   display: block;
   float: left;
   margin: 1% 0.86881%;
-  background-color: #fff6f0; }
+  background-color: transparent; }
 
 /*  GROUPING  */
 .group:before,
@@ -34,39 +35,51 @@
 
 /* Column Widths */
 .col-md-1 {
-  width: 6.59571%; }
+  width: 4.51238%; }
 
 .col-md-2 {
-  width: 14.92905%; }
+  width: 10.76238%; }
 
 .col-md-3 {
-  width: 23.26238%; }
+  width: 17.01238%; }
 
 .col-md-4 {
-  width: 31.59571%; }
+  width: 23.26238%; }
 
 .col-md-5 {
-  width: 39.92905%; }
+  width: 29.51238%; }
 
 .col-md-6 {
-  width: 48.26238%; }
+  width: 35.76238%; }
 
 .col-md-7 {
-  width: 56.59571%; }
+  width: 42.01238%; }
 
 .col-md-8 {
-  width: 64.92905%; }
+  width: 48.26238%; }
 
 .col-md-9 {
-  width: 73.26238%; }
+  width: 54.51238%; }
 
 .col-md-10 {
-  width: 81.59571%; }
+  width: 60.76238%; }
 
 .col-md-11 {
-  width: 89.92905%; }
+  width: 67.01238%; }
 
 .col-md-12 {
+  width: 73.26238%; }
+
+.col-md-13 {
+  width: 79.51238%; }
+
+.col-md-14 {
+  width: 85.76238%; }
+
+.col-md-15 {
+  width: 92.01238%; }
+
+.col-md-16 {
   width: 98.26238%; }
 
 /*  GO FULL WIDTH BELOW 768 PIXELS */
@@ -108,12 +121,33 @@
     width: 100%; }
 
   .col-md-12 {
+    width: 100%; }
+
+  .col-md-13 {
+    width: 100%; }
+
+  .col-md-14 {
+    width: 100%; }
+
+  .col-md-15 {
+    width: 100%; }
+
+  .col-md-16 {
     width: 100%; } }
 #plone #section-title {
   font-size: 2em;
   color: #333333; }
   #plone #section-title a {
     color: #333333; }
+#plone .documentDescription {
+  margin-bottom: 1em; }
+#plone #content .tileItem {
+  margin-bottom: 1em; }
+#plone #content .tileTitle {
+  font-size: 1.375em;
+  font-weight: bold; }
+#plone #content .tileDescription {
+  font-size: 1.125em; }
 #plone .navTree ul {
   margin-left: 1em; }
 #plone #homepageimage {
@@ -134,9 +168,9 @@
 #plone #center-column .portletfeedmixer .portletItem {
   margin: 2% 0; }
   #plone #center-column .portletfeedmixer .portletItem .rssImage {
-    max-width: 23.45786%;
+    max-width: 31.27715%;
     float: right;
-    margin-left: 1.04257%; }
+    margin-left: 1.3901%; }
     #plone #center-column .portletfeedmixer .portletItem .rssImage img {
       width: 100%; }
   #plone #center-column .portletfeedmixer .portletItem .title {

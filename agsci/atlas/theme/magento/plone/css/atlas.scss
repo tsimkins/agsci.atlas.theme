@@ -1,7 +1,8 @@
-$columns: 12;
+$columns: 16;
 $margin: 10px;
 $site_width: 1151px;
-$column_bg: #fff6f0;
+/* $column_bg: #fff6f0; */
+$column_bg: transparent;
 
 $column_content_width: ($site_width/$columns);
 
@@ -9,7 +10,6 @@ $column_content_width: ($site_width/$columns);
     position: absolute;
     margin: 0 0 0 -10000px;
 }
-    
 
 .section {
 	clear: both;
@@ -66,7 +66,27 @@ $column_content_width: ($site_width/$columns);
             color: #333333;
         }
     }
+
+    .documentDescription {
+        margin-bottom: 1em;
+    }
     
+    #content {
+        
+        .tileItem {
+            margin-bottom: 1em;
+        }
+
+        .tileTitle {
+            font-size: 1.375em;
+            font-weight: bold;
+        }
+        
+        .tileDescription {
+            font-size: 1.125em;
+        }
+    }
+
     .navTree {
         ul {
             margin-left: 1em;

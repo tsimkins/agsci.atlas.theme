@@ -3,7 +3,7 @@
            xmlns:plone="http://namespaces.plone.org/plone"
            i18n_domain="agsci.atlas">
 
-    
+        <include package=".viewlets" />
 
 
 </configure>
