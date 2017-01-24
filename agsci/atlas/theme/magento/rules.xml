@@ -154,9 +154,9 @@
         
     <!-- listing-bar -->
 
-    <replace 
-        css:content-children="#content .listingBar" 
-        css:theme-children=".container .listing-bar" />
+    <after 
+        css:content="#content .listingBar" 
+        css:theme-children="#plone #content" />
 
     <!-- Drop items -->
     <drop css:theme=".product-collateral" />

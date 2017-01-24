@@ -17,7 +17,7 @@
 .col {
   display: block;
   float: left;
-  margin: 1% 0.86881%;
+  margin: 1% 1.73762%;
   background-color: transparent; }
 
 /*  GROUPING  */
@@ -35,52 +35,52 @@
 
 /* Column Widths */
 .col-md-1 {
-  width: 4.51238%; }
+  width: 2.77476%; }
 
 .col-md-2 {
-  width: 10.76238%; }
+  width: 9.02476%; }
 
 .col-md-3 {
-  width: 17.01238%; }
+  width: 15.27476%; }
 
 .col-md-4 {
-  width: 23.26238%; }
+  width: 21.52476%; }
 
 .col-md-5 {
-  width: 29.51238%; }
+  width: 27.77476%; }
 
 .col-md-6 {
-  width: 35.76238%; }
+  width: 34.02476%; }
 
 .col-md-7 {
-  width: 42.01238%; }
+  width: 40.27476%; }
 
 .col-md-8 {
-  width: 48.26238%; }
+  width: 46.52476%; }
 
 .col-md-9 {
-  width: 54.51238%; }
+  width: 52.77476%; }
 
 .col-md-10 {
-  width: 60.76238%; }
+  width: 59.02476%; }
 
 .col-md-11 {
-  width: 67.01238%; }
+  width: 65.27476%; }
 
 .col-md-12 {
-  width: 73.26238%; }
+  width: 71.52476%; }
 
 .col-md-13 {
-  width: 79.51238%; }
+  width: 77.77476%; }
 
 .col-md-14 {
-  width: 85.76238%; }
+  width: 84.02476%; }
 
 .col-md-15 {
-  width: 92.01238%; }
+  width: 90.27476%; }
 
 .col-md-16 {
-  width: 98.26238%; }
+  width: 96.52476%; }
 
 /*  GO FULL WIDTH BELOW 768 PIXELS */
 @media only screen and (max-width: 768px) {
@@ -140,7 +140,15 @@
   #plone #section-title a {
     color: #333333; }
 #plone .documentDescription {
-  margin-bottom: 1em; }
+  margin-bottom: 1em;
+  font-size: 1.125em; }
+#plone .leadimage {
+  float: right;
+  width: 34.75239%;
+  margin-left: 1.73762%; }
+  #plone .leadimage img {
+    width: 100%;
+    height: auto; }
 #plone #content .tileItem {
   margin-bottom: 1em; }
 #plone #content .tileTitle, #plone #content .tileHeadline {
@@ -148,6 +156,31 @@
   font-weight: bold; }
 #plone #content .tileDescription {
   font-size: 1.125em; }
+#plone #content ul {
+  list-style-type: disc;
+  margin-bottom: 1.375em; }
+  #plone #content ul li {
+    margin-left: 2em;
+    margin-bottom: 0.25em; }
+#plone #content p {
+  margin-bottom: 1.375em; }
+#plone #content .listingBar {
+  margin-top: 2em;
+  clear: both; }
+  #plone #content .listingBar a {
+    width: 48%;
+    text-align: left;
+    display: inline-block; }
+  #plone #content .listingBar a.listingNext {
+    margin-left: 2%;
+    text-align: right;
+    float: right; }
+  #plone #content .listingBar a.listingPrevious {
+    margin-right: 2%; }
+  #plone #content .listingBar a.listingPrevious::before {
+    content: "\00AB"; }
+  #plone #content .listingBar a.listingNext::after {
+    content: "\00BB"; }
 #plone .navTree ul {
   margin-left: 1em; }
 #plone #homepageimage {
