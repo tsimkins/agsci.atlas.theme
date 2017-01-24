@@ -11,9 +11,8 @@
         provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
-    <!--
-        <plone:static name="atlas_theme" directory="theme" type="theme" />
-    -->
-    <plone:static name="atlas_theme" directory="theme_download" type="theme" />
+    <include package=".browser" />
+
+    <plone:static name="atlas_theme" directory="magento" type="theme" />
 
 </configure>
