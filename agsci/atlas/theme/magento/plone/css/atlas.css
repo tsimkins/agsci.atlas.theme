@@ -84,8 +84,13 @@
 
 /*  GO FULL WIDTH BELOW 768 PIXELS */
 @media only screen and (max-width: 768px) {
-  .col, .section {
-    margin: 1% 0 1% 0%; }
+  #plone {
+    margin: 1% 3.47524%; }
+    #plone .col, #plone .section {
+      margin: 1% 0; }
+    #plone .product-name {
+      padding: 0 !important;
+      /* Sorry, Magento made me do it. */ }
 
   .col-md-1 {
     width: 100%; }
@@ -134,6 +139,8 @@
 
   .col-md-16 {
     width: 100%; } }
+#plone > .section {
+  margin: 0 -1.73762%; }
 #plone #section-title {
   font-size: 2em;
   color: #333333; }

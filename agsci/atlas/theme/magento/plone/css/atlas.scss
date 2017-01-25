@@ -50,7 +50,17 @@ $column_content_width: ($site_width/$columns);
 
 /*  GO FULL WIDTH BELOW 768 PIXELS */
 @media only screen and (max-width: 768px) {
-	.col, .section {  margin: 1% 0 1% 0%; }
+    #plone {
+    	.col, .section {
+            margin: 1% 0; 
+        }
+        
+        .product-name {
+            padding: 0 !important; /* Sorry, Magento made me do it. */
+        }
+        
+        margin: 1% 100%*(2*$margin/$site_width); 
+    }
     
     @for $i from 1 through $columns {
         .col-md-#{$i} {
@@ -60,6 +70,10 @@ $column_content_width: ($site_width/$columns);
 }
 
 #plone {
+    
+    > .section {
+        margin: 0 -100%*($margin/$site_width);
+    }
     
     #section-title {
         font-size: 2em;
