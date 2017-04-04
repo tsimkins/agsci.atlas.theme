@@ -4,6 +4,6 @@
            i18n_domain="agsci.atlas">
 
         <include package=".viewlets" />
-
+        <include package=".views" />
 
 </configure>

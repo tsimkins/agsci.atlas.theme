@@ -1,0 +1,23 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:plone="http://namespaces.plone.org/plone"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           i18n_domain="agsci.atlas">
+
+    <!--
+        folder_summary_view_z3 for Collection.
+    -->
+
+    <configure package="Products.agCommon.browser.views">
+
+        <browser:page
+            for="Products.ATContentTypes.interfaces.topic.IATTopic"
+            class="agsci.atlas.theme.browser.views.PeopleCollection"
+            name="folder_summary_view_z3"
+            permission="zope2.View"
+            layer="Products.agCommon.browser.interfaces.IThemeSpecific"
+            template="templates/folder_summary_view_z3.pt"
+        />
+
+    </configure>
+
+</configure>

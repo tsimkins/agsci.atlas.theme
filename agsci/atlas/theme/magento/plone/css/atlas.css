@@ -158,6 +158,13 @@
     height: auto; }
 #plone #content .tileItem {
   margin-bottom: 1em; }
+  #plone #content .tileItem ul.jobTitle {
+    font-weight: bold;
+    margin: 0.125em 0 0.375em;
+    list-style-type: none; }
+    #plone #content .tileItem ul.jobTitle li {
+      margin: 0 0 0.125em;
+      line-height: 1.125; }
 #plone #content .tileTitle, #plone #content .tileHeadline {
   font-size: 1.375em;
   font-weight: bold; }

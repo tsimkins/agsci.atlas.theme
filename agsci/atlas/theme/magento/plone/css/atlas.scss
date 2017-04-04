@@ -52,16 +52,16 @@ $column_content_width: ($site_width/$columns);
 @media only screen and (max-width: 768px) {
     #plone {
     	.col, .section {
-            margin: 1% 0; 
+            margin: 1% 0;
         }
-        
+
         .product-name {
             padding: 0 !important; /* Sorry, Magento made me do it. */
         }
-        
-        margin: 1% 100%*(2*$margin/$site_width); 
+
+        margin: 1% 100%*(2*$margin/$site_width);
     }
-    
+
     @for $i from 1 through $columns {
         .col-md-#{$i} {
             width: 100%;
@@ -70,15 +70,15 @@ $column_content_width: ($site_width/$columns);
 }
 
 #plone {
-    
+
     > .section {
         margin: 0 -100%*($margin/$site_width);
     }
-    
+
     #section-title {
         font-size: 2em;
         color: #333333;
-        
+
         a {
             color: #333333;
         }
@@ -88,57 +88,68 @@ $column_content_width: ($site_width/$columns);
         margin-bottom: 1em;
         font-size: 1.125em;
     }
-    
+
     .leadimage {
         float: right;
         width: $leadimage_width_percent;
         margin-left: 100%*($margin/$site_width);
-        
+
         img {
             width: 100%;
             height: auto;
         }
     }
-    
+
     #content {
-        
+
         .tileItem {
             margin-bottom: 1em;
+
+            ul.jobTitle {
+                font-weight: bold;
+                margin: 0.125em 0 0.375em;
+                list-style-type: none;
+
+                li {
+                    margin: 0 0 0.125em;
+                    line-height: 1.125;
+                }
+            }
         }
 
         .tileTitle, .tileHeadline {
             font-size: 1.375em;
             font-weight: bold;
         }
-        
+
         .tileDescription {
             font-size: 1.125em;
         }
-        
+
         ul {
             list-style-type: disc;
             margin-bottom: 1.375em;
-            
+
             li {
                 margin-left: 2em;
                 margin-bottom: 0.25em;
             }
         }
-        
+
         p {
             margin-bottom: 1.375em;
         }
-        
+
         .listingBar {
             margin-top: 2em;
             clear: both;
-            
+
             a {
                 width: 48%;
                 text-align: left;
                 display: inline-block;
             }
-            
+
             a.listingNext {
                 margin-left: 2%;
                 text-align: right;
@@ -165,7 +176,7 @@ $column_content_width: ($site_width/$columns);
             margin-left: 1em;
         }
     }
-    
+
     #homepageimage {
     	display: block;
     	text-align: left;
@@ -174,7 +185,7 @@ $column_content_width: ($site_width/$columns);
     	background-position: center middle;
     	background-color: #FFFFFF;
     }
-    
+
     .portletWrapper {
         h2.portletHeader {
             margin-bottom: 0.125em;
@@ -183,14 +194,14 @@ $column_content_width: ($site_width/$columns);
         .portletItem {
             margin-bottom: 0.25em;
         }
-        
+
         .portletFooter {
             font-size: 0.875em;
         }
-        
+
         margin-bottom: 1em;
     }
-    
+
     #center-column {
         .portletfeedmixer {
             .portletItem {
@@ -199,25 +210,25 @@ $column_content_width: ($site_width/$columns);
                     max-width: 100%*(225px/(10*$column_content_width));
                     float: right;
                     margin-left: 100%*(10px/(10*$column_content_width));
-                    
+
                     img {
                         width: 100%;
                     }
                 }
-                
+
                 .title {
                     font-size: 1.25em;
                     font-weight: bold;
                 }
-                
+
                 .portletItemDetails.date {
                     font-size: 0.875em;
                 }
-                
+
                 margin: 2% 0;
             }
         }
-        
+
         .portletItem:after {
             clear: both;
             content: '';
