@@ -100,10 +100,16 @@ $column_content_width: ($site_width/$columns);
         }
     }
 
+    .visualClear {
+        clear: both;
+        display: block;
+        font-size: 0;
+    }
+
     #content {
 
         .tileItem {
-            margin-bottom: 1em;
+            margin-bottom: 1.5em;
 
             ul.jobTitle {
                 font-weight: bold;
@@ -113,6 +119,15 @@ $column_content_width: ($site_width/$columns);
                 li {
                     margin: 0 0 0.125em;
                     line-height: 1.125;
+                }
+            }
+
+            .contentLeadImageContainer {
+                float: right;
+                width: 15%;
+
+                img {
+                    width: 100%;
                 }
             }
         }

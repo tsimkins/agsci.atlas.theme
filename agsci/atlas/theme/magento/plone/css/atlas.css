@@ -156,8 +156,12 @@
   #plone .leadimage img {
     width: 100%;
     height: auto; }
+#plone .visualClear {
+  clear: both;
+  display: block;
+  font-size: 0; }
 #plone #content .tileItem {
-  margin-bottom: 1em; }
+  margin-bottom: 1.5em; }
   #plone #content .tileItem ul.jobTitle {
     font-weight: bold;
     margin: 0.125em 0 0.375em;
@@ -165,6 +169,11 @@
     #plone #content .tileItem ul.jobTitle li {
       margin: 0 0 0.125em;
       line-height: 1.125; }
+  #plone #content .tileItem .contentLeadImageContainer {
+    float: right;
+    width: 15%; }
+    #plone #content .tileItem .contentLeadImageContainer img {
+      width: 100%; }
 #plone #content .tileTitle, #plone #content .tileHeadline {
   font-size: 1.375em;
   font-weight: bold; }
