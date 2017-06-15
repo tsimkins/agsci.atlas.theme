@@ -7,6 +7,12 @@
   clear: both;
   padding: 0px;
   margin: 0px; }
+  .section #content-column {
+    color: #000000; }
+
+.discreet {
+  color: #575757;
+  font-size: 0.9375em; }
 
 .section:after {
   display: table;

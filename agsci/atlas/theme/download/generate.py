@@ -16,7 +16,7 @@ BASE_OPTIONS['drop-empty-elements'] = 0
 def tidy_document(text):
     return Tidy(LIB_NAMES).tidy_document(text, BASE_OPTIONS)
 
-ORIGINAL_URL = "http://psuextension-attr.iwdfun.com/extension/marketing-to-professional-chefs"
+ORIGINAL_URL = "https://extension-dev.psu.edu/wild-bees-in-orchards"
 OUTPUT = 'output'
 
 download_types = {
@@ -86,7 +86,10 @@ changes.sort(key=lambda x: len(x[0]), reverse=True)
 
 
 # Get the HTML directly from the page
-html = urllib2.urlopen(ORIGINAL_URL).read()
+#html = urllib2.urlopen(ORIGINAL_URL).read()
+
+# Just use a static file for now.
+html = open("magento.html", "r").read()
 
 # Soup it
 soup = BeautifulSoup(html, 'html.parser')
