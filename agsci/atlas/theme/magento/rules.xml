@@ -150,7 +150,11 @@
 
     <replace 
         css:content-children="#content #content-core" 
-        css:theme-children="#plone #content" />
+        css:theme-children="#plone #content #content-core" />
+        
+    <replace 
+        css:content-children="#content #content-text" 
+        css:theme-children="#plone #content #content-text" />
         
     <!-- listing-bar -->
 
@@ -168,6 +172,8 @@
 
     <drop css:theme=".subscription > p" />
     
+    <drop css:theme="#header-search" />
+        
     <!-- Subscription empty -->
     <append css:theme=".subscription">
         <p>

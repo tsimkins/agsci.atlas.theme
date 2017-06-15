@@ -129,6 +129,8 @@ content_soup = BeautifulSoup("""
                 <!-- Content Column -->
                 <div id="content">
                     <!-- Content -->
+                    <div id="content-text"></div>
+                    <div id="content-core"></div>
                 </div>
                 <div id="center-column">
                     <!-- Center column -->

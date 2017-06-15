@@ -4,10 +4,25 @@ $site_width: 1151px;
 /* $column_bg: #fff6f0; */
 $column_bg: transparent;
 
+$link_color: #006DB1;
+$link_hover_color: #1C7DAE;
+
 $leadimage_width: 300px;
 $leadimage_width_percent: 100%*($leadimage_width/(12*$site_width/16));
 
 $column_content_width: ($site_width/$columns);
+
+@mixin body-links() {
+    a, a:visited {
+        color: $link_color;
+        text-decoration: none;
+    }
+    
+    a:hover {
+        color: $link_color;
+        text-decoration: underline;
+    }
+}
 
 .hiddenStructure {
     position: absolute;
@@ -20,7 +35,13 @@ $column_content_width: ($site_width/$columns);
 	margin: 0px;
 	
 	#content-column {
-	   color: #000000;
+        color: #000000;
+
+        @include body-links;
+        
+        a, a:hover {
+            text-decoration: underline;
+        }
 	}
 }
 
@@ -79,7 +100,7 @@ $column_content_width: ($site_width/$columns);
 }
 
 #plone {
-
+font-size: 1.125em;
     > .section {
         margin: 0 -100%*($margin/$site_width);
     }
@@ -116,8 +137,31 @@ $column_content_width: ($site_width/$columns);
     }
 
     #content {
+        
+        table {
+
+            border: 1px solid #333333;
+            border-collapse: collapse;
+
+            th, td {
+                padding: 0.5em 0.25em;
+                border: 1px solid #333333;
+                border-collapse: collapse;
+                color: #000000;
+            }
+
+            th {
+                background-color: #DDDDDD;
+                font-weight: bold;
+            }
+
+            td {
+            }
+
+        }
 
         .tileItem {
+            clear: both;
             margin-bottom: 1.5em;
 
             ul.jobTitle {
@@ -142,12 +186,14 @@ $column_content_width: ($site_width/$columns);
         }
 
         .tileTitle, .tileHeadline {
-            font-size: 1.375em;
+            font-size: 1.25em;
             font-weight: bold;
+            
+            @include body-links;
         }
 
         .tileDescription {
-            font-size: 1.125em;
+            font-size: 1em;
         }
 
         ul {
@@ -166,6 +212,8 @@ $column_content_width: ($site_width/$columns);
 
         .listingBar {
             margin-top: 2em;
+            padding-top: 1em;
+
             clear: both;
 
             a {
@@ -217,11 +265,69 @@ $column_content_width: ($site_width/$columns);
 
         .portletItem {
             margin-bottom: 0.25em;
+            line-height: 1.25;
         }
 
         .portletFooter {
+
+            @include body-links;
             font-size: 0.875em;
         }
+
+        .portletLinkIcon {
+            .portletItem {
+                
+                @include body-links;
+                
+                margin-left: 0.75em;
+                margin-bottom: 0.75em;
+                
+                span {
+                    margin-left: 0.25em;
+                }
+            }
+        }
+        
+        .portletLinkButton {
+            .portletItem {
+                border: 1px solid #333333;
+                background-color: #F6F6F6;
+                padding: 1em;
+                margin: 1em 0;
+            }
+        }
+    
+        .portletNavigationTree {
+            .portletItem {
+                
+                @include body-links;
+                
+                .navTreeItemInPath, .navTreeCurrentNode {
+                    > a {
+                        font-weight: bold;
+                    }
+                }
+                
+                > ul > li {
+                    margin-bottom: 0.75em;
+                    
+                    > ul > li {
+                        margin: 0.25em 0;
+                    }
+                }
+            }
+        }
+    
+        .portletCollection {
+            .portletItem {
+                
+                @include body-links;
+                
+                margin-left: 0.75em;
+                margin-bottom: 0.75em;
+            }
+        }
+
 
         margin-bottom: 1em;
     }
