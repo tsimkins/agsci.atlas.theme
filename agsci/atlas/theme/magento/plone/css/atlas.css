@@ -264,7 +264,6 @@
         color: #006DB1;
         text-decoration: underline; }
     #plone .portletWrapper .portletLinkIcon .portletItem {
-      margin-left: 0.75em;
       margin-bottom: 0.75em; }
       #plone .portletWrapper .portletLinkIcon .portletItem a, #plone .portletWrapper .portletLinkIcon .portletItem a:visited {
         color: #006DB1;
@@ -275,10 +274,14 @@
       #plone .portletWrapper .portletLinkIcon .portletItem span {
         margin-left: 0.25em; }
     #plone .portletWrapper .portletLinkButton .portletItem {
-      border: 1px solid #333333;
-      background-color: #F6F6F6;
-      padding: 1em;
+      background-color: #006db1;
+      padding: 0.75em;
       margin: 1em 0; }
+      #plone .portletWrapper .portletLinkButton .portletItem a {
+        text-decoration: none;
+        color: #FFFFFF; }
+    #plone .portletWrapper .portletLinkButton .portletItem:hover {
+      background-color: #1b90c9; }
     #plone .portletWrapper .portletNavigationTree .portletItem a, #plone .portletWrapper .portletNavigationTree .portletItem a:visited {
       color: #006DB1;
       text-decoration: none; }
@@ -292,7 +295,6 @@
       #plone .portletWrapper .portletNavigationTree .portletItem > ul > li > ul > li {
         margin: 0.25em 0; }
     #plone .portletWrapper .portletCollection .portletItem {
-      margin-left: 0.75em;
       margin-bottom: 0.75em; }
       #plone .portletWrapper .portletCollection .portletItem a, #plone .portletWrapper .portletCollection .portletItem a:visited {
         color: #006DB1;
@@ -312,7 +314,8 @@
       font-size: 1.25em;
       font-weight: bold; }
     #plone #center-column .portletfeedmixer .portletItem .portletItemDetails.date {
-      font-size: 0.875em; }
+      font-size: 0.875em;
+      color: #575757; }
   #plone #center-column .portletItem:after {
     clear: both;
     content: '';

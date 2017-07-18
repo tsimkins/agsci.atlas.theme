@@ -12,6 +12,9 @@ $leadimage_width_percent: 100%*($leadimage_width/(12*$site_width/16));
 
 $column_content_width: ($site_width/$columns);
 
+$button_background: #006db1;
+$button_background_hover: #1b90c9;
+
 @mixin body-links() {
     a, a:visited {
         color: $link_color;
@@ -279,7 +282,6 @@ font-size: 1.125em;
                 
                 @include body-links;
                 
-                margin-left: 0.75em;
                 margin-bottom: 0.75em;
                 
                 span {
@@ -290,10 +292,18 @@ font-size: 1.125em;
         
         .portletLinkButton {
             .portletItem {
-                border: 1px solid #333333;
-                background-color: #F6F6F6;
-                padding: 1em;
+                background-color: $button_background;
+                padding: 0.75em;
                 margin: 1em 0;
+                
+                a {
+                    text-decoration: none;
+                    color: #FFFFFF;
+                }
+            }
+            
+            .portletItem:hover {
+                background-color: $button_background_hover;
             }
         }
     
@@ -323,7 +333,6 @@ font-size: 1.125em;
                 
                 @include body-links;
                 
-                margin-left: 0.75em;
                 margin-bottom: 0.75em;
             }
         }
@@ -353,6 +362,7 @@ font-size: 1.125em;
 
                 .portletItemDetails.date {
                     font-size: 0.875em;
+                    color: #575757;
                 }
 
                 margin: 2% 0;
