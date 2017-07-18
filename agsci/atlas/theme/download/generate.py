@@ -16,7 +16,7 @@ BASE_OPTIONS['drop-empty-elements'] = 0
 def tidy_document(text):
     return Tidy(LIB_NAMES).tidy_document(text, BASE_OPTIONS)
 
-ORIGINAL_URL = "https://extension-dev.psu.edu/wild-bees-in-orchards"
+ORIGINAL_URL = "https://extension.psu.edu/wild-bees-in-orchards"
 OUTPUT = 'output'
 
 download_types = {
@@ -43,7 +43,7 @@ for i in data['log']['entries']:
     url = request.get('url')
     parsed_url = urlparse(url)
     url_path = os.path.abspath(parsed_url.path)
-    
+
     # Response
     response = i.get('response')
     headers = response.get('headers')
@@ -79,14 +79,11 @@ for i in data['log']['entries']:
             else:
                 open(download_path, "w").write(response['content']['text'].encode(encoding))
             changes.append([url_path, download_path[len(OUTPUT)+1:]])
+            changes.append([parsed_url, download_path[len(OUTPUT)+1:]])
     else:
         html = response['content']['text']
 
 changes.sort(key=lambda x: len(x[0]), reverse=True)
-
-
-# Get the HTML directly from the page
-#html = urllib2.urlopen(ORIGINAL_URL).read()
 
 # Just use a static file for now.
 html = open("magento.html", "r").read()
