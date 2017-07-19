@@ -9,7 +9,7 @@ import os
 import base64
 import urllib2
 
-LIB_NAMES = ['/usr/local/lib/libtidy.so.5']
+LIB_NAMES = ['/usr/lib/libtidy.so.5']
 
 BASE_OPTIONS['drop-empty-elements'] = 0
 
