@@ -1,3 +1,4 @@
+from datetime import datetime
 from tidylib import Tidy
 from tidylib.tidy import BASE_OPTIONS
 from urlparse import urlparse
@@ -34,6 +35,8 @@ har = har.replace('/img/', '/images/')
 
 data = json.loads(har)
 
+datestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+
 changes = []
 
 for i in data['log']['entries']:
@@ -67,7 +70,7 @@ for i in data['log']['entries']:
     if content_type not in ['text/html']:
         filename = os.path.basename(parsed_url.path)
         if  content_type in ['text/css', 'text/javascript', 'application/javascript']:
-            filename = 'themecache-%s-%s' % (uuid4(), filename)
+            filename = 'themecache-%s-%s-%s' % (datestamp, uuid4(), filename)
         if '.' in filename:
             download_path = '%s/%s' % (download_folder, filename)
             try:
@@ -77,7 +80,9 @@ for i in data['log']['entries']:
             if encoding in ['base64',]:
                 open(download_path, "wb").write(base64.b64decode(response['content']['text']))
             else:
-                open(download_path, "w").write(response['content']['text'].encode(encoding))
+                file_data = response['content']['text'].encode(encoding)
+                file_data = file_data.replace('https://extension.psu.edu/skin/frontend/extensions/default/css/images/', '../images/')
+                open(download_path, "w").write(file_data)
             changes.append([url_path, download_path[len(OUTPUT)+1:]])
             changes.append([parsed_url, download_path[len(OUTPUT)+1:]])
     else:
