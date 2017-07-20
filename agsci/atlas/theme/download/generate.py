@@ -68,8 +68,14 @@ for i in data['log']['entries']:
         pass
     
     if content_type not in ['text/html']:
+    
+        # Ignore per-product images
+        if parsed_url.path.startswith('/media/catalog/product'):
+            continue
+    
         filename = os.path.basename(parsed_url.path)
-        if  content_type in ['text/css', 'text/javascript', 'application/javascript']:
+
+        if content_type in ['text/css', 'text/javascript', 'application/javascript']:
             filename = 'themecache-%s-%s-%s' % (datestamp, uuid4(), filename)
         if '.' in filename:
             download_path = '%s/%s' % (download_folder, filename)
