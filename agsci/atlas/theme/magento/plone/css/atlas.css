@@ -17,6 +17,8 @@
       text-decoration: underline; }
     .section #content-column a, .section #content-column a:hover {
       text-decoration: underline; }
+    .section #content-column .product-name h1.documentFirstHeading {
+      margin-bottom: 0.375em; }
 
 .discreet {
   color: #575757;
@@ -176,6 +178,17 @@
     clear: both;
     display: block;
     font-size: 0; }
+  #plone #content .effectiveDate {
+    font-size: 0.875em;
+    color: #575757; }
+  #plone #content h2 a, #plone #content h3 a, #plone #content h4 a, #plone #content h5 a, #plone #content h6 a {
+    color: #000000;
+    text-decoration: none !important;
+    cursor: default; }
+  #plone #content h2 a {
+    color: #213261 !important; }
+  #plone #content h3 a {
+    color: #333333 !important; }
   #plone #content table {
     border: 1px solid #333333;
     border-collapse: collapse; }
@@ -189,7 +202,7 @@
       font-weight: bold; }
   #plone #content .tileItem {
     clear: both;
-    margin-bottom: 1.5em; }
+    margin-bottom: 2em; }
     #plone #content .tileItem ul.jobTitle {
       font-weight: bold;
       margin: 0.125em 0 0.375em;
@@ -202,6 +215,16 @@
       width: 15%; }
       #plone #content .tileItem .contentLeadImageContainer img {
         width: 100%; }
+    #plone #content .tileItem .tileSubItem {
+      margin-top: 1.5em;
+      margin-left: 2em;
+      font-size: 0.875em; }
+  #plone #content #content-core .tileItem:first-child {
+    clear: none; }
+  #plone #content #content-core dd {
+    margin-bottom: 2em; }
+    #plone #content #content-core dd span.description {
+      line-height: 1.25; }
   #plone #content .tileTitle, #plone #content .tileHeadline {
     font-size: 1.25em;
     font-weight: bold; }
@@ -211,14 +234,19 @@
     #plone #content .tileTitle a:hover, #plone #content .tileHeadline a:hover {
       color: #006DB1;
       text-decoration: underline; }
-  #plone #content .tileDescription {
-    font-size: 1em; }
-  #plone #content ul {
-    list-style-type: disc;
+  #plone #content .tileDescription,
+  #plone #content .tileBody {
+    font-size: 1em;
+    line-height: 1.25; }
+  #plone #content ul, #plone #content ol {
     margin-bottom: 1.375em; }
-    #plone #content ul li {
+    #plone #content ul li, #plone #content ol li {
       margin-left: 2em;
       margin-bottom: 0.25em; }
+  #plone #content ul {
+    list-style-type: disc; }
+  #plone #content ol {
+    list-style-type: roman; }
   #plone #content p {
     margin-bottom: 1.375em; }
   #plone #content .listingBar {
@@ -239,8 +267,20 @@
       content: "\00AB"; }
     #plone #content .listingBar a.listingNext::after {
       content: "\00BB"; }
-  #plone .navTree ul {
-    margin-left: 1em; }
+  #plone #content .listingBar.pagination {
+    clear: both;
+    margin-top: 2em;
+    padding-top: 1em;
+    margin-bottom: 1em; }
+    #plone #content .listingBar.pagination span, #plone #content .listingBar.pagination a {
+      display: inline;
+      width: auto; }
+    #plone #content .listingBar.pagination a.next {
+      float: right; }
+    #plone #content .listingBar.pagination a.previous {
+      padding-right: 2em; }
+    #plone #content .listingBar.pagination .current {
+      font-weight: bold; }
   #plone #homepageimage {
     display: block;
     text-align: left;
@@ -249,7 +289,7 @@
     background-position: center middle;
     background-color: #FFFFFF; }
   #plone .portletWrapper {
-    margin-bottom: 1em; }
+    margin-bottom: 2em; }
     #plone .portletWrapper h2.portletHeader {
       margin-bottom: 0.125em; }
     #plone .portletWrapper .portletItem {
@@ -288,12 +328,22 @@
     #plone .portletWrapper .portletNavigationTree .portletItem a:hover {
       color: #006DB1;
       text-decoration: underline; }
+    #plone .portletWrapper .portletNavigationTree .portletItem .navTree ul {
+      margin-left: 1em; }
     #plone .portletWrapper .portletNavigationTree .portletItem .navTreeItemInPath > a, #plone .portletWrapper .portletNavigationTree .portletItem .navTreeCurrentNode > a {
       font-weight: bold; }
     #plone .portletWrapper .portletNavigationTree .portletItem > ul > li {
-      margin-bottom: 0.75em; }
-      #plone .portletWrapper .portletNavigationTree .portletItem > ul > li > ul > li {
-        margin: 0.25em 0; }
+      margin-bottom: 0.875em;
+      line-height: 1.125; }
+      #plone .portletWrapper .portletNavigationTree .portletItem > ul > li > ul {
+        margin: 0.25em 0 0.75em 0.5em;
+        padding: 0.25em 0.75em;
+        border: 1px solid #DDDD;
+        background-color: #F9F9F9;
+        font-size: 0.9375em; }
+        #plone .portletWrapper .portletNavigationTree .portletItem > ul > li > ul > li {
+          line-height: 1.125;
+          margin: 0.375em 0 0.5em; }
     #plone .portletWrapper .portletCollection .portletItem {
       margin-bottom: 0.75em; }
       #plone .portletWrapper .portletCollection .portletItem a, #plone .portletWrapper .portletCollection .portletItem a:visited {
@@ -302,8 +352,10 @@
       #plone .portletWrapper .portletCollection .portletItem a:hover {
         color: #006DB1;
         text-decoration: underline; }
+  #plone #left-column #left-column-navigation-header a {
+    text-decoration: none; }
   #plone #center-column .portletfeedmixer .portletItem {
-    margin: 2% 0; }
+    margin: 2% 0 1.5em; }
     #plone #center-column .portletfeedmixer .portletItem .rssImage {
       max-width: 31.27715%;
       float: right;
@@ -311,11 +363,13 @@
       #plone #center-column .portletfeedmixer .portletItem .rssImage img {
         width: 100%; }
     #plone #center-column .portletfeedmixer .portletItem .title {
-      font-size: 1.25em;
+      font-size: 1.125em;
       font-weight: bold; }
     #plone #center-column .portletfeedmixer .portletItem .portletItemDetails.date {
       font-size: 0.875em;
       color: #575757; }
+    #plone #center-column .portletfeedmixer .portletItem .portletItemDetails.summary {
+      font-size: 1em; }
   #plone #center-column .portletItem:after {
     clear: both;
     content: '';

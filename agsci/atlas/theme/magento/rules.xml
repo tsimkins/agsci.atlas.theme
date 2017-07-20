@@ -155,11 +155,14 @@
     <replace 
         css:content-children="#content #content-text" 
         css:theme-children="#plone #content #content-text" />
-        
+    
+    <!-- Drop "Read more" -->    
+    <drop css:content="#content .tileFooter" />
+
     <!-- listing-bar -->
 
     <after 
-        css:content="#content .listingBar" 
+        css:content="#content > .listingBar" 
         css:theme-children="#plone #content" />
 
     <!-- Drop items -->

@@ -15,6 +15,9 @@ $column_content_width: ($site_width/$columns);
 $button_background: #006db1;
 $button_background_hover: #1b90c9;
 
+$h2_color: #213261;
+$h3_color: #333333;
+
 @mixin body-links() {
     a, a:visited {
         color: $link_color;
@@ -44,6 +47,10 @@ $button_background_hover: #1b90c9;
         
         a, a:hover {
             text-decoration: underline;
+        }
+        
+        .product-name h1.documentFirstHeading {
+            margin-bottom: 0.375em;
         }
 	}
 }
@@ -140,6 +147,28 @@ font-size: 1.125em;
     }
 
     #content {
+
+        .effectiveDate {
+            font-size: 0.875em;
+            color: #575757;
+        }
+
+        // Headings shouldn't have links
+        h2, h3, h4, h5, h6 {
+            a {
+                color: #000000;
+                text-decoration: none !important;
+                cursor: default;
+            }
+        }
+
+        h2 a {
+            color: $h2_color !important;
+        }
+        
+        h3 a {
+            color: $h3_color !important;
+        }
         
         table {
 
@@ -165,7 +194,7 @@ font-size: 1.125em;
 
         .tileItem {
             clear: both;
-            margin-bottom: 1.5em;
+            margin-bottom: 2em;
 
             ul.jobTitle {
                 font-weight: bold;
@@ -186,6 +215,29 @@ font-size: 1.125em;
                     width: 100%;
                 }
             }
+
+            .tileSubItem {
+                margin-top: 1.5em;
+                margin-left: 2em;
+                font-size: 0.875em;
+            }
+
+        }
+        
+        #content-core {
+
+            // First tile item shouldn't clear, since the lead image needs to float
+            .tileItem:first-child {
+                clear: none;
+            }
+            
+            dd {
+                margin-bottom: 2em;
+
+                span.description {
+                    line-height: 1.25;
+                }
+            }
         }
 
         .tileTitle, .tileHeadline {
@@ -195,12 +247,13 @@ font-size: 1.125em;
             @include body-links;
         }
 
-        .tileDescription {
+        .tileDescription,
+        .tileBody {
             font-size: 1em;
+            line-height: 1.25;
         }
 
-        ul {
-            list-style-type: disc;
+        ul, ol {
             margin-bottom: 1.375em;
 
             li {
@@ -208,6 +261,14 @@ font-size: 1.125em;
                 margin-bottom: 0.25em;
             }
         }
+
+        ul {
+            list-style-type: disc;
+        }
+
+        ol {
+            list-style-type: roman;
+        }        
 
         p {
             margin-bottom: 1.375em;
@@ -243,13 +304,32 @@ font-size: 1.125em;
                 content: "\00BB";
             }
         }
+        
+        .listingBar.pagination {
 
-    }
-
-    .navTree {
-        ul {
-            margin-left: 1em;
+            clear: both;
+            margin-top: 2em;
+            padding-top: 1em;
+            margin-bottom: 1em;
+            
+            span, a {
+                display: inline;
+                width: auto;
+            }
+            
+            a.next {
+                float: right;
+            }
+            
+            a.previous {
+                padding-right: 2em;
+            }
+            
+            .current {
+                font-weight: bold;
+            }
         }
+
     }
 
     #homepageimage {
@@ -262,6 +342,7 @@ font-size: 1.125em;
     }
 
     .portletWrapper {
+        
         h2.portletHeader {
             margin-bottom: 0.125em;
         }
@@ -311,7 +392,13 @@ font-size: 1.125em;
             .portletItem {
                 
                 @include body-links;
-                
+
+                .navTree {
+                    ul {
+                        margin-left: 1em;
+                    }
+                }
+
                 .navTreeItemInPath, .navTreeCurrentNode {
                     > a {
                         font-weight: bold;
@@ -319,10 +406,21 @@ font-size: 1.125em;
                 }
                 
                 > ul > li {
-                    margin-bottom: 0.75em;
+                    margin-bottom: 0.875em;
+                    line-height: 1.125;
                     
-                    > ul > li {
-                        margin: 0.25em 0;
+                    > ul {
+                        
+                        margin: 0.25em 0 0.75em 0.5em;
+                        padding: 0.25em 0.75em;
+                        border: 1px solid #DDDD;
+                        background-color: #F9F9F9;
+                        font-size: 0.9375em;
+
+                        > li {
+                            line-height: 1.125;
+                            margin: 0.375em 0 0.5em;
+                        }
                     }
                 }
             }
@@ -338,10 +436,17 @@ font-size: 1.125em;
         }
 
 
-        margin-bottom: 1em;
+        margin-bottom: 2em;
+    }
+
+    #left-column {
+        #left-column-navigation-header a {
+            text-decoration: none;
+        }
     }
 
     #center-column {
+        
         .portletfeedmixer {
             .portletItem {
 
@@ -356,7 +461,7 @@ font-size: 1.125em;
                 }
 
                 .title {
-                    font-size: 1.25em;
+                    font-size: 1.125em;
                     font-weight: bold;
                 }
 
@@ -364,8 +469,12 @@ font-size: 1.125em;
                     font-size: 0.875em;
                     color: #575757;
                 }
+                
+                .portletItemDetails.summary {
+                    font-size: 1em;
+                }
 
-                margin: 2% 0;
+                margin: 2% 0 1.5em;
             }
         }
 
