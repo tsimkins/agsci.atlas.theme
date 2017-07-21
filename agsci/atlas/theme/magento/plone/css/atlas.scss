@@ -133,6 +133,7 @@ font-size: 1.125em;
         float: right;
         width: $leadimage_width_percent;
         margin-left: 100%*($margin/$site_width);
+        margin-bottom: 1em;
 
         img {
             width: 100%;
@@ -151,6 +152,15 @@ font-size: 1.125em;
         .effectiveDate {
             font-size: 0.875em;
             color: #575757;
+        }
+
+        .pullquote, .callout {
+            display: block;
+            background: #EEEEEE;
+            padding: 1em;
+            border-left: 1em solid #CCCCCC;
+            clear: both;
+            margin: 0.5em 0;
         }
 
         // Headings shouldn't have links
