@@ -42,7 +42,6 @@ class leadimage_field(object):
 def VirtualBrainFactory(user_id):
 
     url = 'http://cms.extension.psu.edu/directory/%s/@@api/json?bin=False&brain=True' % user_id
-    url = 'http://agplonesrv.ag.psu.edu/atlas-test/directory/%s/@@api/json?bin=False&brain=True' % user_id
 
     try:
         data = json.loads(urllib2.urlopen(url).read())
