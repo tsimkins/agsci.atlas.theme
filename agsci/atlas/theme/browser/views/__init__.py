@@ -48,6 +48,10 @@ def VirtualBrainFactory(user_id):
     except urllib2.HTTPError:
         data = {}
 
+    # Skip inactive (not "published") people.
+    if not data.get('visibility', None) in ('Catalog',):
+        return None
+
     logger = logging.getLogger('agsci.atlas.theme')
 
     logger.info("Lookup %s, found %r" % (user_id, not not data))
