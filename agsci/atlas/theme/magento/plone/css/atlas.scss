@@ -241,6 +241,10 @@ font-size: 1.125em;
                 clear: none;
             }
             
+            .tileItemLeadImage:first-child {
+                clear: both;
+            }
+            
             dd {
                 margin-bottom: 2em;
 

@@ -229,6 +229,8 @@
       font-size: 0.875em; }
   #plone #content #content-core .tileItem:first-child {
     clear: none; }
+  #plone #content #content-core .tileItemLeadImage:first-child {
+    clear: both; }
   #plone #content #content-core dd {
     margin-bottom: 2em; }
     #plone #content #content-core dd span.description {
