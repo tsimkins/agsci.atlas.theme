@@ -219,10 +219,12 @@ font-size: 1.125em;
 
             .contentLeadImageContainer {
                 float: right;
-                width: 15%;
+                width: 25%;
+                margin: 0 0 0.75em 0.75em;
 
                 img {
                     width: 100%;
+                    height: auto;
                 }
             }
 
@@ -236,7 +238,8 @@ font-size: 1.125em;
         
         #content-core {
 
-            .tileItemLeadImage {
+            .tileItemLeadImage,
+            .tileSummaryLeadImage {
                 clear: both;
             }
             

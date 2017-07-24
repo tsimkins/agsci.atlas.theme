@@ -220,14 +220,17 @@
         line-height: 1.125; }
     #plone #content .tileItem .contentLeadImageContainer {
       float: right;
-      width: 15%; }
+      width: 25%;
+      margin: 0 0 0.75em 0.75em; }
       #plone #content .tileItem .contentLeadImageContainer img {
-        width: 100%; }
+        width: 100%;
+        height: auto; }
     #plone #content .tileItem .tileSubItem {
       margin-top: 1.5em;
       margin-left: 2em;
       font-size: 0.875em; }
-  #plone #content #content-core .tileItemLeadImage {
+  #plone #content #content-core .tileItemLeadImage,
+  #plone #content #content-core .tileSummaryLeadImage {
     clear: both; }
   #plone #content #content-core dd {
     margin-bottom: 2em; }
