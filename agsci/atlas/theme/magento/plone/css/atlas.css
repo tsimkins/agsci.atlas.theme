@@ -227,9 +227,7 @@
       margin-top: 1.5em;
       margin-left: 2em;
       font-size: 0.875em; }
-  #plone #content #content-core .tileItem:first-child {
-    clear: none; }
-  #plone #content #content-core .tileItemLeadImage:first-child {
+  #plone #content #content-core .tileItemLeadImage {
     clear: both; }
   #plone #content #content-core dd {
     margin-bottom: 2em; }

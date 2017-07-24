@@ -236,12 +236,7 @@ font-size: 1.125em;
         
         #content-core {
 
-            // First tile item shouldn't clear, since the lead image needs to float
-            .tileItem:first-child {
-                clear: none;
-            }
-            
-            .tileItemLeadImage:first-child {
+            .tileItemLeadImage {
                 clear: both;
             }
             
