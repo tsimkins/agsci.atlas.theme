@@ -209,7 +209,7 @@
       background-color: #DDDDDD;
       font-weight: bold; }
   #plone #content .tileItem {
-    clear: both;
+    clear: none;
     margin-bottom: 2em; }
     #plone #content .tileItem ul.jobTitle {
       font-weight: bold;
