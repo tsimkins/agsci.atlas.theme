@@ -8,7 +8,12 @@
             <a href="http://www.psu.edu">Penn State</a>
             <span>| </span>
         </li>    
-   
+
+        <li class="breadcrumbs-extension">
+            <a href="//extension.psu.edu">Penn State Extension</a>
+            <span>| </span>
+        </li> 
+
         <li class="breadcrumbs-parent"
             tal:define="parent_url context/custom_parent_url|nothing;
                         parent_breadcrumb context/custom_parent_breadcrumb|nothing;"
