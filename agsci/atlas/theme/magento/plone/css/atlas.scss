@@ -164,11 +164,12 @@ font-size: 1.125em;
         
         table {
 
+            margin-bottom: 1.5em;
             border: 1px solid #333333;
             border-collapse: collapse;
 
             th, td {
-                padding: 0.5em 0.25em;
+                padding: 0.5em 0.75em;
                 border: 1px solid #333333;
                 border-collapse: collapse;
                 color: #000000;
@@ -264,6 +265,10 @@ font-size: 1.125em;
             li {
                 margin-left: 2em;
                 margin-bottom: 0.25em;
+                
+                p {
+                    margin: 0;
+                }
             }
         }
 
@@ -445,8 +450,12 @@ font-size: 1.125em;
     }
 
     #left-column {
-        #left-column-navigation-header a {
-            text-decoration: none;
+        #left-column-navigation-header {
+            border-bottom: 1px solid #575757;
+
+            a {
+                text-decoration: none;
+            }
         }
     }
 

@@ -198,10 +198,11 @@
   #plone #content h3 a {
     color: #333333 !important; }
   #plone #content table {
+    margin-bottom: 1.5em;
     border: 1px solid #333333;
     border-collapse: collapse; }
     #plone #content table th, #plone #content table td {
-      padding: 0.5em 0.25em;
+      padding: 0.5em 0.75em;
       border: 1px solid #333333;
       border-collapse: collapse;
       color: #000000; }
@@ -258,6 +259,8 @@
     #plone #content ul li, #plone #content ol li {
       margin-left: 2em;
       margin-bottom: 0.25em; }
+      #plone #content ul li p, #plone #content ol li p {
+        margin: 0; }
   #plone #content ul {
     list-style-type: disc; }
   #plone #content ol {
@@ -367,8 +370,10 @@
       #plone .portletWrapper .portletCollection .portletItem a:hover {
         color: #006DB1;
         text-decoration: underline; }
-  #plone #left-column #left-column-navigation-header a {
-    text-decoration: none; }
+  #plone #left-column #left-column-navigation-header {
+    border-bottom: 1px solid #575757; }
+    #plone #left-column #left-column-navigation-header a {
+      text-decoration: none; }
   #plone #center-column .portletfeedmixer .portletItem {
     margin: 2% 0 1.5em; }
     #plone #center-column .portletfeedmixer .portletItem .rssImage {
