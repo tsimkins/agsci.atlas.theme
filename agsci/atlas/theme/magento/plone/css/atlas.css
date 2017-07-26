@@ -371,7 +371,8 @@
         color: #006DB1;
         text-decoration: underline; }
   #plone #left-column #left-column-navigation-header {
-    border-bottom: 1px solid #575757; }
+    border-bottom: 1px solid #DDDDDD;
+    margin-bottom: 0.375em; }
     #plone #left-column #left-column-navigation-header a {
       text-decoration: none; }
   #plone #center-column .portletfeedmixer .portletItem {
