@@ -97,6 +97,10 @@
             css:content-children="#content #homepage-text .documentDescription"
             css:theme-children="#plone p.documentDescription" />
 
+        <drop
+            css:if-not-content="#content #homepage-text .documentDescription *"
+            css:theme="#plone p.documentDescription" />
+
         <replace
             css:content-children="#content #homepage-text .documentText"
             css:theme-children="#plone #content #content-text" />
