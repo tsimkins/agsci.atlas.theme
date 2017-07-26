@@ -96,24 +96,16 @@
         <replace
             css:content-children="#content #homepage-text .documentDescription"
             css:theme-children="#plone p.documentDescription" />
-            
+
         <replace
             css:content-children="#content #homepage-text .documentText"
             css:theme-children="#plone #content #content-text" />
-            
-        <after 
+
+        <after
             css:content="#content #portlets-above"
             css:theme="#plone #content #content-text" />
 
-
         <drop css:theme=".leadimage" />
-
-    </rules>
-    
-    <!-- right column (homepage) -->
-
-    <rules
-        css:if-content="body.portaltype-homepage">
 
         <drop
             css:theme="#plone #right-column"
@@ -126,27 +118,26 @@
 
         <!-- content column -->
         <before css:theme-children="#plone #content-column"
-            css:if-content="#centercolumn.sr">
-            <xsl:attribute name="class">col col-md-8</xsl:attribute>
-        </before>
-
-        <before css:theme-children="#plone #content-column"
-            css:if-not-content="#centercolumn.sr">
+            css:if-not-content="#rightcolumn">
             <xsl:attribute name="class">col col-md-12</xsl:attribute>
         </before>
 
+        <replace
+            css:content-children="#centercolumn"
+            css:theme-children="#plone #center-column"
+            css:if-content="#centercolumn" />
+
     </rules>
 
-    <!-- center column -->
+    <!-- Drop center column if not homepage-->
 
-    <drop
-        css:theme="#plone #center-column"
-        css:if-not-content="#centercolumn" />
+    <rules
+        css:if-not-content="body.portaltype-homepage">
 
-    <replace
-        css:content-children="#centercolumn"
-        css:theme-children="#plone #center-column"
-        css:if-content="#centercolumn" />
+        <drop
+            css:theme="#plone #center-column"/>
+
+    </rules>
 
     <!-- breadcrumbs -->
 
