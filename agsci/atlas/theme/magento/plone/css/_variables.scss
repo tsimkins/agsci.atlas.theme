@@ -1,0 +1,19 @@
+$columns: 16;
+$margin: 20px;
+$site_width: 1151px;
+/* $column_bg: #fff6f0; */
+$column_bg: transparent;
+
+$link_color: #006DB1;
+$link_hover_color: #1C7DAE;
+
+$leadimage_width: 300px;
+$leadimage_width_percent: 100%*($leadimage_width/(12*$site_width/16));
+
+$column_content_width: ($site_width/$columns);
+
+$button_background: #006db1;
+$button_background_hover: #1b90c9;
+
+$h2_color: #213261;
+$h3_color: #333333;
