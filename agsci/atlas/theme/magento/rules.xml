@@ -8,47 +8,47 @@
 
     <notheme css:if-not-content="body.userrole-anonymous"/>
 
-    <merge 
-        css:content="body" 
+    <merge
+        css:content="body"
         css:theme="body"
         attributes="class" />
 
     <!-- title -->
-    <replace 
-        css:content-children="title" 
+    <replace
+        css:content-children="title"
         css:theme-children="title" />
 
     <!-- section title -->
-        
-    <replace 
-        css:content-children="#section-title" 
+
+    <replace
+        css:content-children="#section-title"
         css:theme-children="#section-title" />
 
-    <drop 
+    <drop
         css:theme-children="#section-title"
         css:if-not-content="#section-title" />
 
     <!-- Homepage Image -->
-    <merge 
-        css:content="#homepageimage" 
+    <merge
+        css:content="#homepageimage"
         css:theme="#homepageimage"
         attributes="data-image-heights data-image-urls"
         css:if-content="#homepageimage" />
 
-    <drop 
+    <drop
         css:theme-children="#homepageimage-section"
         css:if-not-content="#homepageimage" />
-          
+
     <!-- Portal Columns -->
 
     <!-- left column -->
 
-    <replace 
-        css:content-children="#portal-column-one" 
+    <replace
+        css:content-children="#portal-column-one"
         css:theme-children="#plone #left-column"
         css:if-content="#portal-column-one" />
 
-    <drop 
+    <drop
         css:theme="#plone #left-column"
         css:if-not-content="#portal-column-one" />
 
@@ -57,27 +57,27 @@
     <rules
         css:if-not-content="body.portaltype-homepage">
 
-        <drop 
+        <drop
             css:theme="#plone #right-column"
             css:if-not-content="#portal-column-two" />
-    
-        <replace 
-            css:content-children="#portal-column-two" 
+
+        <replace
+            css:content-children="#portal-column-two"
             css:theme-children="#plone #right-column"
             css:if-content="#portal-column-two" />
 
         <!-- content column -->
-        <before css:theme-children="#plone #content-column" 
+        <before css:theme-children="#plone #content-column"
             css:if-content="#portal-column-content.sr">
             <xsl:attribute name="class">col col-md-12</xsl:attribute>
         </before>
-    
-        <before css:theme-children="#content-column" 
+
+        <before css:theme-children="#content-column"
             css:if-content="#portal-column-content.sl">
             <xsl:attribute name="class">col col-md-12</xsl:attribute>
         </before>
-    
-        <before css:theme-children="#content-column" 
+
+        <before css:theme-children="#content-column"
             css:if-content="#portal-column-content.sr.sl">
             <xsl:attribute name="class">col col-md-8</xsl:attribute>
         </before>
@@ -89,83 +89,94 @@
     <rules
         css:if-content="body.portaltype-homepage">
 
-        <drop 
+        <drop css:theme=".leadimage" />
+        <drop css:theme="#content-column > .documentDescription.short-description" />
+        <drop css:theme="#content-column > .product-name" />
+
+        <drop
             css:theme="#plone #right-column"
             css:if-not-content="#rightcolumn" />
-    
-        <replace 
-            css:content-children="#rightcolumn" 
+
+        <replace
+            css:content-children="#rightcolumn"
             css:theme-children="#plone #right-column"
             css:if-content="#rightcolumn" />
 
         <!-- content column -->
-        <before css:theme-children="#plone #content-column" 
+        <before css:theme-children="#plone #content-column"
             css:if-content="#centercolumn.sr">
             <xsl:attribute name="class">col col-md-8</xsl:attribute>
         </before>
 
-        <before css:theme-children="#plone #content-column" 
+        <before css:theme-children="#plone #content-column"
             css:if-not-content="#centercolumn.sr">
             <xsl:attribute name="class">col col-md-12</xsl:attribute>
-        </before>    
+        </before>
 
     </rules>
 
     <!-- center column -->
 
-    <drop 
+    <drop
         css:theme="#plone #center-column"
         css:if-not-content="#centercolumn" />
 
-    <replace 
-        css:content-children="#centercolumn" 
+    <replace
+        css:content-children="#centercolumn"
         css:theme-children="#plone #center-column"
         css:if-content="#centercolumn" />
 
     <!-- breadcrumbs -->
 
-    <replace 
-        css:content-children="#magento-breadcrumbs" 
+    <replace
+        css:content-children="#magento-breadcrumbs"
         css:theme-children=".breadcrumbs" />
 
     <!-- page title -->
 
-    <replace 
-        css:content-children="h1.documentFirstHeading" 
+    <replace
+        css:content-children="h1.documentFirstHeading"
         css:theme-children="#plone h1.documentFirstHeading" />
 
     <!-- page description -->
 
-    <replace 
-        css:content-children="#content > .documentDescription" 
+    <replace
+        css:content-children="#content > .documentDescription"
         css:theme-children="#plone p.documentDescription" />
 
     <!-- lead image -->
 
-    <before 
-        css:content-children="#content > .contentLeadImageContainer" 
+    <before
+        css:content-children="#content > .contentLeadImageContainer"
         css:theme-children="#content-column .leadimage" />
 
     <!-- content -->
 
-    <replace 
-        css:content-children="#content #content-core" 
+    <replace
+        css:content-children="#content #content-core"
         css:theme-children="#plone #content #content-core" />
-        
-    <replace 
-        css:content-children="#content #content-text" 
+
+    <replace
+        css:content-children="#content #content-text"
         css:theme-children="#plone #content #content-text" />
-    
-    <!-- Drop "Read more" -->    
+
+    <replace
+        css:if-content="#centercolumn"
+        css:content-children="#content #homepage-text"
+        css:theme-children="#plone #content #content-text" />
+
+    <!-- Drop "Read more" -->
     <drop css:content="#content .tileFooter" />
 
     <!-- listing-bar -->
 
-    <after 
-        css:content="#content > .listingBar" 
+    <after
+        css:content="#content > .listingBar"
         css:theme-children="#plone #content" />
 
     <!-- Drop items -->
+    <drop css:content="#addthis" />
+
     <drop css:theme=".product-collateral" />
     <drop css:theme=".product-details" />
     <drop css:theme=".product-essential > .discussing" />
@@ -174,9 +185,9 @@
     <drop css:theme=".col-right" />
 
     <drop css:theme=".subscription > p" />
-    
+
     <drop css:theme="#header-search" />
-        
+
     <!-- Subscription empty -->
     <append css:theme=".subscription">
         <p>
