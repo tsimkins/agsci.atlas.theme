@@ -1,0 +1,20 @@
+.sorter > .view-mode .list {
+	margin-right: 8px;
+	background-position: 4px -517px;
+}
+
+.sorter > .view-mode strong.list, .sorter > .view-mode a.list:hover {
+	background-position: -46px -517px;
+}
+
+.sorter > .view-mode .order_list {
+    background: url("../images/order-list.png") no-repeat scroll 0 50% transparent;
+    float: left;
+    height: 30px;
+    width: 20px;
+    text-indent: -9999px;
+}
+
+.sorter > .view-mode strong.order_list,.sorter > .view-mode .order_list:hover {
+	background-position: -22px 50%;
+}

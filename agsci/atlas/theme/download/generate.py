@@ -4,11 +4,11 @@ from tidylib.tidy import BASE_OPTIONS
 from urlparse import urlparse
 from bs4 import BeautifulSoup # BeautifulSoup 4
 from uuid import uuid4
+import hashlib
 
 import json
 import os
 import base64
-import urllib2
 
 LIB_NAMES = ['/usr/lib/libtidy.so.5']
 
@@ -38,6 +38,11 @@ data = json.loads(har)
 datestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 
 changes = []
+
+def get_css_filename(url):
+    m = hashlib.md5()
+    m.update(url)
+    return m.hexdigest()
 
 for i in data['log']['entries']:
 
@@ -74,9 +79,10 @@ for i in data['log']['entries']:
             continue
     
         filename = os.path.basename(parsed_url.path)
+        cksum = get_css_filename(parsed_url.path)
 
         if content_type in ['text/css', 'text/javascript', 'application/javascript']:
-            filename = 'themecache-%s-%s-%s' % (datestamp, uuid4(), filename)
+            filename = 'themecache-%s-%s' % (cksum, filename)
         if '.' in filename:
             download_path = '%s/%s' % (download_folder, filename)
             try:
@@ -179,6 +185,36 @@ for el in soup.findAll():
                 if old_url == parsed_src_path:
                     el[attr] = new_url
                     break
+
+# Fix <title>
+for t in soup.findAll('title'):
+    t.contents = []
+
+# Adjust body classes
+for body in soup.findAll('body'):
+    klass = body.get("class", '')
+    for k in klass:
+        if k.startswith('product-'):
+            klass.remove(k)
+    body['class'] = " ".join(klass)
+
+# Fix breadcrumb
+for breadcrumbs in soup.findAll("div", attrs={'class' : 'breadcrumbs'}):
+    for li in breadcrumbs.findAll("li", attrs={'class' : 'product'}):
+        for strong in li.findAll("strong"):
+            strong.contents = []
+
+# Remove page-specific meta tags
+for meta in soup.findAll('meta'):
+    name = meta.get('name', '')
+    property = meta.get('property', '')
+    
+    if name in ('robots', 'description') or property.startswith('og:'):
+        _ = meta.extract()
+        
+# Remove script of type application/ld+json contents
+for script in soup.findAll('script', attrs={'type' : 'application/ld+json'}):
+    script.contents = []
 
 # Tidy
 html, errors = tidy_document(unicode(soup))
