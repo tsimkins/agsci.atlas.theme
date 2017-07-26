@@ -18,6 +18,23 @@
         css:content-children="title"
         css:theme-children="title" />
 
+    <!-- meta tags -->
+    <append
+        css:content='head meta[property^="og:"]'
+        css:theme="head" />
+        
+    <append
+        css:content='head meta[name^="twitter:"]'
+        css:theme="head" />
+
+    <append
+        css:content='head meta[name="description"]'
+        css:theme="head" />
+
+    <append
+        css:content='head link[rel="image_src"]'
+        css:theme="head" />
+
     <!-- section title -->
 
     <replace
