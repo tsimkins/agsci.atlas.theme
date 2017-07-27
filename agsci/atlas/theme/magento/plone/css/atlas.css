@@ -197,6 +197,9 @@
     color: #213261 !important; }
   #plone #content h3 a {
     color: #333333 !important; }
+  #plone #content h4 {
+    text-transform: none;
+    font-size: 19px; }
   #plone #content table {
     margin-bottom: 1.5em;
     border: 1px solid #333333;
