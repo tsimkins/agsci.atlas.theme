@@ -20,4 +20,20 @@
 
     </configure>
 
+    <browser:page
+        for="Products.CMFCore.interfaces._content.IFolderish"
+        name="responsive_photogallery"
+        class="agsci.photogallery.browser.views.PhotoGalleryView"
+        template="templates/responsive_photogallery.pt"
+        permission="zope2.View"
+    />
+
+    <browser:page
+        for="Products.CMFCore.interfaces._content.IFolderish"
+        name="atct_album_view"
+        class="agsci.photogallery.browser.views.PhotoGalleryView"
+        template="templates/responsive_photogallery.pt"
+        permission="zope2.View"
+    />
+
 </configure>

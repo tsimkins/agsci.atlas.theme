@@ -232,8 +232,45 @@ font-size: 1.125em;
                 margin-left: 2em;
                 font-size: 0.875em;
             }
-
         }
+
+        .galleryImage {
+            margin: 0 0.75em 2em;
+
+            .tileImage {
+                width: 100%;
+                display: block;
+                height: 0;
+                padding-bottom: 66.6667%;
+                overflow: hidden;
+                position: relative;
+                
+                img {
+                    max-width: 100%;
+                    width: 100%;
+                    display: block;
+                    position: absolute;
+                    height: auto;
+                    -ms-transform: translateY(-50%);
+                    -webkit-transform: translateY(-50%);
+                    transform: translateY(-50%);
+                    top: 50%;
+                }
+            }
+            
+            .tileTitle {
+                margin-top: 0.25em;
+                font-size: 1.125em;
+                line-height: 1.125;
+            }
+            
+            .tileDescription,
+            .tileBody {
+                font-size: 1em;
+                line-height: 1.125;
+            }
+        }
+
         
         #content-core {
 
@@ -507,3 +544,4 @@ font-size: 1.125em;
 }
 
 @import 'tile';
+@import 'tile-folder';

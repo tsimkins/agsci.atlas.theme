@@ -237,6 +237,33 @@
       margin-top: 1.5em;
       margin-left: 2em;
       font-size: 0.875em; }
+  #plone #content .galleryImage {
+    margin: 0 0.75em 2em; }
+    #plone #content .galleryImage .tileImage {
+      width: 100%;
+      display: block;
+      height: 0;
+      padding-bottom: 66.6667%;
+      overflow: hidden;
+      position: relative; }
+      #plone #content .galleryImage .tileImage img {
+        max-width: 100%;
+        width: 100%;
+        display: block;
+        position: absolute;
+        height: auto;
+        -ms-transform: translateY(-50%);
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
+        top: 50%; }
+    #plone #content .galleryImage .tileTitle {
+      margin-top: 0.25em;
+      font-size: 1.125em;
+      line-height: 1.125; }
+    #plone #content .galleryImage .tileDescription,
+    #plone #content .galleryImage .tileBody {
+      font-size: 1em;
+      line-height: 1.125; }
   #plone #content #content-core .tileItemLeadImage,
   #plone #content #content-core .tileSummaryLeadImage {
     clear: both; }
@@ -3851,5 +3878,96 @@ div.tilePortletManager {
       width: 100%;
       float: none;
       display: block; } }
+/* Tile folder view */
+body.template-responsive_photogallery .leadimage,
+body.template-atct_album_view .leadimage {
+  display: none; }
+body.template-responsive_photogallery #content,
+body.template-atct_album_view #content {
+  /* 
+      Assigning margin to content-core because it fixes the issue of the 
+      "AddThis" block pushing down the content tiles 
+  */ }
+  body.template-responsive_photogallery #content #content-core,
+  body.template-atct_album_view #content #content-core {
+    margin-top: 0.75em; }
+  body.template-responsive_photogallery #content .tileitem-width-100:nth-child(1n+1),
+  body.template-responsive_photogallery #content .tileitem-width-50:nth-child(2n+1),
+  body.template-responsive_photogallery #content .tileitem-width-33:nth-child(3n+1),
+  body.template-responsive_photogallery #content .tileitem-width-25:nth-child(4n+1),
+  body.template-responsive_photogallery #content .tileitem-width-20:nth-child(5n+1),
+  body.template-atct_album_view #content .tileitem-width-100:nth-child(1n+1),
+  body.template-atct_album_view #content .tileitem-width-50:nth-child(2n+1),
+  body.template-atct_album_view #content .tileitem-width-33:nth-child(3n+1),
+  body.template-atct_album_view #content .tileitem-width-25:nth-child(4n+1),
+  body.template-atct_album_view #content .tileitem-width-20:nth-child(5n+1) {
+    clear: left; }
+  body.template-responsive_photogallery #content tileitem-width-100,
+  body.template-atct_album_view #content tileitem-width-100 {
+    border-top: 1px dashed #E6E6E6;
+    padding-top: 1.125em;
+    padding-bottom: 0.75em; }
+    body.template-responsive_photogallery #content tileitem-width-100 .tileHeadline,
+    body.template-atct_album_view #content tileitem-width-100 .tileHeadline {
+      margin-top: 0.25em;
+      font-size: 1.375em; }
+  body.template-responsive_photogallery #content .tileitem-width-100:first-child,
+  body.template-atct_album_view #content .tileitem-width-100:first-child {
+    border-top: none;
+    padding-top: 0.5em; }
+  body.template-responsive_photogallery #content .tileSummaryLeadImage,
+  body.template-responsive_photogallery #content .tileSummaryLeadImage:first-child,
+  body.template-responsive_photogallery #content .tileSummary,
+  body.template-responsive_photogallery #content .tileSummary:first-child,
+  body.template-atct_album_view #content .tileSummaryLeadImage,
+  body.template-atct_album_view #content .tileSummaryLeadImage:first-child,
+  body.template-atct_album_view #content .tileSummary,
+  body.template-atct_album_view #content .tileSummary:first-child {
+    border-top: none;
+    padding-top: 0; }
+  body.template-responsive_photogallery #content .tileItem,
+  body.template-atct_album_view #content .tileItem {
+    margin-bottom: 1em;
+    border-top: none; }
+    body.template-responsive_photogallery #content .tileItem .tileHeadline,
+    body.template-atct_album_view #content .tileItem .tileHeadline {
+      font-weight: normal; }
+    body.template-responsive_photogallery #content .tileItem .contentLeadImageContainer,
+    body.template-atct_album_view #content .tileItem .contentLeadImageContainer {
+      float: none;
+      clear: both;
+      margin-bottom: 0.125em;
+      max-width: 100%; }
+      body.template-responsive_photogallery #content .tileItem .contentLeadImageContainer img.tileImage,
+      body.template-atct_album_view #content .tileItem .contentLeadImageContainer img.tileImage {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        float: none;
+        clear: both;
+        max-width: 100%;
+        display: block; }
+    body.template-responsive_photogallery #content .tileItem .tilebody.tile-folder,
+    body.template-atct_album_view #content .tileItem .tilebody.tile-folder {
+      color: #000000; }
+    body.template-responsive_photogallery #content .tileItem .tileBody,
+    body.template-atct_album_view #content .tileItem .tileBody {
+      color: #000000; }
+  body.template-responsive_photogallery #content .tileItem.excludeFromNav,
+  body.template-atct_album_view #content .tileItem.excludeFromNav {
+    clear: both;
+    width: auto; }
+  body.template-responsive_photogallery #content div.listingBar,
+  body.template-atct_album_view #content div.listingBar {
+    clear: both;
+    margin-top: 1em;
+    padding-top: 2em;
+    padding-bottom: 1em; }
+
+body.tile-folder.no-description #content .tileItem {
+  margin-bottom: 1.75em; }
+
+body.tile-folder.listing-after-text #content #content-text {
+  clear: both; }
 
 /*# sourceMappingURL=atlas.css.map */

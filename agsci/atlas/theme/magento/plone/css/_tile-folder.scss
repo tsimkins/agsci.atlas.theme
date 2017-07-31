@@ -1,0 +1,108 @@
+/* Tile folder view */
+body.template-responsive_photogallery,
+body.template-atct_album_view {
+
+    .leadimage {
+        display: none;
+    }
+
+    #content {
+        
+        /* 
+            Assigning margin to content-core because it fixes the issue of the 
+            "AddThis" block pushing down the content tiles 
+        */
+        #content-core {
+            margin-top: 0.75em;
+        }
+
+        .tileitem-width-100:nth-child(1n+1),
+        .tileitem-width-50:nth-child(2n+1),
+        .tileitem-width-33:nth-child(3n+1),
+        .tileitem-width-25:nth-child(4n+1),
+        .tileitem-width-20:nth-child(5n+1) {
+            clear: left;
+        }
+        
+        tileitem-width-100 {
+            border-top: 1px dashed $globalBorderColor;
+            padding-top: 1.125em;
+            padding-bottom: 0.75em;
+
+            .tileHeadline {
+                margin-top: 0.25em;
+                font-size: 1.375em;
+            }
+        }
+        
+        .tileitem-width-100:first-child {
+            border-top: none;
+            padding-top: 0.5em;
+        }
+
+        .tileSummaryLeadImage,
+        .tileSummaryLeadImage:first-child,
+        .tileSummary,
+        .tileSummary:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .tileItem {
+            margin-bottom: 1em;
+            
+            border-top: none;
+            
+            .tileHeadline {
+                font-weight: normal;
+            }
+            
+            .contentLeadImageContainer {
+                float: none;
+                clear: both;
+                margin-bottom: 0.125em;
+                max-width: 100%;
+                
+                img.tileImage {
+                    width: 100%;
+                    padding: 0;
+                    margin: 0;
+                    float: none;
+                    clear: both;
+                    max-width: 100%;
+                    display: block;
+                }
+
+            }
+
+            .tilebody.tile-folder {
+                color: $globalFontColor;
+            }
+            
+            .tileBody {
+                color: $globalFontColor;
+            }
+        }
+
+        .tileItem.excludeFromNav {
+            clear: both;
+            width: auto;
+        }
+
+
+        div.listingBar {
+            clear: both;
+            margin-top: 1em;
+            padding-top: 2em;
+            padding-bottom: 1em;
+        }
+    }
+}
+
+body.tile-folder.no-description #content .tileItem {
+    margin-bottom: 1.75em;
+}
+
+body.tile-folder.listing-after-text #content #content-text {
+    clear: both;
+}

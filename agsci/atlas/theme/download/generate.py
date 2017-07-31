@@ -159,8 +159,13 @@ content_soup = BeautifulSoup("""
 
 # CSS and JS
 head_soup = BeautifulSoup("""
+    <link rel="stylesheet" type="text/css" href="featherlight/featherlight.min.css" />
     <link rel="stylesheet" type="text/css" href="plone/css/atlas.css" />
-    <script type="text/javascript" src="plone/js/atlas.js">
+""".strip(), 'html.parser').contents
+
+foot_soup = BeautifulSoup("""
+    <script type="text/javascript" src="featherlight/featherlight.min.js"></script>
+    <script type="text/javascript" src="plone/js/atlas.js"></script>
 """.strip(), 'html.parser').contents
 
 # Append CSS and body content
@@ -197,6 +202,10 @@ for body in soup.findAll('body'):
         if k.startswith('product-'):
             klass.remove(k)
     body['class'] = " ".join(klass)
+
+# Append
+for i in foot_soup:
+    soup.find('body').append(i)
 
 # Fix breadcrumb
 for breadcrumbs in soup.findAll("div", attrs={'class' : 'breadcrumbs'}):

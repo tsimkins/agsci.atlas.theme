@@ -1,0 +1,63 @@
+<metal:page define-macro="master">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone">
+
+<body tal-define="isAnon context/@@plone_portal_state/anonymous;">
+
+    <metal:content-core fill-slot="content-core">
+
+    <div metal:define-macro="text-field-view"
+            id="parent-fieldname-text" class="stx"
+            tal:define="text here/getText|nothing"
+            tal:condition="text">
+        <div metal:define-slot="inside" tal:replace="structure text">The body</div>
+    </div>
+    
+    <div class="gallery">
+    
+        <div tal:repeat="i view/getImages"
+            class="tileitem-width-33">
+    
+            <div class="galleryImage">
+    
+                <a tal:attributes="href string:${i/getURL}/image_galleryzoom;"
+                   data-featherlight="image">
+                    <div class="tileImage">
+                        <img 
+                            tal:attributes="src string:${i/getURL}/image_preview;
+                                            alt i/Title; 
+                                            data-title i/Title; 
+                                            data-description i/Description;
+                                            data-editlink editlink;
+                                            data-image-fit python:view.getImageFit(i)"
+                            tal:define="editlink string:${i/getURL}/edit;
+                                        editlink python: not isAnon and editlink or ''" />
+                    </div>
+    
+                    <div class="tileTitle"
+                         tal:content="i/Title" />
+                </a>
+    
+                <div class="tileDescription"
+                        tal:content="i/Description"
+                        tal:condition="i/Description" />
+    
+            </div>
+    
+        </div>
+
+        <div class="visualClear"><!-- --></div>
+
+    </div>
+    
+    </metal:content-core>
+
+</body>
+</html>
+</metal:page>
+
