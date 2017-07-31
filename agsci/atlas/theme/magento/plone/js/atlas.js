@@ -3,7 +3,7 @@ function scaleHomepageImage() {
     
     var hpi = $ji("#homepageimage");
 
-    if (hpi) {
+    if (hpi.size()) {
         var ratio = hpi.width()/maxHomepageImageWidth; // Homepage image ratio
         var _height = hpi.data('height');
         var new_height = ratio*_height;
@@ -17,7 +17,7 @@ $ji(document).ready(
         var hpi = $ji('#homepageimage');
         
         if (hpi.size()) {
-        
+
             var image_urls = hpi.attr('data-image-urls').split(';');
             var image_heights = hpi.attr('data-image-heights').split(';');
     

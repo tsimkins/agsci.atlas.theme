@@ -89,6 +89,11 @@
             width: 100%;
         }
     }
+    
+    body.section-4-h .main #left-column {
+        background-image: none;
+        padding-bottom: 0;
+    }
 }
 
 #plone {
@@ -541,6 +546,13 @@ font-size: 1.125em;
             display: block;
         }
     }
+}
+
+body.section-4-h #left-column {
+    background-image: url('../images/4hlogo.png');
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    padding-bottom: 150px;
 }
 
 @import 'tile';
