@@ -39,3 +39,13 @@ $ji(window).resize(
         scaleHomepageImage();
     }
 );
+
+$ji(document).ready(
+    function () {
+        $ji('.leadimage a').each(
+            function () {
+                $ji(this).attr('data-featherlight', 'image');
+            }
+        );
+    }
+);
