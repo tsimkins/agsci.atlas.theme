@@ -17,8 +17,11 @@ BASE_OPTIONS['drop-empty-elements'] = 0
 def tidy_document(text):
     return Tidy(LIB_NAMES).tidy_document(text, BASE_OPTIONS)
 
+CDN_HOSTNAME = 'extension-ssl-45413.nexcesscdn.net'
 ORIGINAL_URL = "https://extension.psu.edu/wild-bees-in-orchards"
 OUTPUT = 'output'
+
+ORIGINAL_HOSTNAME = urlparse(ORIGINAL_URL).netloc
 
 download_types = {
     'application/javascript' : 'js',
@@ -39,6 +42,28 @@ datestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 
 changes = []
 
+def remove_cdn(url):
+
+    parsed_url = urlparse(url)
+    
+    hostname = parsed_url.netloc
+    
+    if CDN_HOSTNAME in hostname:
+        url = url.replace(hostname, ORIGINAL_HOSTNAME)
+    
+    return url
+
+def content_type_from_extension(url):
+    
+    extension = url.split('.')[-1]
+    
+    content_types = {
+        'css' : 'text/css',
+        'js' : 'application/javascript',
+    }
+    
+    return content_types.get(extension, '')
+
 def get_css_filename(url):
     m = hashlib.md5()
     m.update(url)
@@ -48,7 +73,8 @@ for i in data['log']['entries']:
 
     # Request
     request = i.get('request')
-    url = request.get('url')
+    original_url_path = url = request.get('url')
+    url = remove_cdn(original_url_path)
     parsed_url = urlparse(url)
     url_path = os.path.abspath(parsed_url.path)
 
@@ -57,8 +83,13 @@ for i in data['log']['entries']:
     headers = response.get('headers')
 
     # Content type
-    content_type = filter(lambda x: x.get('name', '') == 'Content-Type', headers)[0].get('value', '')
-    content_type = content_type.split(';')[0]
+    try:
+        content_type = filter(lambda x: x.get('name', '') == 'Content-Type', headers)[0].get('value', '')
+    except IndexError:
+        # No header
+        content_type = content_type_from_extension(url)
+    else:
+        content_type = content_type.split(';')[0]
 
     download_folder = OUTPUT
     download_type = download_types.get(content_type, '')
@@ -93,12 +124,18 @@ for i in data['log']['entries']:
                 open(download_path, "wb").write(base64.b64decode(response['content']['text']))
             else:
                 file_data = response['content']['text'].encode(encoding)
+                file_data = file_data.replace(CDN_HOSTNAME, ORIGINAL_HOSTNAME)
                 file_data = file_data.replace('https://extension.psu.edu/skin/frontend/extensions/default/css/images/', '../images/')
                 open(download_path, "w").write(file_data)
+            changes.append([original_url_path, download_path[len(OUTPUT)+1:]])
             changes.append([url_path, download_path[len(OUTPUT)+1:]])
             changes.append([parsed_url, download_path[len(OUTPUT)+1:]])
     else:
-        html = response['content']['text']
+        try:
+            html = response['content']['text']
+        except KeyError:
+            html = ''
+            print "No HTML for %s" % url
 
 changes.sort(key=lambda x: len(x[0]), reverse=True)
 
@@ -181,9 +218,11 @@ soup.find('div', attrs={'class' : 'col-right sidebar'}).extract()
 
 # Fix src, href URLs
 for el in soup.findAll():
+    x = False
     for attr in attrs:
         src = el.get(attr, '')
         if src:
+            src = remove_cdn(src)
             parsed_src = urlparse(src).path
             parsed_src_path = os.path.abspath(parsed_src)
             for (old_url, new_url) in changes:

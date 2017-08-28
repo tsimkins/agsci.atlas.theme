@@ -11755,11 +11755,12 @@ Mage.Cookies.getCookieVal = function(offset){
 ;if(typeof(jQueryIWD) == "undefined"){if(typeof(jQuery) != "undefined") {jQueryIWD = jQuery;}} $ji = jQueryIWD;
 var ExtendedValidation = {
     uniqueEmailValidationErrorClass: 'iwd-type-email-unique-trigger-error',
+    localValidationEnabled: false,
     init: function() {
 
     },
     // NOT USED
-    checkDoRunExtendedValidation: function(form) {
+    _checkDoRunExtendedValidation: function(form) {
         var doRun = true;
         if (typeof window._iwdIsFromForm == 'undefined')
             doRun = false;
@@ -11796,6 +11797,9 @@ var ExtendedValidation = {
         }
         return false;
     },
+    checkDoRunExtendedValidation: function() {
+        return ExtendedValidation.localValidationEnabled;
+    },
     getForm: function(input) {
         var _input = jQueryIWD(input);
         if (_input.parents('.iwd-local-form').length > 0)
@@ -11803,10 +11807,16 @@ var ExtendedValidation = {
         return _input.closest('form');
     },
     validateFirstLastNames: function(val, input) {
+        if (!ExtendedValidation.checkDoRunExtendedValidation()) {
+            return true;
+        }
         var _localForm = ExtendedValidation.getForm(input);
         return val.length > 0;
     },
     validatePhoneOrEmail: function(val, input) {
+        if (!ExtendedValidation.checkDoRunExtendedValidation()) {
+            return true;
+        }
         var _localForm = ExtendedValidation.getForm(input);
 
         if (!_localForm.find('.iwd-type-primary_phone').val() && !_localForm.find('.iwd-type-email').val()) {
@@ -11815,6 +11825,9 @@ var ExtendedValidation = {
         return true;
     },
     validateEmailGroupRegistration: function(val, thisInput) {
+        if (!ExtendedValidation.checkDoRunExtendedValidation()) {
+            return true;
+        }
         // empty email - is valid from point of group validation
         if (val.length == 0) {
             return true;
@@ -11831,6 +11844,10 @@ var ExtendedValidation = {
                 }
                 if (val == $input.val()) {
                     hasDuplicates = true;
+                } else {
+                    // remove prev. error message
+                    var advice = Validation.getAdvice('iwd-group-unique-email', input);
+                    Validation.hideAdvice(input, advice);
                 }
             });
             return !hasDuplicates;
@@ -11838,6 +11855,9 @@ var ExtendedValidation = {
         return true;
     },
     validatePhoneType: function(val, input) {
+        if (!ExtendedValidation.checkDoRunExtendedValidation()) {
+            return true;
+        }
         var _localForm = ExtendedValidation.getForm(input);
         var phoneInput = _localForm.find('.iwd-type-primary_phone');
         if (phoneInput.val().length > 0 && val.length == 0)
@@ -11845,16 +11865,25 @@ var ExtendedValidation = {
         return true;
     },
     validatePhone: function (val, input) {
+        if (!ExtendedValidation.checkDoRunExtendedValidation()) {
+            return true;
+        }
         if (val == '') {
             return true;
         }
         return Validation.get('validate-phoneLax').test(val, input);
     },
     validateRegistrationRequired: function(val, input) {
+        if (!ExtendedValidation.checkDoRunExtendedValidation()) {
+            return true;
+        }
         var _localForm = ExtendedValidation.getForm(input);
         return Validation.get('required-entry').test(val);
     },
     validateRegistrationRequiredByName: function(v, elm) {
+        if (!ExtendedValidation.checkDoRunExtendedValidation()) {
+            return true;
+        }
         var _localForm = ExtendedValidation.getForm(elm);
         var inputs = $$('input[name="' + elm.name.replace(/([\\"])/g, '\\$1') + '"]');
 
@@ -11878,8 +11907,19 @@ var ExtendedValidation = {
         //return Validation.get('am-validate-one-required-by-name').test(val, elm); doesn't work
     },
     triggerUniqueEmailError: function(v, elm) {
+        if (!ExtendedValidation.checkDoRunExtendedValidation()) {
+            return true;
+        }
         // always return error
         return false;
+    },
+    validateUpdateItemQty: function(v, elm) {
+        v = parseInt(v);
+        $input = jQueryIWD(elm);
+        var name = $input.attr('name').replace('total_qty', 'prev_qty');
+        var prevQtyInput = $input.closest('tr').find('[name="' + name + '"]');
+        var prevQty = parseInt(prevQtyInput.val());
+        return v >= prevQty;
     },
 };
 ExtendedValidation.init();
@@ -11888,9 +11928,10 @@ Validation.add('iwd-type-lastname', 'This field is required', ExtendedValidation
 Validation.add('iwd-type-primary_phone', 'Email or phone are required', ExtendedValidation.validatePhoneOrEmail);
 Validation.add('iwd-validate-phone', 'Please enter a valid phone number. For example (123) 456-7890 or 123-456-7890.', ExtendedValidation.validatePhone);
 Validation.add('iwd-type-email', 'Email or phone are required', ExtendedValidation.validatePhoneOrEmail);
-Validation.add('iwd-type-group-unique-email', 'Email must be unique among all registrants in the group', ExtendedValidation.validateEmailGroupRegistration);
+Validation.add('iwd-group-unique-email', 'Email must be unique among all registrants in the group', ExtendedValidation.validateEmailGroupRegistration);
 Validation.add(ExtendedValidation.uniqueEmailValidationErrorClass, 'Attendee with this email already exists for this event', ExtendedValidation.triggerUniqueEmailError);
 Validation.add('iwd-type-primary_phone_type', 'Phone type is required', ExtendedValidation.validatePhoneType);
+Validation.add('iwd-events-qty', 'To reduce the quantity, please delete an individual line item from the details below.', ExtendedValidation.validateUpdateItemQty);
 Validation.add('am-required-entry', 'This field is required', ExtendedValidation.validateRegistrationRequired);
 Validation.add('am-validate-one-required-by-name', 'Please select one of the options.', ExtendedValidation.validateRegistrationRequiredByName);
 /*! jQuery v2.1.3 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
@@ -17985,15 +18026,20 @@ var IWD=IWD||{};
 IWD.PSU = {};
 
 IWD.PSU.Processor = {
+    initiated: false,
     url: null,
     preview_url_param:null,
     bundleVal: {},
     init: function(){
         var self = this;
+        if (self.initiated)
+            return;
+        self.initiated = true;        
         self.handleQVSelectionChange();
         $j(".product-view.bundle .product-shop .product-options").find("input[type='hidden']").each(function(){
             $option_id = $j(this).val();
-            if($option_id) {
+            optsel = $j(".product-view.bundle .product-options select").val();
+            if($option_id && optsel != '') {
                 IWD.PSU.Processor.sendReloadTabs($option_id);
             }
         });
@@ -18748,9 +18794,17 @@ $j(document).ready(function () {
         }, 250);
     });
 
-    IWD.PSU.Processor.init();
+    $j(window).mousemove(function() {
+        IWD.PSU.Processor.init();
+    })
+    $j(window).scroll(function (e) {
+        IWD.PSU.Processor.init();
+    });
+    $j(window).resize(function (e) {
+        IWD.PSU.Processor.init();
+    });
 
-    $j('.B2B_search_url').change(function (e) {
+    $j(document).on('change', '.B2B_search_url', function (e) {
         setLocation(setB2BSearchUrl(this.value));
     });
 });
@@ -18919,7 +18973,7 @@ function scrollToLink(){
 }
 
 
-
+// by IWD
 var B2BSearch = Class.create();
 B2BSearch.prototype = {
     initialize: function (url, containerEl, skuEl, nameEl, filterButton, filterResetButton )
@@ -19030,6 +19084,27 @@ function setB2BSearchUrl(url) {
     }
     return url;
 }
+// by IWD - Publication Group
+var B2BPublication = Class.create();
+B2BPublication.prototype = {
+    initialize: function() {
+        $j(document).on('change', '.b2borderlist-bundle-options .publications', function(e) {
+            var _this = $j(this), value = _this.val();
+            var destination = $j('#' + _this.data('for'));
+            if (destination.length) {
+                destination = destination.eq(0);
+                // reset prev. selections
+                destination.find('option').prop('selected', false);
+                var selectedArray = value.split(',');
+                $j.each(selectedArray, function(i, val) {
+                    destination.find('option[value="' + val + '"]').prop('selected', true).trigger('change');
+                });
+            }
+        });
+    },
+};
+
+
 /*!
 * jQuery Cycle2; build: v20131022
 * http://jquery.malsup.com/cycle2/
@@ -22507,6 +22582,13 @@ $j(document).ready(function () {
     var mouseYspeed = 0;
     var movedElement;
     var movedElementsaved;
+	var isFirstTime;
+
+	$j(document).mousemove(function (e) {
+		if ($j('.header-nav').has(e.target).length === 0){
+			isFirstTime = true;
+		}
+	});
     $j(document).on('mousemove','.desktop.page-header .nav-primary', function(e){
         pageX = e.pageX;
         pageY = e.pageY;
@@ -22519,9 +22601,10 @@ $j(document).ready(function () {
 		movedElement = $j(this);
 		$j(this).mousemove(function(e) {
             clearTimeout(timerMouseMove);
-            if ((pageX - mouseXspeed) <= 10) {
+            if (((pageX - mouseXspeed) <= 10) || isFirstTime) {
                 timerMouseMove = setTimeout(function() {
                     customMenu(movedElementsaved);
+					isFirstTime = false;
                 }, 100);
                 movedElementsaved = movedElement;
 			}
@@ -22629,7 +22712,7 @@ $j(document).ready(function () {
 	$j('.featured-products select#category-filter').selectpicker();
 
 	/* CONTACT US */
-	$j('#contactForm select#department').selectpicker().css({'display':'inline-block'});
+	$j('#contactForm select.department-select').selectpicker().css({'display':'inline-block'});
 
 	/* STATIC PAGE(move title) */
 	if($j('.cms-page-view .col-main .page-title').size() && $j('.main .breadcrumbs').size()){
@@ -23040,6 +23123,13 @@ $j(window).load(function () {
 	/* SETUP EMPTY FOOTER HEIGHT */
 	alignFooter();
 
+	/* setup max-width for category-4h-banner */
+	image = $j('.category-4h-banner-outer > img');
+	if(image.size()){
+		imageW = image.width();
+		$j('.category-4h-banner-outer').css({'width': imageW + 'px'});
+	}
+
 });
 
 Varien.searchForm.addMethods({
@@ -23285,16 +23375,19 @@ $j.fn.setup_navigation = function(settings) {
 }
 var IWD=IWD||{};
 IWD.Publication = {
-	config:null,
-	parent_block: 'body '
+	config: null,
+	parent_block: null,
 };
 IWD.Publication.Processor = {
 
 	init: function(){
 		/* single selection */
 
-		if(IWD.QuickView.Decorator.showPopup)
-			IWD.Publication.parent_block='.iwd-qv-modal ';
+		if (IWD.QuickView.Decorator.showPopup) {
+			IWD.Publication.parent_block = '.iwd-qv-modal ';
+		} else {
+			IWD.Publication.parent_block = 'body ';
+		}
 
 		IWD.Publication.Processor.singleBundleSelection();
 
@@ -23383,22 +23476,24 @@ $j(window).load(function(){
 
 var IWD=IWD||{};
 IWD.Workshop = {
-	config:null,
-	parent_block: '.product-shop ',
-	cart_block: '.btn-cart',
-	title: 'Buy Now',
-
+	config: null,
+	parent_block: null,
+	cart_block: null,
+	title: null,
 };
 IWD.Workshop.Processor = {
 
 	init: function(){
 
-		if(IWD.QuickView.Decorator.showPopup){
-			IWD.Workshop.parent_block ='.iwd-qv-modal ';
+		if (IWD.QuickView.Decorator.showPopup) {
+			IWD.Workshop.parent_block = '.iwd-qv-modal ';
 			IWD.Workshop.cart_block = '.btn-add-to-cart span span';
 			if ($j('#iwd_qv_product_addtocart_form_modal').attr('action').indexOf('updateItemOptions') != -1)
 				IWD.Workshop.title = 'Update Product';
-
+		} else {
+			IWD.Workshop.parent_block = '.product-shop ';
+			IWD.Workshop.cart_block = '.btn-cart';
+			IWD.Workshop.title = 'Buy Now';
 		}
 		$onclickText = 'productAddToCartForm.submit(this)';
 		$j(IWD.Workshop.parent_block + IWD.Workshop.cart_block).attr('cvent_link', '');
@@ -23435,53 +23530,65 @@ IWD.Workshop.Processor = {
 		/**/
 	},
 
+	toggleQtyVisibilityBasedOnCvent: function($option_id) {
+		var qtyBox = $j(IWD.Workshop.parent_block + ' .product-options-bottom .qty-wrapper');
+		if (workshop_group[$option_id].is_cvent) {
+			qtyBox.addClass('hidden');
+		} else {
+			qtyBox.removeClass('hidden');
+		}
+	},
+
 	applyBundleSelection: function(el){
 		if(el){
 			tag = $j(el).prop("tagName").toLowerCase();
 
 			/* select option change */
-			if( tag == "select" ){
+			if (tag == "select") {
 				$option_id = $j(el).find(":selected").val();
 				$cart = $j(el).closest(IWD.Workshop.parent_block).find(IWD.Workshop.cart_block);
-				if( $option_id ){
-					if (workshop_group[$option_id].externalUrl){
+				if ($option_id) {
+					IWD.Workshop.Processor.toggleQtyVisibilityBasedOnCvent($option_id);
+					if (workshop_group[$option_id].externalUrl) {
 						$cart.html('Register');
-						$cart.attr('cvent_link',workshop_group[$option_id].externalUrl);
+						$cart.attr('cvent_link', workshop_group[$option_id].externalUrl);
 						$j('#iwd_qv_product_addtocart_form_modal').addClass('disabled');
-						if(!IWD.QuickView.Decorator.showPopup){
-							$cart.attr('onclick','');
-						}
-						else{
-							$j(IWD.Workshop.parent_block + '.add-to-cart').attr('type','button');
+						if (!IWD.QuickView.Decorator.showPopup) {
+							$cart.attr('onclick', '');
+						} else {
+							$j(IWD.Workshop.parent_block + '.add-to-cart').attr('type', 'button');
 						}
 
-					}
-					else {
+					} else {
 						$cart.html(IWD.Workshop.title);
-						$cart.attr('cvent_link','');
+						$cart.attr('cvent_link', '');
 						$j('#iwd_qv_product_addtocart_form_modal').removeClass('disabled');
-						if(!IWD.QuickView.Decorator.showPopup)
-							$cart.attr('onclick',$onclickText);
-						else
-							$j(IWD.Workshop.parent_block + '.add-to-cart').attr('type','submit');
+						if (!IWD.QuickView.Decorator.showPopup) {
+							$cart.attr('onclick', $onclickText);
+						}
+						else {
+							$j(IWD.Workshop.parent_block + '.add-to-cart').attr('type', 'submit');
+						}
 					}
 					// change button title according price
-					if (workshop_group[$option_id].price > 0){
+					if (workshop_group[$option_id].price > 0) {
 						$cart.html(IWD.Workshop.title);
-					}
-					else {
+					} else {
 						$cart.html('Register');
 					}
 
-				}
-				else{
+				} else {
 					$cart.html(IWD.Workshop.title);
-					$cart.attr('cvent_link','');
+					$cart.attr('cvent_link', '');
 					$j('#iwd_qv_product_addtocart_form_modal').removeClass('disabled');
-					if(!IWD.QuickView.Decorator.showPopup)
-						$cart.attr('onclick',$onclickText);
-					else
-						$j(IWD.Workshop.parent_block + '.add-to-cart').attr('type','submit');
+					if (!IWD.QuickView.Decorator.showPopup) {
+						$cart.attr('onclick', $onclickText);
+					} else {
+						$j(IWD.Workshop.parent_block + '.add-to-cart').attr('type', 'submit');
+					}
+					var qtyBox = $j(IWD.Workshop.parent_block + ' .product-options-bottom .qty-wrapper');
+					qtyBox.addClass('hidden');
+
 				}
 
 			}
@@ -23510,7 +23617,7 @@ IWD.Workshop.Processor = {
 
 		if($option_id){
 			$j(IWD.Workshop.parent_block+ ".bundle-option-select option[value='"+$option_id+"']").prop('selected',true).trigger('change');
-
+			IWD.Workshop.Processor.toggleQtyVisibilityBasedOnCvent($option_id);
 			if( workshop_group[$option_id].externalUrl ){
 				$j(IWD.Workshop.parent_block + IWD.Workshop.cart_block).html('Register');
 				$j(IWD.Workshop.parent_block + IWD.Workshop.cart_block).attr('cvent_link',workshop_group[$option_id].externalUrl);
@@ -23563,18 +23670,22 @@ $j(window).load(function(){
 var IWD=IWD||{};
 IWD.Webinar = {
 	config:null,
-	parent_block: '.product-shop ',
-	cart_block: '.btn-cart',
+	parent_block: null,
+	cart_block: null,
 };
 IWD.Webinar.Processor = {
 
 	init: function(){
 
-		if(IWD.QuickView.Decorator.showPopup){
-			IWD.Webinar.parent_block ='.iwd-qv-modal ';
+		if (IWD.QuickView.Decorator.showPopup) {
+			IWD.Webinar.parent_block = '.iwd-qv-modal ';
 			IWD.Webinar.cart_block = '.btn-add-to-cart span span';
 			if ($j('#iwd_qv_product_addtocart_form_modal').attr('action').indexOf('updateItemOptions') != -1)
 				IWD.Webinar.title = 'Update Product';
+		} else {
+			IWD.Webinar.parent_block = '.product-shop ';
+			IWD.Webinar.cart_block = '.btn-cart';
+			IWD.Webinar.title = null;
 		}
 
 		$onclickText = 'productAddToCartForm.submit(this)';
@@ -23702,21 +23813,24 @@ $j(window).load(function(){
 var IWD=IWD||{};
 IWD.Courses = {
 	config:null,
-	parent_block: 'body ',
-	cart_block: '.btn-cart',
-	title: 'Buy Now',
+	parent_block: null,
+	cart_block: null,
+	title: null,
 
 };
 IWD.Courses.Processor = {
 
 	init: function(){
 
-		if(IWD.QuickView.Decorator.showPopup){
-			IWD.Courses.parent_block ='.iwd-qv-modal ';
+		if (IWD.QuickView.Decorator.showPopup) {
+			IWD.Courses.parent_block = '.iwd-qv-modal ';
 			IWD.Courses.cart_block = '.btn-add-to-cart span span';
 			if ($j('#iwd_qv_product_addtocart_form_modal').attr('action').indexOf('updateItemOptions') != -1)
 				IWD.Courses.title = 'Update Product';
-
+		} else {
+			IWD.Courses.parent_block = 'body ';
+			IWD.Courses.cart_block = '.btn-cart';
+			IWD.Courses.title = 'Buy Now';
 		}
 
 		/* for single selection */
@@ -24331,61 +24445,6 @@ document.observe("dom:loaded", function() {
   $$('#wishlist-table div.description').each(function(el) { Enterprise.textOverflow(el); });
 });
 
-window.hasOwnProperty = function (obj) {return (this[obj]) ? true : false;};
-if (!window.hasOwnProperty('IWD')){IWD = {};}
-IWD = IWD||{};
-IWD.AutoRelatedProducts = {
-    default_settings: {
-    	nav: true, 
-		slideSpeed: 300,
-		paginationSpeed: 400,
-		items : 4,
-		responsive:{
-	        0:{ items:1,},
-	        480:{ items:2,},
-	        768:{ items:2,},
-	        880:{ items:3,},
-	        1024:{items:4,}
-	    },
-	    slideBy : 4,
-	    loop: true,
-	    margin:25,
-        navText:["<strong class='fa fa-angle-left'></strong>","<strong class='fa fa-angle-right'></strong>"] ,
-        onInitialized : function(){	
-        	IWD.Featured.Processor.setupItemHeight(block);
-			$j('.iwd-auto-related-products-slider .item .product-name a').dotdotdot({ellipsis	: '...'});
-			$j('.iwd-auto-related-products-slider .item .top-list-info p').dotdotdot({ellipsis : '...'});
-    	},
-    	onRefreshed  :function(){
-    		IWD.Featured.Processor.setupItemHeight(block);
-			$j('.iwd-auto-related-products-slider .item .product-name a').dotdotdot({ellipsis	: '...'});
-			$j('.iwd-auto-related-products-slider .item .top-list-info p').dotdotdot({ellipsis : '...'});
-    	}
-    },
-
-    initSlider: function(block, settings, general_settings){
-        var slider = $j(block);
-        general_settings = $j.extend(IWD.AutoRelatedProducts.default_settings, general_settings);
-        settings = $j.extend(general_settings, settings);
-        slider.owlCarousel(settings);
-    },
-    
-    
-	
-    /*initHeight: function(){
-        IWD.AutoRelatedProducts.updateHeight();
-        $j(window).resize(function(){IWD.AutoRelatedProducts.updateHeight();});
-    },
-
-    updateHeight: function(){
-    	$j('.iwd-auto-related-products-slider .item .info .product-name a').dotdotdot({ellipsis	: '...'});
-    	IWD.Featured.Processor.setupItemHeight(block);
-       
-    }*/
-};
-
-
-
 var IWD=IWD||{};
 
 IWD.Featured = {
@@ -24452,11 +24511,14 @@ IWD.Featured.Processor = {
         		    margin:18,
         		    loop: $loop,
         			navText:["<strong class='fa fa-angle-left'></strong>","<strong class='fa fa-angle-right'></strong>"],
-        			onInitialized : function(){	
+        			onInitialized : function(){
                 		$j('.cms-home .featured-products .slides-parent').removeClass('hide-content');
 						$j('.featured-products .item .product-name a').dotdotdot({ellipsis	: '...'});
 						$j('.featured-products .item .top-list-info p').dotdotdot({ellipsis : '...'});
         			},
+					onInitialize : function(){
+						$j('.featured-products .slides-parent').addClass('loaded');
+					},
         			onRefreshed  :function(){
         				IWD.Featured.Processor.setupItemHeight(el);
 						$j('.featured-products .item .product-name a').dotdotdot({ellipsis	: '...'});
@@ -24464,7 +24526,7 @@ IWD.Featured.Processor = {
         			}
         			
         		});
-    		});    
+    		});
     		
     	}
     },
@@ -24492,12 +24554,19 @@ IWD.Featured.Processor = {
 		
 };
 
-$j(window).load(function(){
+$j(document).ready(function(){
 	if (typeof($ji)=="undefined"){
 		console.log('IWD jQuery Library undefined');
 	}else{
 		IWD.Featured.Processor.init();
 	}
+});
+$j(window).load(function(){
+	var owl = $j('.cms-home .featured-products .slides');
+	owl.each(function () {
+		IWD.Featured.Processor.setupItemHeight($j(this));
+	});
+
 });
 
 
@@ -25005,6 +25074,18 @@ IWD.QuickView.Decorator = {
             $ji('body').removeClass('quick-view-modal');
             ProductMediaManagerQV.destroyZoom();
             IWD.QuickView.Processor.restorePrice();
+
+            // reinit custom PSU handlers
+            IWD.Publication.Processor.init();
+            if (typeof workshop_group !== 'undefined') {
+                IWD.Workshop.Processor.init();
+            }
+            if (typeof webinars !== 'undefined') {
+                IWD.Webinar.Processor.init();
+            }
+            if (typeof online_courses !== 'undefined') {
+                IWD.Courses.Processor.init();
+            }
         });
     },
 
@@ -25300,17 +25381,6 @@ if (typeof(jQueryIWD)!="undefined"){
 }else{
 	console.log('IWD jQuery undefined');
 };
-/* Modernizr 2.6.2 (Custom Build) | MIT & BSD
- * Build: http://modernizr.com/download/#-localstorage-touch-shiv-mq-cssclasses-teststyles-prefixes-load
- */
-;window.Modernizr=function(a,b,c){function x(a){j.cssText=a}function y(a,b){return x(m.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}var d="2.6.2",e={},f=!0,g=b.documentElement,h="modernizr",i=b.createElement(h),j=i.style,k,l={}.toString,m=" -webkit- -moz- -o- -ms- ".split(" "),n={},o={},p={},q=[],r=q.slice,s,t=function(a,c,d,e){var f,i,j,k,l=b.createElement("div"),m=b.body,n=m||b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:h+(d+1),l.appendChild(j);return f=["&#173;",'<style id="s',h,'">',a,"</style>"].join(""),l.id=h,(m?l:n).innerHTML+=f,n.appendChild(l),m||(n.style.background="",n.style.overflow="hidden",k=g.style.overflow,g.style.overflow="hidden",g.appendChild(n)),i=c(l,a),m?l.parentNode.removeChild(l):(n.parentNode.removeChild(n),g.style.overflow=k),!!i},u=function(b){var c=a.matchMedia||a.msMatchMedia;if(c)return c(b).matches;var d;return t("@media "+b+" { #"+h+" { position: absolute; } }",function(b){d=(a.getComputedStyle?getComputedStyle(b,null):b.currentStyle)["position"]=="absolute"}),d},v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=r.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(r.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(r.call(arguments)))};return e}),n.touch=function(){var c;return"ontouchstart"in a||a.DocumentTouch&&b instanceof DocumentTouch?c=!0:t(["@media (",m.join("touch-enabled),("),h,")","{#modernizr{top:9px;position:absolute}}"].join(""),function(a){c=a.offsetTop===9}),c},n.localstorage=function(){try{return localStorage.setItem(h,h),localStorage.removeItem(h),!0}catch(a){return!1}};for(var C in n)w(n,C)&&(s=C.toLowerCase(),e[s]=n[C](),q.push((e[s]?"":"no-")+s));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof f!="undefined"&&f&&(g.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),i=k=null,function(a,b){function k(a,b){var c=a.createElement("p"),d=a.getElementsByTagName("head")[0]||a.documentElement;return c.innerHTML="x<style>"+b+"</style>",d.insertBefore(c.lastChild,d.firstChild)}function l(){var a=r.elements;return typeof a=="string"?a.split(" "):a}function m(a){var b=i[a[g]];return b||(b={},h++,a[g]=h,i[h]=b),b}function n(a,c,f){c||(c=b);if(j)return c.createElement(a);f||(f=m(c));var g;return f.cache[a]?g=f.cache[a].cloneNode():e.test(a)?g=(f.cache[a]=f.createElem(a)).cloneNode():g=f.createElem(a),g.canHaveChildren&&!d.test(a)?f.frag.appendChild(g):g}function o(a,c){a||(a=b);if(j)return a.createDocumentFragment();c=c||m(a);var d=c.frag.cloneNode(),e=0,f=l(),g=f.length;for(;e<g;e++)d.createElement(f[e]);return d}function p(a,b){b.cache||(b.cache={},b.createElem=a.createElement,b.createFrag=a.createDocumentFragment,b.frag=b.createFrag()),a.createElement=function(c){return r.shivMethods?n(c,a,b):b.createElem(c)},a.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+l().join().replace(/\w+/g,function(a){return b.createElem(a),b.frag.createElement(a),'c("'+a+'")'})+");return n}")(r,b.frag)}function q(a){a||(a=b);var c=m(a);return r.shivCSS&&!f&&!c.hasCSS&&(c.hasCSS=!!k(a,"article,aside,figcaption,figure,footer,header,hgroup,nav,section{display:block}mark{background:#FF0;color:#000}")),j||p(a,c),a}var c=a.html5||{},d=/^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,e=/^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,f,g="_html5shiv",h=0,i={},j;(function(){try{var a=b.createElement("a");a.innerHTML="<xyz></xyz>",f="hidden"in a,j=a.childNodes.length==1||function(){b.createElement("a");var a=b.createDocumentFragment();return typeof a.cloneNode=="undefined"||typeof a.createDocumentFragment=="undefined"||typeof a.createElement=="undefined"}()}catch(c){f=!0,j=!0}})();var r={elements:c.elements||"abbr article aside audio bdi canvas data datalist details figcaption figure footer header hgroup mark meter nav output progress section summary time video",shivCSS:c.shivCSS!==!1,supportsUnknownElements:j,shivMethods:c.shivMethods!==!1,type:"default",shivDocument:q,createElement:n,createDocumentFragment:o};a.html5=r,q(b)}(this,b),e._version=d,e._prefixes=m,e.mq=u,e.testStyles=t,g.className=g.className.replace(/(^|\s)no-js(\s|$)/,"$1$2")+(f?" js "+q.join(" "):""),e}(this,this.document),function(a,b,c){function d(a){return"[object Function]"==o.call(a)}function e(a){return"string"==typeof a}function f(){}function g(a){return!a||"loaded"==a||"complete"==a||"uninitialized"==a}function h(){var a=p.shift();q=1,a?a.t?m(function(){("c"==a.t?B.injectCss:B.injectJs)(a.s,0,a.a,a.x,a.e,1)},0):(a(),h()):q=0}function i(a,c,d,e,f,i,j){function k(b){if(!o&&g(l.readyState)&&(u.r=o=1,!q&&h(),l.onload=l.onreadystatechange=null,b)){"img"!=a&&m(function(){t.removeChild(l)},50);for(var d in y[c])y[c].hasOwnProperty(d)&&y[c][d].onload()}}var j=j||B.errorTimeout,l=b.createElement(a),o=0,r=0,u={t:d,s:c,e:f,a:i,x:j};1===y[c]&&(r=1,y[c]=[]),"object"==a?l.data=c:(l.src=c,l.type=a),l.width=l.height="0",l.onerror=l.onload=l.onreadystatechange=function(){k.call(this,r)},p.splice(e,0,u),"img"!=a&&(r||2===y[c]?(t.insertBefore(l,s?null:n),m(k,j)):y[c].push(l))}function j(a,b,c,d,f){return q=0,b=b||"j",e(a)?i("c"==b?v:u,a,b,this.i++,c,d,f):(p.splice(this.i++,0,a),1==p.length&&h()),this}function k(){var a=B;return a.loader={load:j,i:0},a}var l=b.documentElement,m=a.setTimeout,n=b.getElementsByTagName("script")[0],o={}.toString,p=[],q=0,r="MozAppearance"in l.style,s=r&&!!b.createRange().compareNode,t=s?l:n.parentNode,l=a.opera&&"[object Opera]"==o.call(a.opera),l=!!b.attachEvent&&!l,u=r?"object":l?"script":"img",v=l?"script":u,w=Array.isArray||function(a){return"[object Array]"==o.call(a)},x=[],y={},z={timeout:function(a,b){return b.length&&(a.timeout=b[0]),a}},A,B;B=function(a){function b(a){var a=a.split("!"),b=x.length,c=a.pop(),d=a.length,c={url:c,origUrl:c,prefixes:a},e,f,g;for(f=0;f<d;f++)g=a[f].split("="),(e=z[g.shift()])&&(c=e(c,g));for(f=0;f<b;f++)c=x[f](c);return c}function g(a,e,f,g,h){var i=b(a),j=i.autoCallback;i.url.split(".").pop().split("?").shift(),i.bypass||(e&&(e=d(e)?e:e[a]||e[g]||e[a.split("/").pop().split("?")[0]]),i.instead?i.instead(a,e,f,g,h):(y[i.url]?i.noexec=!0:y[i.url]=1,f.load(i.url,i.forceCSS||!i.forceJS&&"css"==i.url.split(".").pop().split("?").shift()?"c":c,i.noexec,i.attrs,i.timeout),(d(e)||d(j))&&f.load(function(){k(),e&&e(i.origUrl,h,g),j&&j(i.origUrl,h,g),y[i.url]=2})))}function h(a,b){function c(a,c){if(a){if(e(a))c||(j=function(){var a=[].slice.call(arguments);k.apply(this,a),l()}),g(a,j,b,0,h);else if(Object(a)===a)for(n in m=function(){var b=0,c;for(c in a)a.hasOwnProperty(c)&&b++;return b}(),a)a.hasOwnProperty(n)&&(!c&&!--m&&(d(j)?j=function(){var a=[].slice.call(arguments);k.apply(this,a),l()}:j[n]=function(a){return function(){var b=[].slice.call(arguments);a&&a.apply(this,b),l()}}(k[n])),g(a[n],j,b,n,h))}else!c&&l()}var h=!!a.test,i=a.load||a.both,j=a.callback||f,k=j,l=a.complete||f,m,n;c(h?a.yep:a.nope,!!i),i&&c(i)}var i,j,l=this.yepnope.loader;if(e(a))g(a,0,l,0);else if(w(a))for(i=0;i<a.length;i++)j=a[i],e(j)?g(j,0,l,0):w(j)?B(j):Object(j)===j&&h(j,l);else Object(a)===a&&h(a,l)},B.addPrefix=function(a,b){z[a]=b},B.addFilter=function(a){x.push(a)},B.errorTimeout=1e4,null==b.readyState&&b.addEventListener&&(b.readyState="loading",b.addEventListener("DOMContentLoaded",A=function(){b.removeEventListener("DOMContentLoaded",A,0),b.readyState="complete"},0)),a.yepnope=k(),a.yepnope.executeStack=h,a.yepnope.injectJs=function(a,c,d,e,i,j){var k=b.createElement("script"),l,o,e=e||B.errorTimeout;k.src=a;for(o in d)k.setAttribute(o,d[o]);c=j?h:c||f,k.onreadystatechange=k.onload=function(){!l&&g(k.readyState)&&(l=1,c(),k.onload=k.onreadystatechange=null)},m(function(){l||(l=1,c(1))},e),i?k.onload():n.parentNode.insertBefore(k,n)},a.yepnope.injectCss=function(a,c,d,e,g,i){var e=b.createElement("link"),j,c=i?h:c||f;e.href=a,e.rel="stylesheet",e.type="text/css";for(j in d)e.setAttribute(j,d[j]);g||(n.parentNode.insertBefore(e,n),m(c,0))}}(this,document),Modernizr.load=function(){yepnope.apply(window,[].slice.call(arguments,0))};
-/*!
- * imagesLoaded PACKAGED v3.1.4
- * JavaScript is all like "You images are done yet or what?"
- * MIT License
- */
-
-(function(){function e(){}function t(e,t){for(var n=e.length;n--;)if(e[n].listener===t)return n;return-1}function n(e){return function(){return this[e].apply(this,arguments)}}var i=e.prototype,r=this,o=r.EventEmitter;i.getListeners=function(e){var t,n,i=this._getEvents();if("object"==typeof e){t={};for(n in i)i.hasOwnProperty(n)&&e.test(n)&&(t[n]=i[n])}else t=i[e]||(i[e]=[]);return t},i.flattenListeners=function(e){var t,n=[];for(t=0;e.length>t;t+=1)n.push(e[t].listener);return n},i.getListenersAsObject=function(e){var t,n=this.getListeners(e);return n instanceof Array&&(t={},t[e]=n),t||n},i.addListener=function(e,n){var i,r=this.getListenersAsObject(e),o="object"==typeof n;for(i in r)r.hasOwnProperty(i)&&-1===t(r[i],n)&&r[i].push(o?n:{listener:n,once:!1});return this},i.on=n("addListener"),i.addOnceListener=function(e,t){return this.addListener(e,{listener:t,once:!0})},i.once=n("addOnceListener"),i.defineEvent=function(e){return this.getListeners(e),this},i.defineEvents=function(e){for(var t=0;e.length>t;t+=1)this.defineEvent(e[t]);return this},i.removeListener=function(e,n){var i,r,o=this.getListenersAsObject(e);for(r in o)o.hasOwnProperty(r)&&(i=t(o[r],n),-1!==i&&o[r].splice(i,1));return this},i.off=n("removeListener"),i.addListeners=function(e,t){return this.manipulateListeners(!1,e,t)},i.removeListeners=function(e,t){return this.manipulateListeners(!0,e,t)},i.manipulateListeners=function(e,t,n){var i,r,o=e?this.removeListener:this.addListener,s=e?this.removeListeners:this.addListeners;if("object"!=typeof t||t instanceof RegExp)for(i=n.length;i--;)o.call(this,t,n[i]);else for(i in t)t.hasOwnProperty(i)&&(r=t[i])&&("function"==typeof r?o.call(this,i,r):s.call(this,i,r));return this},i.removeEvent=function(e){var t,n=typeof e,i=this._getEvents();if("string"===n)delete i[e];else if("object"===n)for(t in i)i.hasOwnProperty(t)&&e.test(t)&&delete i[t];else delete this._events;return this},i.removeAllListeners=n("removeEvent"),i.emitEvent=function(e,t){var n,i,r,o,s=this.getListenersAsObject(e);for(r in s)if(s.hasOwnProperty(r))for(i=s[r].length;i--;)n=s[r][i],n.once===!0&&this.removeListener(e,n.listener),o=n.listener.apply(this,t||[]),o===this._getOnceReturnValue()&&this.removeListener(e,n.listener);return this},i.trigger=n("emitEvent"),i.emit=function(e){var t=Array.prototype.slice.call(arguments,1);return this.emitEvent(e,t)},i.setOnceReturnValue=function(e){return this._onceReturnValue=e,this},i._getOnceReturnValue=function(){return this.hasOwnProperty("_onceReturnValue")?this._onceReturnValue:!0},i._getEvents=function(){return this._events||(this._events={})},e.noConflict=function(){return r.EventEmitter=o,e},"function"==typeof define&&define.amd?define("eventEmitter/EventEmitter",[],function(){return e}):"object"==typeof module&&module.exports?module.exports=e:this.EventEmitter=e}).call(this),function(e){function t(t){var n=e.event;return n.target=n.target||n.srcElement||t,n}var n=document.documentElement,i=function(){};n.addEventListener?i=function(e,t,n){e.addEventListener(t,n,!1)}:n.attachEvent&&(i=function(e,n,i){e[n+i]=i.handleEvent?function(){var n=t(e);i.handleEvent.call(i,n)}:function(){var n=t(e);i.call(e,n)},e.attachEvent("on"+n,e[n+i])});var r=function(){};n.removeEventListener?r=function(e,t,n){e.removeEventListener(t,n,!1)}:n.detachEvent&&(r=function(e,t,n){e.detachEvent("on"+t,e[t+n]);try{delete e[t+n]}catch(i){e[t+n]=void 0}});var o={bind:i,unbind:r};"function"==typeof define&&define.amd?define("eventie/eventie",o):e.eventie=o}(this),function(e,t){"function"==typeof define&&define.amd?define(["eventEmitter/EventEmitter","eventie/eventie"],function(n,i){return t(e,n,i)}):"object"==typeof exports?module.exports=t(e,require("eventEmitter"),require("eventie")):e.imagesLoaded=t(e,e.EventEmitter,e.eventie)}(this,function(e,t,n){function i(e,t){for(var n in t)e[n]=t[n];return e}function r(e){return"[object Array]"===d.call(e)}function o(e){var t=[];if(r(e))t=e;else if("number"==typeof e.length)for(var n=0,i=e.length;i>n;n++)t.push(e[n]);else t.push(e);return t}function s(e,t,n){if(!(this instanceof s))return new s(e,t);"string"==typeof e&&(e=document.querySelectorAll(e)),this.elements=o(e),this.options=i({},this.options),"function"==typeof t?n=t:i(this.options,t),n&&this.on("always",n),this.getImages(),a&&(this.jqDeferred=new a.Deferred);var r=this;setTimeout(function(){r.check()})}function c(e){this.img=e}function f(e){this.src=e,v[e]=this}var a=e.jQuery,u=e.console,h=u!==void 0,d=Object.prototype.toString;s.prototype=new t,s.prototype.options={},s.prototype.getImages=function(){this.images=[];for(var e=0,t=this.elements.length;t>e;e++){var n=this.elements[e];"IMG"===n.nodeName&&this.addImage(n);for(var i=n.querySelectorAll("img"),r=0,o=i.length;o>r;r++){var s=i[r];this.addImage(s)}}},s.prototype.addImage=function(e){var t=new c(e);this.images.push(t)},s.prototype.check=function(){function e(e,r){return t.options.debug&&h&&u.log("confirm",e,r),t.progress(e),n++,n===i&&t.complete(),!0}var t=this,n=0,i=this.images.length;if(this.hasAnyBroken=!1,!i)return this.complete(),void 0;for(var r=0;i>r;r++){var o=this.images[r];o.on("confirm",e),o.check()}},s.prototype.progress=function(e){this.hasAnyBroken=this.hasAnyBroken||!e.isLoaded;var t=this;setTimeout(function(){t.emit("progress",t,e),t.jqDeferred&&t.jqDeferred.notify&&t.jqDeferred.notify(t,e)})},s.prototype.complete=function(){var e=this.hasAnyBroken?"fail":"done";this.isComplete=!0;var t=this;setTimeout(function(){if(t.emit(e,t),t.emit("always",t),t.jqDeferred){var n=t.hasAnyBroken?"reject":"resolve";t.jqDeferred[n](t)}})},a&&(a.fn.imagesLoaded=function(e,t){var n=new s(this,e,t);return n.jqDeferred.promise(a(this))}),c.prototype=new t,c.prototype.check=function(){var e=v[this.img.src]||new f(this.img.src);if(e.isConfirmed)return this.confirm(e.isLoaded,"cached was confirmed"),void 0;if(this.img.complete&&void 0!==this.img.naturalWidth)return this.confirm(0!==this.img.naturalWidth,"naturalWidth"),void 0;var t=this;e.on("confirm",function(e,n){return t.confirm(e.isLoaded,n),!0}),e.check()},c.prototype.confirm=function(e,t){this.isLoaded=e,this.emit("confirm",this,t)};var v={};return f.prototype=new t,f.prototype.check=function(){if(!this.isChecked){var e=new Image;n.bind(e,"load",this),n.bind(e,"error",this),e.src=this.src,this.isChecked=!0}},f.prototype.handleEvent=function(e){var t="on"+e.type;this[t]&&this[t](e)},f.prototype.onload=function(e){this.confirm(!0,"onload"),this.unbindProxyEvents(e)},f.prototype.onerror=function(e){this.confirm(!1,"onerror"),this.unbindProxyEvents(e)},f.prototype.confirm=function(e,t){this.isConfirmed=!0,this.isLoaded=e,this.emit("confirm",this,t)},f.prototype.unbindProxyEvents=function(e){n.unbind(e.target,"load",this),n.unbind(e.target,"error",this)},s});
 /**
  * Magento Enterprise Edition
  *
@@ -29535,15 +29605,23 @@ IWD.Signin = {
             if (typeof(response.message) != "undefined") {
                 //show message and redirect to url after 2.5s;
                 setTimeout(function () {
-                    setLocation(response.linkAfterLogin);
+                    IWD.Signin.redirect(response.linkAfterLogin);
                 }, 2500);
             } else {
                 //just redirect to url
                 setTimeout(function () {
-                    setLocation(response.linkAfterLogin);
+                    IWD.Signin.redirect(response.linkAfterLogin);
+                }, 500);
+            }
+        } else {
+            if (typeof(response.redirect) != "undefined") {
+                //just redirect to url
+                setTimeout(function () {
+                    IWD.Signin.redirect(response.redirect);
                 }, 500);
             }
         }
+        
     },
 
     showMessage: function (message, block) {
@@ -29558,7 +29636,11 @@ IWD.Signin = {
     },
 
     redirect: function (url) {
-        setLocation(url);
+        if (url) {
+            setLocation(url);
+        } else {
+            location.reload();
+        }
     },
 
     parseRegisterResponse: function (response) {
@@ -29586,12 +29668,19 @@ IWD.Signin = {
                 $ji('<div />').attr('id', 'signin-error').addClass('signin-success').html(response.message).appendTo('.account-create-signin #form-validate');
 
                 setTimeout(function () {
-                    setLocation(response.linkAfterLogin);
+                    IWD.Signin.redirect(response.linkAfterLogin);
                 }, 2500);
             } else {
                 //just redirect to url
                 setTimeout(function () {
-                    setLocation(response.linkAfterLogin);
+                    IWD.Signin.redirect(response.linkAfterLogin);
+                }, 500);
+            }
+        } else {
+            if (typeof(response.redirect) != "undefined") {
+                //just redirect to url
+                setTimeout(function () {
+                    IWD.Signin.redirect(response.redirect);
                 }, 500);
             }
         }
@@ -29794,6 +29883,9 @@ $j(document).ready(function () {
 				$j('.box-up-sell .slides .item .product-name a').dotdotdot({ellipsis	: '...'});
 				$j('.box-up-sell .slides .item .top-list-info p').dotdotdot({ellipsis : '...'});
 			},
+			onInitialize : function(){
+				$j('.catalog-product-view .featured-products .inner').addClass('loaded');
+			},
 			onRefreshed  :function(){
 				IWD.Featured.Processor.setupItemHeight(owl);
 				$j('.box-up-sell .slides .item .product-name a').dotdotdot({ellipsis	: '...'});
@@ -29960,6 +30052,23 @@ $j(document).ready(function () {
 
 	//hide-show more articles logic
 	showMoreArticles();
+
+// add version number to ad to cart url to stop cache
+/* no need now, problem was in varnish	
+if ($j('#product_addtocart_form').length) {
+	var action = $j('#product_addtocart_form').attr('action');
+	var time = new Date().getTime();
+	
+	var last = action.slice(-1);
+	if (last != '/')
+	    action = action+'/';
+	
+	var action2 = action + 'vcache/'+time;
+	    
+	$j('#product_addtocart_form').get(0).setAttribute('action', action2);
+}
+*/	
+//	
 	
 });
 
@@ -30099,6 +30208,33 @@ $j(window).load(function () {
 
 
 (function(){var b,d,c;b=jQuery;c=(function(){function b(){this.fadeDuration=500;this.fitImagesInViewport=true;this.resizeDuration=700;this.showImageNumberLabel=true;this.wrapAround=false}b.prototype.albumLabel=function(b,c){return"Image "+b+" of "+c};return b})();d=(function(){function c(b){this.options=b;this.album=[];this.currentImageIndex=void 0;this.init()}c.prototype.init=function(){this.enable();return this.build()};c.prototype.enable=function(){var c=this;return b('body').on('click','a[rel^=lightbox], area[rel^=lightbox], a[data-lightbox], area[data-lightbox]',function(d){c.start(b(d.currentTarget));return false})};c.prototype.build=function(){var c=this;b("<div id='lightboxOverlay' class='lightboxOverlay'></div><div id='lightbox' class='lightbox'><div class='lb-outerContainer'><div class='lb-container'><img class='lb-image' src='' /><div class='lb-nav'><a class='lb-prev' href='' ></a><a class='lb-next' href='' ></a></div><div class='lb-loader'><a class='lb-cancel'></a></div></div></div><div class='lb-dataContainer'><div class='lb-data'><div class='lb-details'><span class='lb-caption'></span><span class='lb-number'></span></div><div class='lb-closeContainer'><a class='lb-close'></a></div></div></div></div>").appendTo(b('body'));this.$lightbox=b('#lightbox');this.$overlay=b('#lightboxOverlay');this.$outerContainer=this.$lightbox.find('.lb-outerContainer');this.$container=this.$lightbox.find('.lb-container');this.containerTopPadding=parseInt(this.$container.css('padding-top'),10);this.containerRightPadding=parseInt(this.$container.css('padding-right'),10);this.containerBottomPadding=parseInt(this.$container.css('padding-bottom'),10);this.containerLeftPadding=parseInt(this.$container.css('padding-left'),10);this.$overlay.hide().on('click',function(){c.end();return false});this.$lightbox.hide().on('click',function(d){if(b(d.target).attr('id')==='lightbox'){c.end()}return false});this.$outerContainer.on('click',function(d){if(b(d.target).attr('id')==='lightbox'){c.end()}return false});this.$lightbox.find('.lb-prev').on('click',function(){if(c.currentImageIndex===0){c.changeImage(c.album.length-1)}else{c.changeImage(c.currentImageIndex-1)}return false});this.$lightbox.find('.lb-next').on('click',function(){if(c.currentImageIndex===c.album.length-1){c.changeImage(0)}else{c.changeImage(c.currentImageIndex+1)}return false});return this.$lightbox.find('.lb-loader, .lb-close').on('click',function(){c.end();return false})};c.prototype.start=function(c){var f,e,j,d,g,n,o,k,l,m,p,h,i;b(window).on("resize",this.sizeOverlay);b('select, object, embed').css({visibility:"hidden"});this.$overlay.width(b(document).width()).height(b(document).height()).fadeIn(this.options.fadeDuration);this.album=[];g=0;j=c.attr('data-lightbox');if(j){h=b(c.prop("tagName")+'[data-lightbox="'+j+'"]');for(d=k=0,m=h.length;k<m;d=++k){e=h[d];this.album.push({link:b(e).attr('href'),title:b(e).attr('title')});if(b(e).attr('href')===c.attr('href')){g=d}}}else{if(c.attr('rel')==='lightbox'){this.album.push({link:c.attr('href'),title:c.attr('title')})}else{i=b(c.prop("tagName")+'[rel="'+c.attr('rel')+'"]');for(d=l=0,p=i.length;l<p;d=++l){e=i[d];this.album.push({link:b(e).attr('href'),title:b(e).attr('title')});if(b(e).attr('href')===c.attr('href')){g=d}}}}f=b(window);o=f.scrollTop()+f.height()/10;n=f.scrollLeft();this.$lightbox.css({top:o+'px',left:n+'px'}).fadeIn(this.options.fadeDuration);this.changeImage(g)};c.prototype.changeImage=function(f){var d,c,e=this;this.disableKeyboardNav();d=this.$lightbox.find('.lb-image');this.sizeOverlay();this.$overlay.fadeIn(this.options.fadeDuration);b('.lb-loader').fadeIn('slow');this.$lightbox.find('.lb-image, .lb-nav, .lb-prev, .lb-next, .lb-dataContainer, .lb-numbers, .lb-caption').hide();this.$outerContainer.addClass('animating');c=new Image();c.onload=function(){var m,g,h,i,j,k,l;d.attr('src',e.album[f].link);m=b(c);d.width(c.width);d.height(c.height);if(e.options.fitImagesInViewport){l=b(window).width();k=b(window).height();j=l-e.containerLeftPadding-e.containerRightPadding-20;i=k-e.containerTopPadding-e.containerBottomPadding-110;if((c.width>j)||(c.height>i)){if((c.width/j)>(c.height/i)){h=j;g=parseInt(c.height/(c.width/h),10);d.width(h);d.height(g)}else{g=i;h=parseInt(c.width/(c.height/g),10);d.width(h);d.height(g)}}}return e.sizeContainer(d.width(),d.height())};c.src=this.album[f].link;this.currentImageIndex=f};c.prototype.sizeOverlay=function(){return b('#lightboxOverlay').width(b(document).width()).height(b(document).height())};c.prototype.sizeContainer=function(f,g){var b,d,e,h,c=this;h=this.$outerContainer.outerWidth();e=this.$outerContainer.outerHeight();d=f+this.containerLeftPadding+this.containerRightPadding;b=g+this.containerTopPadding+this.containerBottomPadding;this.$outerContainer.animate({width:d,height:b},this.options.resizeDuration,'swing');setTimeout(function(){c.$lightbox.find('.lb-dataContainer').width(d);c.$lightbox.find('.lb-prevLink').height(b);c.$lightbox.find('.lb-nextLink').height(b);c.showImage()},this.options.resizeDuration)};c.prototype.showImage=function(){this.$lightbox.find('.lb-loader').hide();this.$lightbox.find('.lb-image').fadeIn('slow');this.updateNav();this.updateDetails();this.preloadNeighboringImages();this.enableKeyboardNav()};c.prototype.updateNav=function(){this.$lightbox.find('.lb-nav').show();if(this.album.length>1){if(this.options.wrapAround){this.$lightbox.find('.lb-prev, .lb-next').show()}else{if(this.currentImageIndex>0){this.$lightbox.find('.lb-prev').show()}if(this.currentImageIndex<this.album.length-1){this.$lightbox.find('.lb-next').show()}}}};c.prototype.updateDetails=function(){var b=this;if(typeof this.album[this.currentImageIndex].title!=='undefined'&&this.album[this.currentImageIndex].title!==""){this.$lightbox.find('.lb-caption').html(this.album[this.currentImageIndex].title).fadeIn('fast')}if(this.album.length>1&&this.options.showImageNumberLabel){this.$lightbox.find('.lb-number').text(this.options.albumLabel(this.currentImageIndex+1,this.album.length)).fadeIn('fast')}else{this.$lightbox.find('.lb-number').hide()}this.$outerContainer.removeClass('animating');this.$lightbox.find('.lb-dataContainer').fadeIn(this.resizeDuration,function(){return b.sizeOverlay()})};c.prototype.preloadNeighboringImages=function(){var c,b;if(this.album.length>this.currentImageIndex+1){c=new Image();c.src=this.album[this.currentImageIndex+1].link}if(this.currentImageIndex>0){b=new Image();b.src=this.album[this.currentImageIndex-1].link}};c.prototype.enableKeyboardNav=function(){b(document).on('keyup.keyboard',b.proxy(this.keyboardAction,this))};c.prototype.disableKeyboardNav=function(){b(document).off('.keyboard')};c.prototype.keyboardAction=function(g){var d,e,f,c,b;d=27;e=37;f=39;b=g.keyCode;c=String.fromCharCode(b).toLowerCase();if(b===d||c.match(/x|o|c/)){this.end()}else if(c==='p'||b===e){if(this.currentImageIndex!==0){this.changeImage(this.currentImageIndex-1)}}else if(c==='n'||b===f){if(this.currentImageIndex!==this.album.length-1){this.changeImage(this.currentImageIndex+1)}}};c.prototype.end=function(){this.disableKeyboardNav();b(window).off("resize",this.sizeOverlay);this.$lightbox.fadeOut(this.options.fadeDuration);this.$overlay.fadeOut(this.options.fadeDuration);return b('select, object, embed').css({visibility:"visible"})};return c})();b(function(){var e,b;b=new c();return e=new d(b)})}).call(this);
+(function(a){function F(a){var b=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99,101,103,105,107,109,111,113,115,117,119,121,123,125,127,129,131,133,135,137,139,141,143,145,147,149,151,153,155,157,159,161,163,165,167,169,171,173,175,177,179,181,183,185,187,189,191,193,195,197,199,201,203,205,207,209,211,213,215,217,219,221,223,225,227,229,231,233,235,237,239,241,243,245,247,249,251,253,255];return v(a,b)}function E(a){var b=[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];return v(a,b)}function D(a){var b=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,9,13,16,20,24,27,31,35,38,41,45,48,51,54,58,61,64,67,70,73,76,79,82,84,87,90,93,95,98,100,103,106,108,111,113,115,118,120,122,125,127,129,131,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,167,169,171,173,175,176,178,180,181,183,185,186,188,189,191,193,194,196,197,199,200,202,203,205,206,207,209,210,212,213,214,216,217,218,220,221,222,223,225,226,227,228,230,231,232,233,234,236,237,238,239,240,241,242,243,245,246,247,248,249,250,251,252,253,254,255];return v(a,b)}function C(a){var b=[0,1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,21,22,23,24,25,27,28,29,30,32,33,34,35,37,38,39,41,42,43,45,46,48,49,50,52,53,55,56,58,59,61,62,64,66,67,69,70,72,74,75,77,79,80,82,84,86,88,89,91,93,95,97,99,101,103,105,107,109,111,113,115,117,119,121,124,126,128,130,133,135,137,140,142,144,147,149,152,155,157,160,162,165,168,171,173,176,179,182,185,188,191,194,197,201,204,207,210,214,217,220,224,228,231,235,239,242,246,250,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];return v(a,b)}function B(a){var b=[0,1,1,2,2,3,3,4,4,5,5,6,7,7,8,8,9,10,10,11,12,12,13,14,14,15,16,16,17,18,19,19,20,21,22,22,23,24,25,25,26,27,28,29,30,30,31,32,33,34,35,36,37,37,39,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,59,59,61,62,63,64,65,66,68,68,70,71,72,73,75,75,77,78,79,80,82,83,84,85,87,88,89,90,92,93,95,96,97,98,100,101,103,104,105,106,108,109,111,112,114,115,117,118,120,121,123,124,126,127,128,129,131,132,134,135,137,138,140,141,143,144,146,147,149,150,151,152,154,155,157,158,159,160,162,163,165,166,167,168,170,171,172,173,175,176,177,178,180,180,182,183,184,185,187,187,189,190,191,192,193,194,196,196,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,216,218,218,219,220,221,222,223,224,225,225,226,227,228,229,230,230,231,232,233,233,234,235,236,236,237,238,239,239,240,241,241,242,243,243,244,245,245,246,247,247,248,248,249,250,250,251,251,252,252,253,253,254,254,255];return v(a,b)}function A(a){var b=[0,128,171,192,205,213,219,224,228,230,233,235,236,238,239,240,241,242,243,243,244,244,245,245,246,246,247,247,247,247,248,248,248,248,249,249,249,249,249,250,250,250,250,250,250,250,251,251,251,251,251,251,251,251,251,251,252,252,252,252,252,252,252,252,252,252,252,252,252,252,252,252,252,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];return v(a,b)}function z(a){var b=[0,0,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,5,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,13,13,14,14,15,16,17,17,18,19,20,20,21,22,23,24,25,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,41,42,43,44,45,46,48,49,50,51,53,54,55,56,58,59,61,62,63,65,66,68,69,71,72,74,75,77,78,80,81,83,85,86,88,89,91,93,95,96,98,100,102,103,105,107,109,111,113,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,143,145,147,149,151,153,154,156,158,160,161,163,165,166,168,170,171,173,175,176,178,179,181,182,184,185,187,188,190,191,193,194,195,197,198,199,201,202,203,204,206,207,208,209,211,212,213,214,215,216,217,218,220,221,222,223,224,225,226,227,227,228,229,230,231,232,233,234,234,235,236,237,237,238,239,240,240,241,242,242,243,244,244,245,245,246,246,247,247,248,248,249,249,250,250,250,251,251,251,252,252,252,253,253,253,253,254,254,254,254,254,254,255,255,255,255,255,255,255,255];return v(a,b)}function y(a){var b=[0,2,4,6,8,10,12,14,16,18,20,22,23,25,27,29,31,33,35,37,38,40,42,44,46,48,49,51,53,55,56,58,60,62,63,65,67,69,70,72,74,75,77,79,80,82,84,85,87,89,90,92,93,95,97,98,100,101,103,104,106,107,109,110,112,113,115,116,118,119,121,122,124,125,127,128,129,131,132,134,135,136,138,139,140,142,143,144,146,147,148,150,151,152,153,155,156,157,158,160,161,162,163,164,166,167,168,169,170,171,173,174,175,176,177,178,179,180,181,182,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,199,200,201,202,203,204,205,206,207,208,208,209,210,211,212,213,213,214,215,216,217,217,218,219,220,220,221,222,223,223,224,225,225,226,227,227,228,229,229,230,231,231,232,232,233,234,234,235,235,236,236,237,237,238,238,239,239,240,240,241,241,242,242,243,243,244,244,244,245,245,246,246,246,247,247,247,248,248,248,249,249,249,250,250,250,250,251,251,251,251,252,252,252,252,253,253,253,253,253,253,254,254,254,254,254,254,254,254,255,255,255,255,255,255,255,255,255,255,255,255];return v(a,b)}function x(a){var b=[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,10,10,11,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19,20,20,21,21,22,23,23,24,24,25,26,26,27,28,28,29,30,30,31,32,32,33,34,35,35,36,37,38,38,39,40,41,42,42,43,44,45,46,47,47,48,49,50,51,52,53,54,55,56,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,73,74,75,76,77,78,79,80,81,82,84,85,86,87,88,89,91,92,93,94,95,97,98,99,100,102,103,104,105,107,108,109,111,112,113,115,116,117,119,120,121,123,124,126,127,128,130,131,133,134,136,137,139,140,142,143,145,146,148,149,151,152,154,155,157,158,160,162,163,165,166,168,170,171,173,175,176,178,180,181,183,185,186,188,190,192,193,195,197,199,200,202,204,206,207,209,211,213,215,217,218,220,222,224,226,228,230,232,233,235,237,239,241,243,245,247,249,251,253,255];return v(a,b)}function w(a,b){return Math.floor(255-((255-a)*(255-b)>>8))}function v(a,b){for(var c=0,d=a.length;c<d;c++){a[c]=b[a[c]];a[++c]=b[a[c]];a[++c]=b[a[c]];++c}return a}function u(a){for(var b=0,c=a.length;b<c;b++){var d=Math.floor(Math.random()*13);a[b]=w(a[b],d);a[++b]=w(a[b],d);a[++b]=w(a[b],d);++b}return a}function t(a,b,d,e){var f=Math.sqrt(d/2*(d/2)+e/2*(e/2));var g=0;for(var h=0,i=a.length;h<i;h++){var j=c(g,d);var k=Math.sqrt((d/2-j[0])*(d/2-j[0])+(e/2-j[1])*(e/2-j[1]));var l=k/f;var m=b*l*l;a[h]-=m;a[++h]-=m;a[++h]-=m;++h;++g}return a}function s(a,b,c,d){var e=0;for(var f=0,g=a.length;f<g;f++){e=.02*a[f]+.22*a[f+1]+.66*a[f+2];a[f]=e;a[++f]=e;a[++f]=e;++f}}function r(a,b,c,d){var e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,3,3,3,4,4,5,5,6,7,7,8,9,10,11,11,12,12,13,15,16,17,18,19,20,21,22,24,26,27,28,30,30,32,33,35,36,38,38,40,41,43,43,45,46,47,48,49,51,52,53,54,55,56,57,57,60,64,64,67,69,72,74,76,79,81,83,86,88,91,92,96,97,101,103,105,107,111,113,116,117,119,123,124,129,130,132,136,137,139,142,144,145,147,151,153,153,156,158,161,162,164,166,169,171,172,174,175,178,181,182,183,184,187,189,189,191,193,194,196,198,199,201,202,204,205,206,206,208,209,211,212,214,214,215,216,217,217,219,220,220,222,224,224,225,227,227,228,230,230,231,231,232,232,233,233,235,235,236,236,238,238,240,240,241,241,243,243,243,244,244,246,246,247,247,247,247,249,249,250,250,250,252,252,252,253,253,255,255];var f=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,5,5,5,6,6,7,7,8,9,9,10,10,11,11,12,13,14,15,15,18,20,21,24,25,27,30,31,34,36,37,40,41,44,45,48,50,52,54,57,58,61,62,65,68,69,72,73,76,77,80,83,84,87,89,90,93,94,97,100,101,103,106,107,110,111,113,116,117,120,122,123,126,127,129,131,132,134,135,137,139,140,142,143,145,147,148,150,151,153,154,156,157,159,161,162,164,165,167,168,170,171,172,174,175,177,178,180,181,182,184,185,186,188,189,190,192,193,194,196,197,198,199,201,202,203,204,205,206,208,209,210,211,212,213,214,216,217,218,219,220,221,222,222,223,224,225,226,227,227,228,229,230,230,231,232,232,233,234,234,235,236,236,237,238,238,239,239,240,240,241,241,242,242,243,243,244,244,245,245,246,247,247,247,248,248,249,249,250,250,250,251,251,252,252,252,253,253,253,254,254,255,255];var g=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,3,3,3,3,4,4,5,5,6,7,7,8,9,10,10,11,11,13,14,15,15,17,17,18,20,20,21,23,24,25,26,27,29,30,32,33,35,35,36,38,40,42,42,43,45,47,47,49,51,51,53,55,55,57,57,59,61,61,64,64,66,66,68,72,72,76,76,77,77,77,81,81,83,83,86,86,90,90,90,92,92,95,95,95,99,99,101,101,101,104,104,106,106,106,109,109,109,112,112,112,114,114,117,117,117,120,120,122,122,122,125,125,125,127,127,129,129,131,131,131,132,132,134,134,135,135,137,137,139,139,140,140,142,142,143,143,145,145,147,147,148,150,150,151,153,153,154,156,156,157,159,159,161,162,164,165,165,167,168,170,171,172,174,174,175,177,178,180,181,182,184,185,186,189,190,192,193,194,196,198,199,201,202,204,205,206,209,210,211,213,214,216,217,219,220,222,222,224,225,227,227,229,230,231,232,234,234,236,237,238,239,240,240,241,242,243,244,245,246,247,247,248,249,250,250,251,252,252,253,253,254,255];var h=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,4,4,4,4,5,5,5,5,6,6,6,7,8,8,9,9,10,11,11,12,13,13,14,15,15,17,17,19,20,21,22,23,24,26,27,29,30,32,33,34,36,38,39,41,42,44,45,46,49,50,52,54,56,57,60,61,63,65,67,69,71,73,75,77,79,81,83,85,87,90,92,94,96,98,100,102,105,107,110,112,114,116,118,120,122,124,126,128,130,132,134,136,140,140,143,145,147,150,152,154,156,158,159,163,164,167,168,170,172,173,175,177,179,180,182,184,185,186,188,189,191,192,193,195,197,198,199,200,201,203,205,205,206,207,209,210,211,212,213,214,215,216,217,219,220,221,222,222,223,224,224,225,226,227,227,228,229,230,230,231,232,232,233,234,234,235,235,236,237,237,238,238,238,239,239,240,240,241,241,242,242,243,243,244,244,245,245,246,247,247,247,248,248,249,249,250,250,250,251,251,252,252,252,253,253,253,254,254,255,255];a=j(a,e,f,g);a=i(a,.9);return t(a,30,c,d)}function q(a,b,c,d){var e=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255];var f=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,193,195,197,199,201,203,205,207,209,211,213,215,217,219,221,223,225,227,229,231,233,235,237,239,241,243,245,247,249,251,253,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var g=[0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,8,9,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26,28,29,30,31,32,33,35,36,37,38,39,40,42,43,44,45,46,48,49,50,51,52,53,55,56,57,58,59,60,62,63,64,65,66,68,69,70,71,72,73,75,76,77,78,79,80,82,83,84,85,86,88,89,90,91,92,93,95,96,97,98,99,100,102,103,104,105,106,107,109,110,111,112,113,115,116,117,118,119,120,122,123,124,125,126,127,129,130,131,132,133,135,136,137,138,139,140,142,143,144,145,146,147,149,150,151,152,153,154,156,157,158,159,160,162,163,164,165,166,167,169,170,171,172,173,174,176,177,178,179,180,182,183,184,185,186,187,189,190,191,192,193,194,196,197,198,199,200,201,203,204,205,206,207,209,210,211,212,213,214,216,217,218,219,220,221,223,224,225,226,227,229,230,231,232,233,234,236,237,238,239,240,241,243,244,245,246,247,248,250,251,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];a=j(a,e,f,g);return t(a,50,c,d)}function p(a,b,c,d){var e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,4,5,6,7,8,9,10,12,14,15,16,17,18,19,20,22,23,25,26,27,28,29,30,32,33,34,35,37,38,39,40,41,43,44,45,46,48,49,50,51,53,54,55,56,57,59,60,61,63,64,65,66,67,68,70,71,73,74,75,76,77,78,79,81,83,84,85,86,87,88,89,90,93,94,95,96,97,98,99,100,101,102,105,106,107,108,109,110,111,112,114,116,117,118,119,120,121,122,124,125,127,128,129,130,131,132,134,135,136,138,139,140,141,142,144,145,146,147,149,150,151,152,153,155,156,157,158,159,161,162,163,165,166,167,168,169,170,172,173,175,176,177,178,179,180,181,183,185,186,187,188,189,190,191,192,195,196,197,198,199,200,201,202,203,206,207,208,209,210,211,212,213,214,216,218,219,220,221,222,223,224,226,227,229,230,231,232,233,234,236,237,238,240,241,242,243,244,246,247,248,249,251,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var f=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,4,7,8,10,12,14,15,18,19,20,23,24,26,28,29,31,33,35,36,39,40,41,44,45,47,49,51,52,55,56,57,60,61,63,65,67,68,71,72,73,76,77,79,81,83,84,87,88,89,92,93,95,97,99,100,103,104,105,108,109,111,113,115,116,118,120,121,122,125,126,128,130,132,133,136,137,138,141,142,144,146,148,149,152,153,154,157,158,160,162,164,165,168,169,170,173,174,176,178,180,181,184,185,186,189,190,192,194,196,197,200,201,202,205,206,207,210,211,213,215,217,218,221,222,223,226,227,229,231,233,234,235,238,239,241,243,245,246,249,250,251,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var g=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100,104,108,112,116,120,124,128,132,136,140,144,148,152,156,160,164,168,172,176,180,184,188,192,196,200,204,208,211,215,219,223,227,231,235,239,243,247,251,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];a=j(a,e,f,g);return t(a,50,c,d)}function o(a,b,c,d){var e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,193,195,197,199,201,203,205,207,209,211,213,215,217,219,221,223,225,227,229,231,233,235,237,239,241,243,245,247,249,251,253,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var f=[0,0,0,0,0,0,0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,19,20,21,22,23,24,25,26,27,29,30,31,32,33,34,35,36,37,38,40,41,42,43,44,45,46,47,48,50,51,52,53,54,55,56,57,58,60,61,62,63,64,65,66,67,68,70,71,72,73,74,75,76,77,78,80,81,82,83,84,85,86,87,88,90,91,92,93,94,95,96,97,98,99,101,102,103,104,105,106,107,108,109,111,112,113,114,115,116,117,118,119,121,122,123,124,125,126,127,128,129,131,132,133,134,135,136,137,138,139,141,142,143,144,145,146,147,148,149,150,152,153,154,155,156,157,158,159,160,162,163,164,165,166,167,168,169,170,172,173,174,175,176,177,178,179,180,182,183,184,185,186,187,188,189,190,192,193,194,195,196,197,198,199,200,201,203,204,205,206,207,208,209,210,211,213,214,215,216,217,218,219,220,221,223,224,225,226,227,228,229,230,231,233,234,235,236,237,238,239,240,241,243,244,245,246,247,248,249,250,251,252,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var g=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255];a=j(a,e,f,g);return t(a,50,c,d)}function n(a,b,c,d){var e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,4,6,7,8,10,11,13,14,16,17,18,20,21,23,24,26,27,28,30,31,33,34,36,37,38,40,41,43,44,45,47,48,50,51,53,54,55,57,58,60,61,63,64,65,67,68,70,71,73,74,75,77,78,80,81,83,84,85,87,88,90,91,92,94,95,97,98,100,101,102,104,105,107,108,110,111,112,114,115,117,118,120,121,122,124,125,127,128,130,131,132,134,135,137,138,140,141,142,144,145,147,148,149,151,152,154,155,157,158,159,161,162,164,165,167,168,169,171,172,174,175,177,178,179,181,182,184,185,187,188,189,191,192,194,195,196,198,199,201,202,204,205,206,208,209,211,212,214,215,216,218,219,221,222,224,225,226,228,229,231,232,234,235,236,238,239,241,242,243,245,246,248,249,251,252,253,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var f=[0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,8,9,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26,28,29,30,31,32,33,35,36,37,38,39,40,42,43,44,45,46,48,49,50,51,52,53,55,56,57,58,59,60,62,63,64,65,66,68,69,70,71,72,73,75,76,77,78,79,80,82,83,84,85,86,88,89,90,91,92,93,95,96,97,98,99,100,102,103,104,105,106,107,109,110,111,112,113,115,116,117,118,119,120,122,123,124,125,126,127,129,130,131,132,133,135,136,137,138,139,140,142,143,144,145,146,147,149,150,151,152,153,154,156,157,158,159,160,162,163,164,165,166,167,169,170,171,172,173,174,176,177,178,179,180,182,183,184,185,186,187,189,190,191,192,193,194,196,197,198,199,200,201,203,204,205,206,207,209,210,211,212,213,214,216,217,218,219,220,221,223,224,225,226,227,229,230,231,232,233,234,236,237,238,239,240,241,243,244,245,246,247,248,250,251,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var g=[40,40,40,40,40,40,40,40,40,40,41,42,43,44,45,46,48,49,50,51,52,53,55,56,57,58,59,61,62,63,64,65,66,68,69,70,71,72,73,75,76,77,78,79,80,82,83,84,85,86,88,89,90,91,92,93,95,96,97,98,99,100,102,103,104,105,106,108,109,110,111,112,113,115,116,117,118,119,120,122,123,124,125,126,128,129,130,131,132,133,135,136,137,138,139,140,142,143,144,145,146,147,149,150,151,152,153,155,156,157,158,159,160,162,163,164,165,166,167,169,170,171,172,173,175,176,177,178,179,180,182,183,184,185,186,187,189,190,191,192,193,194,196,197,198,199,200,202,203,204,205,206,207,209,210,211,212,213,214,216,217,218,219,220,222,223,224,225,226,227,229,230,231,232,233,234,236,237,238,239,240,241,243,244,245,246,247,249,250,251,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];a=j(a,e,f,g);return t(a,50,c,d)}function m(a){var b=[255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,254,252,251,250,248,247,245,244,243,241,240,239,237,236,234,233,232,230,229,228,226,225,223,222,221,219,218,216,215,214,212,211,209,208,207,205,204,202,201,199,198,196,195,194,192,191,189,188,186,185,183,182,180,179,177,176,174,173,171,169,168,166,165,163,162,160,159,157,155,154,152,150,149,147,146,144,142,141,139,137,136,134,132,130,129,127,125,124,122,120,118,116,115,113,111,109,107,106,104,102,100,98,96,95,93,91,89,87,85,83,81,79,77,76,74,72,70,68,66,64,62,60,58,56,54,52,50,48,46,44,42,40,38,36,34,32,30,28,26,24,22,20,18,16,14,12,10,8,6,4,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];var c=[255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,252,250,247,244,242,239,236,234,231,228,226,223,220,218,215,212,210,207,204,202,199,196,194,191,188,186,183,181,178,175,173,170,168,165,162,160,157,155,152,150,147,144,142,139,137,134,132,129,127,125,122,120,117,115,112,110,108,105,103,100,98,96,93,91,89,86,84,81,79,77,75,72,70,68,65,63,61,58,56,54,52,49,47,45,43,40,38,36,34,31,29,27,25,22,20,18,16,13,11,9,7,4,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];var d=[255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,251,247,243,240,236,232,228,224,220,216,213,209,205,201,198,194,190,186,183,179,175,172,168,165,161,157,154,150,147,144,140,137,134,130,127,124,121,117,114,111,108,105,102,99,96,94,91,88,85,82,79,77,74,71,69,66,63,61,58,56,53,51,48,46,43,41,38,36,33,31,28,26,24,21,19,17,14,12,9,7,5,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];return j(a,b,c,d)}function l(a){var b=[0,0,1,1,2,2,3,3,4,4,5,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,15,15,16,16,17,18,18,19,19,20,21,21,22,23,23,24,25,26,26,27,28,29,29,30,31,32,33,34,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,58,59,60,61,63,64,65,66,68,69,70,72,73,74,76,77,78,80,81,83,84,85,87,88,90,91,92,94,95,97,98,100,101,103,104,106,107,109,110,112,113,115,116,118,119,121,122,124,125,126,128,129,131,132,134,135,137,138,140,141,143,144,146,147,149,150,152,153,154,156,157,159,160,162,163,164,166,167,168,170,171,172,174,175,176,178,179,180,182,183,184,185,186,188,189,190,191,192,193,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,215,216,217,218,219,220,221,221,222,223,224,225,226,226,227,228,229,229,230,231,232,232,233,234,235,235,236,237,237,238,239,239,240,241,241,242,243,243,244,245,245,246,247,247,248,249,249,250,251,251,252,252,253,254,254,255];var c=[0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,5,5,5,6,6,7,7,8,8,9,9,10,11,11,12,13,14,15,15,16,17,18,19,20,22,23,24,25,26,28,29,31,32,34,35,37,39,40,42,44,46,48,50,52,54,56,59,61,63,66,68,71,73,76,78,81,83,86,88,91,93,96,99,101,104,106,109,111,114,116,119,121,123,126,128,130,132,135,137,139,141,143,145,147,149,150,152,154,156,157,159,161,162,164,165,167,168,170,171,172,173,175,176,177,178,179,181,182,183,184,185,186,187,188,188,189,190,191,192,192,193,194,195,195,196,196,197,198,198,199,199,200,200,201,201,201,202,202,203,203,203,204,204,204,204,205,205,205,205,206,206,206,206,206,207,207,207,207,207,207,207,207,208,208,208,208,208,208,208,208,208,208,208,208,208,208,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,208,208,208,208,208,208,208,208,208,208,208,208,208,208];var d=[0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,5,5,5,6,6,6,7,7,8,8,9,9,9,10,11,11,12,12,13,13,14,15,16,16,17,18,19,19,20,21,22,23,24,25,26,27,28,29,30,32,33,34,35,37,38,39,41,42,43,45,46,48,49,51,52,54,55,57,58,60,62,63,65,67,68,70,72,73,75,77,79,80,82,84,86,88,89,91,93,95,97,99,101,103,104,106,108,110,112,114,116,118,120,122,124,125,127,129,131,133,135,137,139,141,143,145,147,148,150,152,154,156,158,160,161,163,165,167,169,171,172,174,176,178,179,181,183,184,186,188,189,191,193,194,196,197,199,200,202,203,205,206,208,209,211,212,213,215,216,217,218,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,234,235,236,237,238,238,239,240,240,241,241,242,243,243,244,244,245,245,246,246,247,247,247,248,248,248,249,249,249,250,250,250,251,251,251,251,252,252,252,252,252,252,253,253,253,253,253,253,254,254,254,254,254,254,254,254,254,255,255,255,255,255,255];return j(a,b,c,d)}function k(a,b,c,d){var e=[0,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,11,11,12,12,13,13,14,14,15,16,16,17,18,18,19,20,21,21,22,23,24,25,25,26,27,28,29,30,31,32,33,34,35,37,38,39,40,41,43,44,45,47,48,49,51,52,53,55,56,58,59,61,62,64,66,67,69,70,72,74,75,77,79,80,82,84,86,87,89,91,93,94,96,98,100,102,104,105,107,109,111,113,115,117,119,120,122,124,126,128,130,132,134,136,137,139,141,143,145,147,149,151,153,155,156,158,160,162,164,166,168,169,171,173,175,177,179,180,182,184,186,187,189,191,193,194,196,198,199,201,203,204,206,207,209,211,212,214,215,217,218,220,222,223,225,226,227,229,230,232,233,235,236,237,239,240,241,242,243,245,246,247,248,249,250,251,252,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var f=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,39,40,41,42,43,44,45,46,47,48,50,51,52,53,54,55,56,58,59,60,61,62,63,65,66,67,68,69,70,72,73,74,75,77,78,79,80,82,83,84,86,87,88,90,91,92,94,95,96,98,99,100,102,103,104,106,107,109,110,111,113,114,116,117,118,120,121,123,124,125,127,128,130,131,132,134,135,137,138,139,141,142,144,145,146,148,149,151,152,153,155,156,158,159,160,162,163,164,166,167,168,170,171,172,174,175,176,178,179,180,182,183,184,185,187,188,189,190,192,193,194,195,196,198,199,200,201,202,203,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,225,226,227,228,229,229,230,231,232,232,233,234,234,235,236,236,237,237,238,238,239,240,240,241,241,242,242,243,243,243,244,244,245,245,246,246,246,247,247,247,248,248,248,249,249,249,250,250,250,251,251,251,251,252,252,252,253,253,253,253,254,254,254,254,255,255,255,255];var g=[25,26,27,27,28,29,30,30,31,32,33,34,34,35,36,37,37,38,39,40,40,41,42,43,44,44,45,46,47,47,48,49,50,51,51,52,53,54,54,55,56,57,57,58,59,60,61,61,62,63,64,64,65,66,67,68,68,69,70,71,71,72,73,74,74,75,76,77,78,78,79,80,81,81,82,83,84,85,85,86,87,88,88,89,90,91,91,92,93,94,95,95,96,97,98,98,99,100,101,102,102,103,104,105,105,106,107,108,109,109,110,111,112,112,113,114,115,115,116,117,118,119,119,120,121,122,122,123,124,125,126,126,127,128,129,129,130,131,132,132,133,134,135,136,136,137,138,139,139,140,141,142,143,143,144,145,146,146,147,148,149,149,150,151,152,153,153,154,155,156,156,157,158,159,160,160,161,162,163,163,164,165,166,166,167,168,169,170,170,171,172,173,173,174,175,176,177,177,178,179,180,180,181,182,183,183,184,185,186,187,187,188,189,190,190,191,192,193,194,194,195,196,197,197,198,199,200,201,201,202,203,204,204,205,206,207,207,208,209,210,211,211,212,213,214,214,215,216,217,218,218,219,220,221,221,222];a=t(a,50,c,d);return j(a,e,f,g)}function j(a,b,c,d){for(var e=0,f=a.length;e<f;e++){a[e]=b[a[e]];a[++e]=c[a[e]];a[++e]=d[a[e]];++e}return a}function i(a,b){var c=[];for(var d=0;d<=255;d++){var e=128+(d-128)*b;if(e<0){e=0}else if(e>255){e=255}c[d]=parseInt(e)}for(var d=0,f=a.length;d<f;d++){a[d]=c[a[d]];a[++d]=c[a[d]];a[++d]=c[a[d]];++d}return a}function h(a){a=g(a);a=z(a);return a}function g(a){var b=0;for(var c=0,d=a.length;c<d;c++){b=(a[c]+a[c+1]+a[c+2])/3;a[c]=b;a[++c]=b;a[++c]=b;++c}return a}function f(a){for(var b=0,c=a.length;b<c;b++){a[b]=255-a[b];a[++b]=255-a[b];a[++b]=255-a[b];++b}return a}function e(a,b){for(var c=0,d=a.length;c<d;c++){a[c]+=b;a[++c]+=b;a[++c]+=b;++c}return a}function d(a,b,d){var e=c(a,d);var f=c(b,d);return Math.sqrt((e[0]-f[0])*(e[0]-f[0])+(e[1]-f[1])*(e[1]-f[1]))}function c(a,b){return[a%b,Math.floor(a/b)]}function b(a,b,c){return b*c+a}var G={blackAndWhite:g,luminosity:e,contrast:i,vividBW:h,vintage:k,vignetting:t,crossprocess:l,negative:f,colornegative:m,classiclomo:n,russianlomo:p,rosylomo:o,greenlomo:q,canvastagram:r,blackstagram:s,filmgrain:u,blend_overlay:z,blend_multiply:x,blend_screen:y,blend_divide:A,blend_softlight:B,blend_colordodge:C,blend_lineardodge:E,blend_colorburn:D,blend_linearburn:F};a.fn.canvasEffect=function(b){var c="getContext"in document.createElement("canvas");if(!c)return this;var d={effect:"blackAndWhite",insert:"before",value:1,canvas:null};var e=a.extend(d,b);this.each(function(){var b=a(this);setTimeout(function(){if(e.canvas!=null)var c=e.canvas;else c=document.createElement("canvas");var d=c.getContext("2d");c.width=b.width();c.height=b.height();d.drawImage(b.get(0),0,0);var f=d.getImageData(0,0,c.width,c.height);var g=f.data;if(e.effect instanceof Array){var h,i;var j={effect:"blackAndWhite",value:1};for(h in e.effect){var k=a.extend(j,e.effect[h]);g=G[k.effect](g,k.value,c.width,c.height)}}else{g=G[e.effect](g,e.value,c.width,c.height)}d.putImageData(f,0,0,0,0,f.width,f.height);if(e.insert=="before")a(c).insertBefore(b)})});return this}})(jQuery)
+/* only or IE */
+function isIE(userAgent) {
+	  userAgent = userAgent || navigator.userAgent;
+	  return userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1;
+}
+
+$j(window).bind("load", function () {
+	var userAgent = window.navigator.userAgent || navigator.userAgent;
+	if(userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1){
+		$j('.category-3 .team-members .canvas, .author-list .canvas').each(function(){
+			if($j(this).size()) {
+				$j(this).find('img.grayscale').canvasEffect({"effect":
+					[
+						{"effect": "contrast", "value": 1.5},
+						{"effect": "blackAndWhite"}
+					]
+				});
+			}
+		})
+
+		if($j('.category-3 .team-members .canvas').size()){
+
+		}
+	}
+});
+
 var awPq2ItemManager = Class.create();
 awPq2ItemManager.prototype = {
     initialize: function (config) {
@@ -30640,6 +30776,64 @@ AmTickets = Class.create({
         }
     }
 });
+window.hasOwnProperty = function (obj) {return (this[obj]) ? true : false;};
+if (!window.hasOwnProperty('IWD')){IWD = {};}
+IWD = IWD||{};
+IWD.AutoRelatedProducts = {
+    default_settings: {
+    	nav: true, 
+		slideSpeed: 300,
+		paginationSpeed: 400,
+		items : 4,
+		responsive:{
+	        0:{ items:1,},
+	        480:{ items:2,},
+	        768:{ items:2,},
+	        880:{ items:3,},
+	        1024:{items:4,}
+	    },
+	    slideBy : 4,
+	    loop: true,
+	    margin:25,
+        navText:["<strong class='fa fa-angle-left'></strong>","<strong class='fa fa-angle-right'></strong>"] ,
+		onInitialize : function(){
+			$j('.featured-products .box-collateral').addClass('loaded');
+		},
+        onInitialized : function(){	
+        	IWD.Featured.Processor.setupItemHeight(block);
+			$j('.iwd-auto-related-products-slider .item .product-name a').dotdotdot({ellipsis	: '...'});
+			$j('.iwd-auto-related-products-slider .item .top-list-info p').dotdotdot({ellipsis : '...'});
+    	},
+    	onRefreshed  :function(){
+    		IWD.Featured.Processor.setupItemHeight(block);
+			$j('.iwd-auto-related-products-slider .item .product-name a').dotdotdot({ellipsis	: '...'});
+			$j('.iwd-auto-related-products-slider .item .top-list-info p').dotdotdot({ellipsis : '...'});
+    	}
+    },
+
+    initSlider: function(block, settings, general_settings){
+        var slider = $j(block);
+        general_settings = $j.extend(IWD.AutoRelatedProducts.default_settings, general_settings);
+        settings = $j.extend(general_settings, settings);
+        slider.owlCarousel(settings);
+    },
+    
+    
+	
+    /*initHeight: function(){
+        IWD.AutoRelatedProducts.updateHeight();
+        $j(window).resize(function(){IWD.AutoRelatedProducts.updateHeight();});
+    },
+
+    updateHeight: function(){
+    	$j('.iwd-auto-related-products-slider .item .info .product-name a').dotdotdot({ellipsis	: '...'});
+    	IWD.Featured.Processor.setupItemHeight(block);
+       
+    }*/
+};
+
+
+
 var IWD=IWD||{};
 
 IWD.Tabs = {
@@ -32778,29 +32972,3 @@ function fotoramaResize(){
         }
     });
 }
-(function(a){function F(a){var b=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99,101,103,105,107,109,111,113,115,117,119,121,123,125,127,129,131,133,135,137,139,141,143,145,147,149,151,153,155,157,159,161,163,165,167,169,171,173,175,177,179,181,183,185,187,189,191,193,195,197,199,201,203,205,207,209,211,213,215,217,219,221,223,225,227,229,231,233,235,237,239,241,243,245,247,249,251,253,255];return v(a,b)}function E(a){var b=[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,194,196,198,200,202,204,206,208,210,212,214,216,218,220,222,224,226,228,230,232,234,236,238,240,242,244,246,248,250,252,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];return v(a,b)}function D(a){var b=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,5,9,13,16,20,24,27,31,35,38,41,45,48,51,54,58,61,64,67,70,73,76,79,82,84,87,90,93,95,98,100,103,106,108,111,113,115,118,120,122,125,127,129,131,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,167,169,171,173,175,176,178,180,181,183,185,186,188,189,191,193,194,196,197,199,200,202,203,205,206,207,209,210,212,213,214,216,217,218,220,221,222,223,225,226,227,228,230,231,232,233,234,236,237,238,239,240,241,242,243,245,246,247,248,249,250,251,252,253,254,255];return v(a,b)}function C(a){var b=[0,1,2,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,21,22,23,24,25,27,28,29,30,32,33,34,35,37,38,39,41,42,43,45,46,48,49,50,52,53,55,56,58,59,61,62,64,66,67,69,70,72,74,75,77,79,80,82,84,86,88,89,91,93,95,97,99,101,103,105,107,109,111,113,115,117,119,121,124,126,128,130,133,135,137,140,142,144,147,149,152,155,157,160,162,165,168,171,173,176,179,182,185,188,191,194,197,201,204,207,210,214,217,220,224,228,231,235,239,242,246,250,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];return v(a,b)}function B(a){var b=[0,1,1,2,2,3,3,4,4,5,5,6,7,7,8,8,9,10,10,11,12,12,13,14,14,15,16,16,17,18,19,19,20,21,22,22,23,24,25,25,26,27,28,29,30,30,31,32,33,34,35,36,37,37,39,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,59,59,61,62,63,64,65,66,68,68,70,71,72,73,75,75,77,78,79,80,82,83,84,85,87,88,89,90,92,93,95,96,97,98,100,101,103,104,105,106,108,109,111,112,114,115,117,118,120,121,123,124,126,127,128,129,131,132,134,135,137,138,140,141,143,144,146,147,149,150,151,152,154,155,157,158,159,160,162,163,165,166,167,168,170,171,172,173,175,176,177,178,180,180,182,183,184,185,187,187,189,190,191,192,193,194,196,196,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,216,218,218,219,220,221,222,223,224,225,225,226,227,228,229,230,230,231,232,233,233,234,235,236,236,237,238,239,239,240,241,241,242,243,243,244,245,245,246,247,247,248,248,249,250,250,251,251,252,252,253,253,254,254,255];return v(a,b)}function A(a){var b=[0,128,171,192,205,213,219,224,228,230,233,235,236,238,239,240,241,242,243,243,244,244,245,245,246,246,247,247,247,247,248,248,248,248,249,249,249,249,249,250,250,250,250,250,250,250,251,251,251,251,251,251,251,251,251,251,252,252,252,252,252,252,252,252,252,252,252,252,252,252,252,252,252,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,253,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];return v(a,b)}function z(a){var b=[0,0,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4,4,5,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,13,13,14,14,15,16,17,17,18,19,20,20,21,22,23,24,25,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,41,42,43,44,45,46,48,49,50,51,53,54,55,56,58,59,61,62,63,65,66,68,69,71,72,74,75,77,78,80,81,83,85,86,88,89,91,93,95,96,98,100,102,103,105,107,109,111,113,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,143,145,147,149,151,153,154,156,158,160,161,163,165,166,168,170,171,173,175,176,178,179,181,182,184,185,187,188,190,191,193,194,195,197,198,199,201,202,203,204,206,207,208,209,211,212,213,214,215,216,217,218,220,221,222,223,224,225,226,227,227,228,229,230,231,232,233,234,234,235,236,237,237,238,239,240,240,241,242,242,243,244,244,245,245,246,246,247,247,248,248,249,249,250,250,250,251,251,251,252,252,252,253,253,253,253,254,254,254,254,254,254,255,255,255,255,255,255,255,255];return v(a,b)}function y(a){var b=[0,2,4,6,8,10,12,14,16,18,20,22,23,25,27,29,31,33,35,37,38,40,42,44,46,48,49,51,53,55,56,58,60,62,63,65,67,69,70,72,74,75,77,79,80,82,84,85,87,89,90,92,93,95,97,98,100,101,103,104,106,107,109,110,112,113,115,116,118,119,121,122,124,125,127,128,129,131,132,134,135,136,138,139,140,142,143,144,146,147,148,150,151,152,153,155,156,157,158,160,161,162,163,164,166,167,168,169,170,171,173,174,175,176,177,178,179,180,181,182,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,199,200,201,202,203,204,205,206,207,208,208,209,210,211,212,213,213,214,215,216,217,217,218,219,220,220,221,222,223,223,224,225,225,226,227,227,228,229,229,230,231,231,232,232,233,234,234,235,235,236,236,237,237,238,238,239,239,240,240,241,241,242,242,243,243,244,244,244,245,245,246,246,246,247,247,247,248,248,248,249,249,249,250,250,250,250,251,251,251,251,252,252,252,252,253,253,253,253,253,253,254,254,254,254,254,254,254,254,255,255,255,255,255,255,255,255,255,255,255,255];return v(a,b)}function x(a){var b=[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9,10,10,11,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19,20,20,21,21,22,23,23,24,24,25,26,26,27,28,28,29,30,30,31,32,32,33,34,35,35,36,37,38,38,39,40,41,42,42,43,44,45,46,47,47,48,49,50,51,52,53,54,55,56,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,73,74,75,76,77,78,79,80,81,82,84,85,86,87,88,89,91,92,93,94,95,97,98,99,100,102,103,104,105,107,108,109,111,112,113,115,116,117,119,120,121,123,124,126,127,128,130,131,133,134,136,137,139,140,142,143,145,146,148,149,151,152,154,155,157,158,160,162,163,165,166,168,170,171,173,175,176,178,180,181,183,185,186,188,190,192,193,195,197,199,200,202,204,206,207,209,211,213,215,217,218,220,222,224,226,228,230,232,233,235,237,239,241,243,245,247,249,251,253,255];return v(a,b)}function w(a,b){return Math.floor(255-((255-a)*(255-b)>>8))}function v(a,b){for(var c=0,d=a.length;c<d;c++){a[c]=b[a[c]];a[++c]=b[a[c]];a[++c]=b[a[c]];++c}return a}function u(a){for(var b=0,c=a.length;b<c;b++){var d=Math.floor(Math.random()*13);a[b]=w(a[b],d);a[++b]=w(a[b],d);a[++b]=w(a[b],d);++b}return a}function t(a,b,d,e){var f=Math.sqrt(d/2*(d/2)+e/2*(e/2));var g=0;for(var h=0,i=a.length;h<i;h++){var j=c(g,d);var k=Math.sqrt((d/2-j[0])*(d/2-j[0])+(e/2-j[1])*(e/2-j[1]));var l=k/f;var m=b*l*l;a[h]-=m;a[++h]-=m;a[++h]-=m;++h;++g}return a}function s(a,b,c,d){var e=0;for(var f=0,g=a.length;f<g;f++){e=.02*a[f]+.22*a[f+1]+.66*a[f+2];a[f]=e;a[++f]=e;a[++f]=e;++f}}function r(a,b,c,d){var e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,3,3,3,4,4,5,5,6,7,7,8,9,10,11,11,12,12,13,15,16,17,18,19,20,21,22,24,26,27,28,30,30,32,33,35,36,38,38,40,41,43,43,45,46,47,48,49,51,52,53,54,55,56,57,57,60,64,64,67,69,72,74,76,79,81,83,86,88,91,92,96,97,101,103,105,107,111,113,116,117,119,123,124,129,130,132,136,137,139,142,144,145,147,151,153,153,156,158,161,162,164,166,169,171,172,174,175,178,181,182,183,184,187,189,189,191,193,194,196,198,199,201,202,204,205,206,206,208,209,211,212,214,214,215,216,217,217,219,220,220,222,224,224,225,227,227,228,230,230,231,231,232,232,233,233,235,235,236,236,238,238,240,240,241,241,243,243,243,244,244,246,246,247,247,247,247,249,249,250,250,250,252,252,252,253,253,255,255];var f=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,5,5,5,6,6,7,7,8,9,9,10,10,11,11,12,13,14,15,15,18,20,21,24,25,27,30,31,34,36,37,40,41,44,45,48,50,52,54,57,58,61,62,65,68,69,72,73,76,77,80,83,84,87,89,90,93,94,97,100,101,103,106,107,110,111,113,116,117,120,122,123,126,127,129,131,132,134,135,137,139,140,142,143,145,147,148,150,151,153,154,156,157,159,161,162,164,165,167,168,170,171,172,174,175,177,178,180,181,182,184,185,186,188,189,190,192,193,194,196,197,198,199,201,202,203,204,205,206,208,209,210,211,212,213,214,216,217,218,219,220,221,222,222,223,224,225,226,227,227,228,229,230,230,231,232,232,233,234,234,235,236,236,237,238,238,239,239,240,240,241,241,242,242,243,243,244,244,245,245,246,247,247,247,248,248,249,249,250,250,250,251,251,252,252,252,253,253,253,254,254,255,255];var g=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,3,3,3,3,4,4,5,5,6,7,7,8,9,10,10,11,11,13,14,15,15,17,17,18,20,20,21,23,24,25,26,27,29,30,32,33,35,35,36,38,40,42,42,43,45,47,47,49,51,51,53,55,55,57,57,59,61,61,64,64,66,66,68,72,72,76,76,77,77,77,81,81,83,83,86,86,90,90,90,92,92,95,95,95,99,99,101,101,101,104,104,106,106,106,109,109,109,112,112,112,114,114,117,117,117,120,120,122,122,122,125,125,125,127,127,129,129,131,131,131,132,132,134,134,135,135,137,137,139,139,140,140,142,142,143,143,145,145,147,147,148,150,150,151,153,153,154,156,156,157,159,159,161,162,164,165,165,167,168,170,171,172,174,174,175,177,178,180,181,182,184,185,186,189,190,192,193,194,196,198,199,201,202,204,205,206,209,210,211,213,214,216,217,219,220,222,222,224,225,227,227,229,230,231,232,234,234,236,237,238,239,240,240,241,242,243,244,245,246,247,247,248,249,250,250,251,252,252,253,253,254,255];var h=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,4,4,4,4,5,5,5,5,6,6,6,7,8,8,9,9,10,11,11,12,13,13,14,15,15,17,17,19,20,21,22,23,24,26,27,29,30,32,33,34,36,38,39,41,42,44,45,46,49,50,52,54,56,57,60,61,63,65,67,69,71,73,75,77,79,81,83,85,87,90,92,94,96,98,100,102,105,107,110,112,114,116,118,120,122,124,126,128,130,132,134,136,140,140,143,145,147,150,152,154,156,158,159,163,164,167,168,170,172,173,175,177,179,180,182,184,185,186,188,189,191,192,193,195,197,198,199,200,201,203,205,205,206,207,209,210,211,212,213,214,215,216,217,219,220,221,222,222,223,224,224,225,226,227,227,228,229,230,230,231,232,232,233,234,234,235,235,236,237,237,238,238,238,239,239,240,240,241,241,242,242,243,243,244,244,245,245,246,247,247,247,248,248,249,249,250,250,250,251,251,252,252,252,253,253,253,254,254,255,255];a=j(a,e,f,g);a=i(a,.9);return t(a,30,c,d)}function q(a,b,c,d){var e=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255];var f=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,193,195,197,199,201,203,205,207,209,211,213,215,217,219,221,223,225,227,229,231,233,235,237,239,241,243,245,247,249,251,253,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var g=[0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,8,9,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26,28,29,30,31,32,33,35,36,37,38,39,40,42,43,44,45,46,48,49,50,51,52,53,55,56,57,58,59,60,62,63,64,65,66,68,69,70,71,72,73,75,76,77,78,79,80,82,83,84,85,86,88,89,90,91,92,93,95,96,97,98,99,100,102,103,104,105,106,107,109,110,111,112,113,115,116,117,118,119,120,122,123,124,125,126,127,129,130,131,132,133,135,136,137,138,139,140,142,143,144,145,146,147,149,150,151,152,153,154,156,157,158,159,160,162,163,164,165,166,167,169,170,171,172,173,174,176,177,178,179,180,182,183,184,185,186,187,189,190,191,192,193,194,196,197,198,199,200,201,203,204,205,206,207,209,210,211,212,213,214,216,217,218,219,220,221,223,224,225,226,227,229,230,231,232,233,234,236,237,238,239,240,241,243,244,245,246,247,248,250,251,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];a=j(a,e,f,g);return t(a,50,c,d)}function p(a,b,c,d){var e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,4,5,6,7,8,9,10,12,14,15,16,17,18,19,20,22,23,25,26,27,28,29,30,32,33,34,35,37,38,39,40,41,43,44,45,46,48,49,50,51,53,54,55,56,57,59,60,61,63,64,65,66,67,68,70,71,73,74,75,76,77,78,79,81,83,84,85,86,87,88,89,90,93,94,95,96,97,98,99,100,101,102,105,106,107,108,109,110,111,112,114,116,117,118,119,120,121,122,124,125,127,128,129,130,131,132,134,135,136,138,139,140,141,142,144,145,146,147,149,150,151,152,153,155,156,157,158,159,161,162,163,165,166,167,168,169,170,172,173,175,176,177,178,179,180,181,183,185,186,187,188,189,190,191,192,195,196,197,198,199,200,201,202,203,206,207,208,209,210,211,212,213,214,216,218,219,220,221,222,223,224,226,227,229,230,231,232,233,234,236,237,238,240,241,242,243,244,246,247,248,249,251,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var f=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,4,7,8,10,12,14,15,18,19,20,23,24,26,28,29,31,33,35,36,39,40,41,44,45,47,49,51,52,55,56,57,60,61,63,65,67,68,71,72,73,76,77,79,81,83,84,87,88,89,92,93,95,97,99,100,103,104,105,108,109,111,113,115,116,118,120,121,122,125,126,128,130,132,133,136,137,138,141,142,144,146,148,149,152,153,154,157,158,160,162,164,165,168,169,170,173,174,176,178,180,181,184,185,186,189,190,192,194,196,197,200,201,202,205,206,207,210,211,213,215,217,218,221,222,223,226,227,229,231,233,234,235,238,239,241,243,245,246,249,250,251,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var g=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100,104,108,112,116,120,124,128,132,136,140,144,148,152,156,160,164,168,172,176,180,184,188,192,196,200,204,208,211,215,219,223,227,231,235,239,243,247,251,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];a=j(a,e,f,g);return t(a,50,c,d)}function o(a,b,c,d){var e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,98,100,102,104,106,108,110,112,114,116,118,120,122,124,126,128,130,132,134,136,138,140,142,144,146,148,150,152,154,156,158,160,162,164,166,168,170,172,174,176,178,180,182,184,186,188,190,192,193,195,197,199,201,203,205,207,209,211,213,215,217,219,221,223,225,227,229,231,233,235,237,239,241,243,245,247,249,251,253,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var f=[0,0,0,0,0,0,0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,16,17,19,20,21,22,23,24,25,26,27,29,30,31,32,33,34,35,36,37,38,40,41,42,43,44,45,46,47,48,50,51,52,53,54,55,56,57,58,60,61,62,63,64,65,66,67,68,70,71,72,73,74,75,76,77,78,80,81,82,83,84,85,86,87,88,90,91,92,93,94,95,96,97,98,99,101,102,103,104,105,106,107,108,109,111,112,113,114,115,116,117,118,119,121,122,123,124,125,126,127,128,129,131,132,133,134,135,136,137,138,139,141,142,143,144,145,146,147,148,149,150,152,153,154,155,156,157,158,159,160,162,163,164,165,166,167,168,169,170,172,173,174,175,176,177,178,179,180,182,183,184,185,186,187,188,189,190,192,193,194,195,196,197,198,199,200,201,203,204,205,206,207,208,209,210,211,213,214,215,216,217,218,219,220,221,223,224,225,226,227,228,229,230,231,233,234,235,236,237,238,239,240,241,243,244,245,246,247,248,249,250,251,252,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var g=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255];a=j(a,e,f,g);return t(a,50,c,d)}function n(a,b,c,d){var e=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,4,6,7,8,10,11,13,14,16,17,18,20,21,23,24,26,27,28,30,31,33,34,36,37,38,40,41,43,44,45,47,48,50,51,53,54,55,57,58,60,61,63,64,65,67,68,70,71,73,74,75,77,78,80,81,83,84,85,87,88,90,91,92,94,95,97,98,100,101,102,104,105,107,108,110,111,112,114,115,117,118,120,121,122,124,125,127,128,130,131,132,134,135,137,138,140,141,142,144,145,147,148,149,151,152,154,155,157,158,159,161,162,164,165,167,168,169,171,172,174,175,177,178,179,181,182,184,185,187,188,189,191,192,194,195,196,198,199,201,202,204,205,206,208,209,211,212,214,215,216,218,219,221,222,224,225,226,228,229,231,232,234,235,236,238,239,241,242,243,245,246,248,249,251,252,253,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var f=[0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,8,9,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26,28,29,30,31,32,33,35,36,37,38,39,40,42,43,44,45,46,48,49,50,51,52,53,55,56,57,58,59,60,62,63,64,65,66,68,69,70,71,72,73,75,76,77,78,79,80,82,83,84,85,86,88,89,90,91,92,93,95,96,97,98,99,100,102,103,104,105,106,107,109,110,111,112,113,115,116,117,118,119,120,122,123,124,125,126,127,129,130,131,132,133,135,136,137,138,139,140,142,143,144,145,146,147,149,150,151,152,153,154,156,157,158,159,160,162,163,164,165,166,167,169,170,171,172,173,174,176,177,178,179,180,182,183,184,185,186,187,189,190,191,192,193,194,196,197,198,199,200,201,203,204,205,206,207,209,210,211,212,213,214,216,217,218,219,220,221,223,224,225,226,227,229,230,231,232,233,234,236,237,238,239,240,241,243,244,245,246,247,248,250,251,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var g=[40,40,40,40,40,40,40,40,40,40,41,42,43,44,45,46,48,49,50,51,52,53,55,56,57,58,59,61,62,63,64,65,66,68,69,70,71,72,73,75,76,77,78,79,80,82,83,84,85,86,88,89,90,91,92,93,95,96,97,98,99,100,102,103,104,105,106,108,109,110,111,112,113,115,116,117,118,119,120,122,123,124,125,126,128,129,130,131,132,133,135,136,137,138,139,140,142,143,144,145,146,147,149,150,151,152,153,155,156,157,158,159,160,162,163,164,165,166,167,169,170,171,172,173,175,176,177,178,179,180,182,183,184,185,186,187,189,190,191,192,193,194,196,197,198,199,200,202,203,204,205,206,207,209,210,211,212,213,214,216,217,218,219,220,222,223,224,225,226,227,229,230,231,232,233,234,236,237,238,239,240,241,243,244,245,246,247,249,250,251,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];a=j(a,e,f,g);return t(a,50,c,d)}function m(a){var b=[255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,254,252,251,250,248,247,245,244,243,241,240,239,237,236,234,233,232,230,229,228,226,225,223,222,221,219,218,216,215,214,212,211,209,208,207,205,204,202,201,199,198,196,195,194,192,191,189,188,186,185,183,182,180,179,177,176,174,173,171,169,168,166,165,163,162,160,159,157,155,154,152,150,149,147,146,144,142,141,139,137,136,134,132,130,129,127,125,124,122,120,118,116,115,113,111,109,107,106,104,102,100,98,96,95,93,91,89,87,85,83,81,79,77,76,74,72,70,68,66,64,62,60,58,56,54,52,50,48,46,44,42,40,38,36,34,32,30,28,26,24,22,20,18,16,14,12,10,8,6,4,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];var c=[255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,252,250,247,244,242,239,236,234,231,228,226,223,220,218,215,212,210,207,204,202,199,196,194,191,188,186,183,181,178,175,173,170,168,165,162,160,157,155,152,150,147,144,142,139,137,134,132,129,127,125,122,120,117,115,112,110,108,105,103,100,98,96,93,91,89,86,84,81,79,77,75,72,70,68,65,63,61,58,56,54,52,49,47,45,43,40,38,36,34,31,29,27,25,22,20,18,16,13,11,9,7,4,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];var d=[255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,251,247,243,240,236,232,228,224,220,216,213,209,205,201,198,194,190,186,183,179,175,172,168,165,161,157,154,150,147,144,140,137,134,130,127,124,121,117,114,111,108,105,102,99,96,94,91,88,85,82,79,77,74,71,69,66,63,61,58,56,53,51,48,46,43,41,38,36,33,31,28,26,24,21,19,17,14,12,9,7,5,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];return j(a,b,c,d)}function l(a){var b=[0,0,1,1,2,2,3,3,4,4,5,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,15,15,16,16,17,18,18,19,19,20,21,21,22,23,23,24,25,26,26,27,28,29,29,30,31,32,33,34,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,58,59,60,61,63,64,65,66,68,69,70,72,73,74,76,77,78,80,81,83,84,85,87,88,90,91,92,94,95,97,98,100,101,103,104,106,107,109,110,112,113,115,116,118,119,121,122,124,125,126,128,129,131,132,134,135,137,138,140,141,143,144,146,147,149,150,152,153,154,156,157,159,160,162,163,164,166,167,168,170,171,172,174,175,176,178,179,180,182,183,184,185,186,188,189,190,191,192,193,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,215,216,217,218,219,220,221,221,222,223,224,225,226,226,227,228,229,229,230,231,232,232,233,234,235,235,236,237,237,238,239,239,240,241,241,242,243,243,244,245,245,246,247,247,248,249,249,250,251,251,252,252,253,254,254,255];var c=[0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,5,5,5,6,6,7,7,8,8,9,9,10,11,11,12,13,14,15,15,16,17,18,19,20,22,23,24,25,26,28,29,31,32,34,35,37,39,40,42,44,46,48,50,52,54,56,59,61,63,66,68,71,73,76,78,81,83,86,88,91,93,96,99,101,104,106,109,111,114,116,119,121,123,126,128,130,132,135,137,139,141,143,145,147,149,150,152,154,156,157,159,161,162,164,165,167,168,170,171,172,173,175,176,177,178,179,181,182,183,184,185,186,187,188,188,189,190,191,192,192,193,194,195,195,196,196,197,198,198,199,199,200,200,201,201,201,202,202,203,203,203,204,204,204,204,205,205,205,205,206,206,206,206,206,207,207,207,207,207,207,207,207,208,208,208,208,208,208,208,208,208,208,208,208,208,208,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,209,208,208,208,208,208,208,208,208,208,208,208,208,208,208];var d=[0,0,0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,5,5,5,6,6,6,7,7,8,8,9,9,9,10,11,11,12,12,13,13,14,15,16,16,17,18,19,19,20,21,22,23,24,25,26,27,28,29,30,32,33,34,35,37,38,39,41,42,43,45,46,48,49,51,52,54,55,57,58,60,62,63,65,67,68,70,72,73,75,77,79,80,82,84,86,88,89,91,93,95,97,99,101,103,104,106,108,110,112,114,116,118,120,122,124,125,127,129,131,133,135,137,139,141,143,145,147,148,150,152,154,156,158,160,161,163,165,167,169,171,172,174,176,178,179,181,183,184,186,188,189,191,193,194,196,197,199,200,202,203,205,206,208,209,211,212,213,215,216,217,218,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,234,235,236,237,238,238,239,240,240,241,241,242,243,243,244,244,245,245,246,246,247,247,247,248,248,248,249,249,249,250,250,250,251,251,251,251,252,252,252,252,252,252,253,253,253,253,253,253,254,254,254,254,254,254,254,254,254,255,255,255,255,255,255];return j(a,b,c,d)}function k(a,b,c,d){var e=[0,0,0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,7,7,7,8,8,9,9,9,10,10,11,11,12,12,13,13,14,14,15,16,16,17,18,18,19,20,21,21,22,23,24,25,25,26,27,28,29,30,31,32,33,34,35,37,38,39,40,41,43,44,45,47,48,49,51,52,53,55,56,58,59,61,62,64,66,67,69,70,72,74,75,77,79,80,82,84,86,87,89,91,93,94,96,98,100,102,104,105,107,109,111,113,115,117,119,120,122,124,126,128,130,132,134,136,137,139,141,143,145,147,149,151,153,155,156,158,160,162,164,166,168,169,171,173,175,177,179,180,182,184,186,187,189,191,193,194,196,198,199,201,203,204,206,207,209,211,212,214,215,217,218,220,222,223,225,226,227,229,230,232,233,235,236,237,239,240,241,242,243,245,246,247,248,249,250,251,252,252,253,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255];var f=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,39,40,41,42,43,44,45,46,47,48,50,51,52,53,54,55,56,58,59,60,61,62,63,65,66,67,68,69,70,72,73,74,75,77,78,79,80,82,83,84,86,87,88,90,91,92,94,95,96,98,99,100,102,103,104,106,107,109,110,111,113,114,116,117,118,120,121,123,124,125,127,128,130,131,132,134,135,137,138,139,141,142,144,145,146,148,149,151,152,153,155,156,158,159,160,162,163,164,166,167,168,170,171,172,174,175,176,178,179,180,182,183,184,185,187,188,189,190,192,193,194,195,196,198,199,200,201,202,203,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,225,226,227,228,229,229,230,231,232,232,233,234,234,235,236,236,237,237,238,238,239,240,240,241,241,242,242,243,243,243,244,244,245,245,246,246,246,247,247,247,248,248,248,249,249,249,250,250,250,251,251,251,251,252,252,252,253,253,253,253,254,254,254,254,255,255,255,255];var g=[25,26,27,27,28,29,30,30,31,32,33,34,34,35,36,37,37,38,39,40,40,41,42,43,44,44,45,46,47,47,48,49,50,51,51,52,53,54,54,55,56,57,57,58,59,60,61,61,62,63,64,64,65,66,67,68,68,69,70,71,71,72,73,74,74,75,76,77,78,78,79,80,81,81,82,83,84,85,85,86,87,88,88,89,90,91,91,92,93,94,95,95,96,97,98,98,99,100,101,102,102,103,104,105,105,106,107,108,109,109,110,111,112,112,113,114,115,115,116,117,118,119,119,120,121,122,122,123,124,125,126,126,127,128,129,129,130,131,132,132,133,134,135,136,136,137,138,139,139,140,141,142,143,143,144,145,146,146,147,148,149,149,150,151,152,153,153,154,155,156,156,157,158,159,160,160,161,162,163,163,164,165,166,166,167,168,169,170,170,171,172,173,173,174,175,176,177,177,178,179,180,180,181,182,183,183,184,185,186,187,187,188,189,190,190,191,192,193,194,194,195,196,197,197,198,199,200,201,201,202,203,204,204,205,206,207,207,208,209,210,211,211,212,213,214,214,215,216,217,218,218,219,220,221,221,222];a=t(a,50,c,d);return j(a,e,f,g)}function j(a,b,c,d){for(var e=0,f=a.length;e<f;e++){a[e]=b[a[e]];a[++e]=c[a[e]];a[++e]=d[a[e]];++e}return a}function i(a,b){var c=[];for(var d=0;d<=255;d++){var e=128+(d-128)*b;if(e<0){e=0}else if(e>255){e=255}c[d]=parseInt(e)}for(var d=0,f=a.length;d<f;d++){a[d]=c[a[d]];a[++d]=c[a[d]];a[++d]=c[a[d]];++d}return a}function h(a){a=g(a);a=z(a);return a}function g(a){var b=0;for(var c=0,d=a.length;c<d;c++){b=(a[c]+a[c+1]+a[c+2])/3;a[c]=b;a[++c]=b;a[++c]=b;++c}return a}function f(a){for(var b=0,c=a.length;b<c;b++){a[b]=255-a[b];a[++b]=255-a[b];a[++b]=255-a[b];++b}return a}function e(a,b){for(var c=0,d=a.length;c<d;c++){a[c]+=b;a[++c]+=b;a[++c]+=b;++c}return a}function d(a,b,d){var e=c(a,d);var f=c(b,d);return Math.sqrt((e[0]-f[0])*(e[0]-f[0])+(e[1]-f[1])*(e[1]-f[1]))}function c(a,b){return[a%b,Math.floor(a/b)]}function b(a,b,c){return b*c+a}var G={blackAndWhite:g,luminosity:e,contrast:i,vividBW:h,vintage:k,vignetting:t,crossprocess:l,negative:f,colornegative:m,classiclomo:n,russianlomo:p,rosylomo:o,greenlomo:q,canvastagram:r,blackstagram:s,filmgrain:u,blend_overlay:z,blend_multiply:x,blend_screen:y,blend_divide:A,blend_softlight:B,blend_colordodge:C,blend_lineardodge:E,blend_colorburn:D,blend_linearburn:F};a.fn.canvasEffect=function(b){var c="getContext"in document.createElement("canvas");if(!c)return this;var d={effect:"blackAndWhite",insert:"before",value:1,canvas:null};var e=a.extend(d,b);this.each(function(){var b=a(this);setTimeout(function(){if(e.canvas!=null)var c=e.canvas;else c=document.createElement("canvas");var d=c.getContext("2d");c.width=b.width();c.height=b.height();d.drawImage(b.get(0),0,0);var f=d.getImageData(0,0,c.width,c.height);var g=f.data;if(e.effect instanceof Array){var h,i;var j={effect:"blackAndWhite",value:1};for(h in e.effect){var k=a.extend(j,e.effect[h]);g=G[k.effect](g,k.value,c.width,c.height)}}else{g=G[e.effect](g,e.value,c.width,c.height)}d.putImageData(f,0,0,0,0,f.width,f.height);if(e.insert=="before")a(c).insertBefore(b)})});return this}})(jQuery)
-/* only or IE */
-function isIE(userAgent) {
-	  userAgent = userAgent || navigator.userAgent;
-	  return userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1;
-}
-$j(document).ready(function () {
-	var userAgent = window.navigator.userAgent || navigator.userAgent;
-	if(userAgent.indexOf("MSIE ") > -1 || userAgent.indexOf("Trident/") > -1){
-		$j('.category-3 .team-members .canvas, .author-list .canvas').each(function(){
-			if($j(this).size()) {			
-				$j(this).find('img.grayscale').canvasEffect({"effect":
-					 [
-					  {"effect": "contrast", "value": 1.5},
-					  {"effect": "blackAndWhite"}
-					  ]
-				});	 
-			}
-		})
-		
-		if($j('.category-3 .team-members .canvas').size()){
-			
-		}
-	}
-	
-});

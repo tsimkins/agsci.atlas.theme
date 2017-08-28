@@ -1220,7 +1220,7 @@ a.button:hover {
  * Container
  */
 .main-container {
-    position: relative;
+    position: initial;
     max-width: 1175px;
     margin: 0 auto;
     padding: 0 12.5px;
@@ -1692,6 +1692,15 @@ body:not(.product-county) .main-container.no-padding,
     display: block;
     /* We want this to show on its own line, otherwise the layout looks funky */
 }
+#b2borderlist_submitform .price-box .minimal-price-link{
+    padding-left: 0;
+    color: #1f1e20;
+    text-decoration: none;
+}
+#b2borderlist_submitform .price-box .minimal-price-link .price{
+    color: #757575;
+}
+
 .price-box .minimal-price-link .label {
     color: #a0a0a0;
 }
@@ -2480,6 +2489,9 @@ body[class*="extevents-account"] .my-account .pager {
     body[class*="extevents-account"] .my-account .pager .limiter {
         float: none;
     }
+}
+.my-account .iwd-empty-events a {
+    text-transform: lowercase;
 }
 /* -------------------------------------------- *
  * Hints
@@ -5739,7 +5751,7 @@ p.product-name a:hover {
     .cart-table .head .product-cart-actions .qty {
         display: block;
     }
-    .cart-table .head .product-cart-actions br.mobile{
+    .cart-table .product-cart-actions br.mobile {
         display: none;
     }
     .cart-table td[data-rwd-label] {
@@ -9024,6 +9036,10 @@ div.paypal-logo span > img {
 .cms-page-view .std ul{
     margin-bottom: 1.8em;
 }
+
+.cms-page-view .col-main .std h1,
+.cms-page-view .main .std h1{color: #213261; font-size: 30px; font-weight: 700; text-transform: none; border: none; margin: 0 0 5px;padding-bottom:3px;}
+
 .cms-page-view .std h2 {
     letter-spacing: 0.5px;
     margin-bottom: 0.7em;
@@ -9051,9 +9067,19 @@ div.paypal-logo span > img {
     line-height: 22px;
     margin-bottom: 30px;
 }
+/*
 .cms-page-view .main .std p {
     margin-bottom: 13px;
 }
+*/
+.cms-page-view .col-main .std p,
+.cms-page-view .main .std p{
+    color: #000;
+    font-size: 16px;
+    line-height: 26px;
+	letter-spacing: 0.5px;
+}
+
 .cms-no-route .std img {
     width: 100%;
 }
@@ -10038,7 +10064,7 @@ div.calendar table td.button {
 .page-header #header-search .search-button:after {color: #757575; font-size: 18px; content: "\f002"; font-family: 'FontAwesome';}
 .page-header #header-search .search-button:hover:after{color: #006db1;}
 .page-header .logo .large{position: absolute; height: auto; width: auto;}
-.z-block-header{width: 100%; background: #ececec; margin: 2px 0 0 0;}
+.z-block-header{width: 100%; background: #ececec; margin: 0;}
 .z-block-header .subscription{max-width: 1175px; padding: 2px 12.5px 4px; margin: 0 auto; text-align: center; line-height: 22px; color: #02458d; font-size: 14.14px; letter-spacing: 0.4px;}
 .z-block-header .subscription .fa {padding: 0 5px 0 0; font-size: 15.15px}
 .z-block-header .subscription a{color: #02458d; text-transform: uppercase; font-weight: 700; text-decoration: none;}
@@ -10093,10 +10119,13 @@ div.calendar table td.button {
 /* HOME PAGE CONTENT AREA */
 .cms-home .main-container{width: 100%; max-width: 100%; padding: 0;}
 .wrapper .page .setup-bg img{position: absolute; width: 8px; height: 8px; visibility: hidden;}
-.home-slider .item{background-position: center center; background-size: cover; display: table; height: 700px; position: relative; text-align: center; width: 100%;}
+.home-slider .item{background-position: center center; background-size: cover; height: 700px; position: relative; text-align: center; width: 100%; display: none;}
+.wrapper .page .setup-bg img{width: 100%; height: 100%; object-fit: cover;  visibility: visible;}
+.home-slider .item:first-child, .home-slider.owl-loaded .item{display: table;}
 .page {overflow: hidden;}
 .home-slider .item .inner{display: table-cell; vertical-align: top; background: url("https://extension.psu.edu/skin/frontend/extensions/default/images/banner-arrow.png") bottom center no-repeat;}
 .home-slider .item .inner .text{max-width: 1175px; margin: 0 auto; padding: 0 12.5px; letter-spacing: 1px;}
+.home-slider:not(.owl-loaded) .item .inner .text {position: absolute; right: 0; left: 0;}
 .home-slider .item .inner h2{color: #ffffff; font-size: 40px; line-height: 50px; margin: 0; font-weight: 300; padding: 90px 0 60px 0;}
 .parent-home-slider .home-search{position: absolute; top: 300px; width: 100%; z-index: inherit;}
 .parent-home-slider .home-search .input-box{ background: url("https://extension.psu.edu/skin/frontend/extensions/default/images/overlay.png") repeat; padding: 10px; position: relative; max-width: 612px; margin: 0 auto; z-index: 2;}
@@ -10129,7 +10158,19 @@ div.calendar table td.button {
 .featured-products .inner{max-width: 1175px; padding: 29px 8.5px 33px; margin: 0 auto;}
 .featured-products .filter{margin: 0 0 12px 0; position: relative;}
 .featured-products .filter label{color: #000000; font-size: 22.5px; font-weight: normal; line-height: 26px;}
-.featured-products .slides .item{float: left; margin: 2px 0 0 0; width: 100%;}
+
+.featured-products .slides-parent, .catalog-product-view .featured-products .inner {overflow: hidden;}
+.featured-products .slides:not(.iwd-auto-related-products-slider),
+.catalog-product-view .featured-products .inner .slides:not(.iwd-auto-related-products-slider){width: 10000px;}
+.featured-products .slides-parent.loaded .slides,  .catalog-product-view .featured-products .inner.loaded  .slides{width: auto;}
+.featured-products .slides-parent.loaded, .catalog-product-view .featured-products .inner.loaded {overflow: visible;}
+.featured-products .slides .item{float: left; margin: 2px 0 0 0; width: 276px; margin-right: 18px;}
+.featured-products .slides.iwd-auto-related-products-slider .item {width: auto;}
+.featured-products .slides .owl-item .item {width: 100%; margin-right: 0;}
+.featured-products .slides .item .product-image .placeholder > img {width: 100%;}
+.featured-products .slides .item .item-inner {min-height: 350px;}
+.featured-products .slides.iwd-auto-related-products-slider .item .item-inner {min-height: 1px;}
+
 .featured-products .slides .item .item-inner, .products-grid .item .item-inner{-webkit-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.2); -moz-box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.2); box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.2); background: #fff;}
 .slides-parent.hide-content{visibility: hidden;}
 .featured-products .slides .owl-dots {bottom: -2px;left: 0;position: absolute;text-align: center;width: 100%;}
@@ -10577,6 +10618,10 @@ html > body {height: auto;min-height: 100%;}
 .social-icons li:hover img.hover{display: block;}
 .social-icons li:hover img.original{display: none;}
 
+/* Z-BLOCK POPUP */
+.zblock-item #popupModal {display: none;}
+
+
 /*** CATEGORY LEVEL 2 ***/
 
 /*** CATEGORY LEVEL 3 ***/
@@ -10986,6 +11031,7 @@ html > body {height: auto;min-height: 100%;}
 .product-essential .top-info .rating-box .fa{font-size: 16px; color: #006db1; line-height: 12px; float: left; margin: 0 1px 0 0;}
 .product-essential .top-info .sku{font-size: 12px; margin: 13px 10px 0 0; padding: 0 10px 0 0; text-transform: uppercase; position: relative;}
 .product-essential .top-info .sku:after {content: ''; width: 1px; height: 9px; background: #757575; display: block; position: absolute; top: 1px; right: 0;}
+.product-essential .top-info .sku.disable-separator:after {display: none;}
 .product-essential .top-info a{color: #007cc3; text-transform: uppercase; text-decoration: none;}
 .product-essential .top-info a:hover{color: #24a6e5;}
 .product-essential .top-info .review-count span{color: #757575;}
@@ -11126,7 +11172,7 @@ html > body {height: auto;min-height: 100%;}
 .product-options label{line-height: 19px; display: block;}
 
 /* CONFIGURABLE PRODUCT */
-.product-view .product-shop .btn.selectpicker.btn-default{background: none; border: none; padding: 0px 42px 0px 10px; border: 1px solid #007cc3; height: 44px; line-height: 44px; border-radius: 5px; width: 100%;}
+.product-view .product-shop .btn.selectpicker.btn-default{background: none; border: none; padding: 0px 42px 0px 10px; border: 1px solid #007cc3; height: 44px; line-height: 40px; border-radius: 5px; width: 100%;}
 .product-view .product-shop .bootstrap-select.btn-group.open .btn.selectpicker.btn-default{border-radius: 5px 5px 0 0;}
 .product-view .product-shop .bootstrap-select.btn-group .btn .filter-option{font-size: 14px; color: #757575; letter-spacing: 0.5px; text-overflow: ellipsis; white-space: nowrap;}
 .product-view .product-shop .bootstrap-select.btn-group .btn .caret{font-size: 26px; color: #007cc3; right: 9px;}
@@ -11637,6 +11683,7 @@ html > body {height: auto;min-height: 100%;}
 .contacts-d2 #contactForm .buttons-set button.button:hover {background: #d8644a;}
 .contacts-d2 #contactForm p.required{display:none;}
 .contacts-d2 select{-webkit-appearance: none; display:inline-block !important; width:0 !important; visibility:hidden; opacity:0; height:1px; padding:0; margin:0 !important; border:none;}
+.contacts-d2 #contactForm .dropdown-menu a:focus { background: #f4f4f4; }
 .contacts-d2 .contacts-google-map iframe{max-width:100%;width:100% !important;}
 
 @media only screen and (max-width: 1199px) {
@@ -12058,7 +12105,7 @@ html > body {height: auto;min-height: 100%;}
 
 /* SHOPPING CART */
 .cart-table tr.head, .cart-table tr.footer {background: #f8fbfd;}
-.cart-table .icon-collapse, .cart-table .icon-slide-up {font-size: 16px; color: #50a4cf;}
+.cart-table .icon-collapse, .cart-table .icon-slide-up {font-size: 16px;color: #213261;}
 .cart-table .icon-collapse:hover, .cart-table .icon-slide-up:hover{opacity: 0.8;}
 .cart-table .icon-collapse.closed i:before {content: "\f151";}
 
@@ -12702,7 +12749,7 @@ div.amshopby-overlay {
     position: absolute;
     top: 0;
     width: 100%;
-    z-index: 555;
+    z-index: 2;
 }
 div.amshopby-overlay img {
     top: 100px;
@@ -12826,184 +12873,6 @@ input[name^="amshopby"][id$="from"].input-text, input[name^="amshopby"][id$="to"
 .customer-account-login .account-login.login-only .col-1.registered-users{
 	width:50%;
 }
-/*
-* 	Owl Carousel Owl Demo Theme 
-*	v1.3.3
-*/
-
-.owl-theme .owl-controls{
-	margin-top: 10px;
-	text-align: center;
-}
-
-/* Styling Next and Prev buttons */
-
-.owl-theme .owl-controls .owl-buttons div{
-	color: #FFF;
-	display: inline-block;
-	zoom: 1;
-	*display: inline;/*IE7 life-saver */
-	margin: 5px;
-	padding: 3px 10px;
-	font-size: 12px;
-	-webkit-border-radius: 30px;
-	-moz-border-radius: 30px;
-	border-radius: 30px;
-	background: #869791;
-	filter: Alpha(Opacity=50);/*IE7 fix*/
-	opacity: 0.5;
-}
-/* Clickable class fix problem with hover on touch devices */
-/* Use it for non-touch hover action */
-.owl-theme .owl-controls.clickable .owl-buttons div:hover{
-	filter: Alpha(Opacity=100);/*IE7 fix*/
-	opacity: 1;
-	text-decoration: none;
-}
-
-/* Styling Pagination*/
-
-.owl-theme .owl-controls .owl-page{
-	display: inline-block;
-	zoom: 1;
-	*display: inline;/*IE7 life-saver */
-}
-.owl-theme .owl-controls .owl-page span{
-	display: block;
-	width: 12px;
-	height: 12px;
-	margin: 5px 7px;
-	filter: Alpha(Opacity=50);/*IE7 fix*/
-	opacity: 0.5;
-	-webkit-border-radius: 20px;
-	-moz-border-radius: 20px;
-	border-radius: 20px;
-	background: #869791;
-}
-
-.owl-theme .owl-controls .owl-page.active span,
-.owl-theme .owl-controls.clickable .owl-page:hover span{
-	filter: Alpha(Opacity=100);/*IE7 fix*/
-	opacity: 1;
-}
-
-/* If PaginationNumbers is true */
-
-.owl-theme .owl-controls .owl-page span.owl-numbers{
-	height: auto;
-	width: auto;
-	color: #FFF;
-	padding: 2px 10px;
-	font-size: 12px;
-	-webkit-border-radius: 30px;
-	-moz-border-radius: 30px;
-	border-radius: 30px;
-}
-
-/* preloading images */
-.owl-item.loading{
-	min-height: 150px;
-	background: url(https://extension.psu.edu/skin/frontend/base/default/css/iwd/autorelatedproducts/AjaxLoader.gif) no-repeat center center
-}
-/* This css file was generate automatically by IWD Auto Related Products extension, please dont change it. File regenerated each time admin IWDAutoRelatedProducts  settings changed */
-/* STORE: default */
-            .default .iwd-auto-related-products-slider .iwd-btn-add-to-cart {color:#FFFFFF !important; background:#3399CC !important;  }
-    .default .iwd-auto-related-products-slider .iwd-btn-add-to-cart:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
-    .default .iwd-auto-related-products-slider .iwd-btn-view-details {color:#FFFFFF !important; background:#3399CC !important;  }
-    .default .iwd-auto-related-products-slider .iwd-btn-view-details:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
-    .default .iwd-auto-related-products-slider .iwd-out-of-stock {background:#FFFFFF !important;  }
-    .default .iwd-auto-related-products-slider .iwd-out-of-stock span {color:#333333 !important; }
-    .default .iwd-auto-related-products-slider .iwd-out-of-stock:hover {background:#FFFFFF !important;}
-    .default .iwd-auto-related-products-slider .iwd-out-of-stock:hover span {color:#333333 !important;}
-    .default .iwd-auto-related-products-slider .iwd-link-wishlist {color:#3399CC !important;  }
-    .default .iwd-auto-related-products-slider .iwd-link-wishlist:hover {color:#2E8AB8 !important;}
-    .default .iwd-auto-related-products-slider .iwd-link-compare {color:#3399CC !important;  }
-    .default .iwd-auto-related-products-slider .iwd-link-compare:hover {color:#2E8AB8 !important;}
-    .default .iwd-auto-related-products-slider .iwd-product-name {color:#636363 !important;  }
-    .default .iwd-auto-related-products-slider .iwd-product-name:hover {color:#3399CC !important;}
-    .default .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
-    .default .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
-    .default .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
-    .default .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
-    .default .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
-    .default .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
-    .default .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
-    .default .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
-    .default .iwd-auto-related-products-block .block-title .title {color:#2B2B2B !important; }
-    .default .iwd-auto-related-products-block .block-title .owl-prev,
-    .default .iwd-auto-related-products-block .block-title .owl-next {color:#2B2B2B !important;}
-    .default .iwd-auto-related-products-block .block-title .owl-prev:hover,
-    .default .iwd-auto-related-products-block .block-title .owl-next:hover {color:#2B2B2B !important;}
-/* STORE: french */
-            .french .iwd-auto-related-products-slider .iwd-btn-add-to-cart {color:#FFFFFF !important; background:#3399CC !important;  }
-    .french .iwd-auto-related-products-slider .iwd-btn-add-to-cart:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
-    .french .iwd-auto-related-products-slider .iwd-btn-view-details {color:#FFFFFF !important; background:#3399CC !important;  }
-    .french .iwd-auto-related-products-slider .iwd-btn-view-details:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
-    .french .iwd-auto-related-products-slider .iwd-out-of-stock {background:#FFFFFF !important;  }
-    .french .iwd-auto-related-products-slider .iwd-out-of-stock span {color:#333333 !important; }
-    .french .iwd-auto-related-products-slider .iwd-out-of-stock:hover {background:#FFFFFF !important;}
-    .french .iwd-auto-related-products-slider .iwd-out-of-stock:hover span {color:#333333 !important;}
-    .french .iwd-auto-related-products-slider .iwd-link-wishlist {color:#3399CC !important;  }
-    .french .iwd-auto-related-products-slider .iwd-link-wishlist:hover {color:#2E8AB8 !important;}
-    .french .iwd-auto-related-products-slider .iwd-link-compare {color:#3399CC !important;  }
-    .french .iwd-auto-related-products-slider .iwd-link-compare:hover {color:#2E8AB8 !important;}
-    .french .iwd-auto-related-products-slider .iwd-product-name {color:#636363 !important;  }
-    .french .iwd-auto-related-products-slider .iwd-product-name:hover {color:#3399CC !important;}
-    .french .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
-    .french .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
-    .french .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
-    .french .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
-    .french .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
-    .french .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
-    .french .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
-    .french .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
-    .french .iwd-auto-related-products-block .block-title .title {color:#2B2B2B !important; }
-    .french .iwd-auto-related-products-block .block-title .owl-prev,
-    .french .iwd-auto-related-products-block .block-title .owl-next {color:#2B2B2B !important;}
-    .french .iwd-auto-related-products-block .block-title .owl-prev:hover,
-    .french .iwd-auto-related-products-block .block-title .owl-next:hover {color:#2B2B2B !important;}
-/* STORE: german */
-            .german .iwd-auto-related-products-slider .iwd-btn-add-to-cart {color:#FFFFFF !important; background:#3399CC !important;  }
-    .german .iwd-auto-related-products-slider .iwd-btn-add-to-cart:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
-    .german .iwd-auto-related-products-slider .iwd-btn-view-details {color:#FFFFFF !important; background:#3399CC !important;  }
-    .german .iwd-auto-related-products-slider .iwd-btn-view-details:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
-    .german .iwd-auto-related-products-slider .iwd-out-of-stock {background:#FFFFFF !important;  }
-    .german .iwd-auto-related-products-slider .iwd-out-of-stock span {color:#333333 !important; }
-    .german .iwd-auto-related-products-slider .iwd-out-of-stock:hover {background:#FFFFFF !important;}
-    .german .iwd-auto-related-products-slider .iwd-out-of-stock:hover span {color:#333333 !important;}
-    .german .iwd-auto-related-products-slider .iwd-link-wishlist {color:#3399CC !important;  }
-    .german .iwd-auto-related-products-slider .iwd-link-wishlist:hover {color:#2E8AB8 !important;}
-    .german .iwd-auto-related-products-slider .iwd-link-compare {color:#3399CC !important;  }
-    .german .iwd-auto-related-products-slider .iwd-link-compare:hover {color:#2E8AB8 !important;}
-    .german .iwd-auto-related-products-slider .iwd-product-name {color:#636363 !important;  }
-    .german .iwd-auto-related-products-slider .iwd-product-name:hover {color:#3399CC !important;}
-    .german .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
-    .german .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
-    .german .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
-    .german .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
-    .german .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
-    .german .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
-    .german .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
-    .german .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
-    .german .iwd-auto-related-products-block .block-title .title {color:#2B2B2B !important; }
-    .german .iwd-auto-related-products-block .block-title .owl-prev,
-    .german .iwd-auto-related-products-block .block-title .owl-next {color:#2B2B2B !important;}
-    .german .iwd-auto-related-products-block .block-title .owl-prev:hover,
-    .german .iwd-auto-related-products-block .block-title .owl-next:hover {color:#2B2B2B !important;}
-
-.iwd-auto-related-products-slider .product-info {text-align:center; position:relative; padding-bottom:95px;}
-.iwd-auto-related-products-slider .product-info .actions {padding-top:10px; position:absolute; bottom:0; min-height:85px; width:100%;}
-.iwd-auto-related-products-slider .iwd-out-of-stock {display:inline-block; padding:7px 15px; text-align:center; margin-bottom: 0; font-size: 13px; text-transform: uppercase; }
-
-
-/* DIRECTION CONTROLS (NEXT / PREV) */
-.iwd-control-slider .owl-prev {margin:5px; color:#636363; cursor:pointer;}
-.iwd-control-slider .owl-next {margin:5px; color:#636363; cursor:pointer;}
-.iwd-control-slider .owl-prev:hover {color:#cccccc;}
-.iwd-control-slider .owl-next:hover {color:#cccccc;}
-
-
-.clear {clear:both;}
 /*** FONTS ***/
 @import url(//fonts.googleapis.com/css?family=Open+Sans:400,700);
 
@@ -14489,6 +14358,184 @@ body:after {
 @media only screen and (max-width: 767px) {
 	.aw-pq2-list__question-expand{margin: 0;}
 }
+/*
+* 	Owl Carousel Owl Demo Theme 
+*	v1.3.3
+*/
+
+.owl-theme .owl-controls{
+	margin-top: 10px;
+	text-align: center;
+}
+
+/* Styling Next and Prev buttons */
+
+.owl-theme .owl-controls .owl-buttons div{
+	color: #FFF;
+	display: inline-block;
+	zoom: 1;
+	*display: inline;/*IE7 life-saver */
+	margin: 5px;
+	padding: 3px 10px;
+	font-size: 12px;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	border-radius: 30px;
+	background: #869791;
+	filter: Alpha(Opacity=50);/*IE7 fix*/
+	opacity: 0.5;
+}
+/* Clickable class fix problem with hover on touch devices */
+/* Use it for non-touch hover action */
+.owl-theme .owl-controls.clickable .owl-buttons div:hover{
+	filter: Alpha(Opacity=100);/*IE7 fix*/
+	opacity: 1;
+	text-decoration: none;
+}
+
+/* Styling Pagination*/
+
+.owl-theme .owl-controls .owl-page{
+	display: inline-block;
+	zoom: 1;
+	*display: inline;/*IE7 life-saver */
+}
+.owl-theme .owl-controls .owl-page span{
+	display: block;
+	width: 12px;
+	height: 12px;
+	margin: 5px 7px;
+	filter: Alpha(Opacity=50);/*IE7 fix*/
+	opacity: 0.5;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	background: #869791;
+}
+
+.owl-theme .owl-controls .owl-page.active span,
+.owl-theme .owl-controls.clickable .owl-page:hover span{
+	filter: Alpha(Opacity=100);/*IE7 fix*/
+	opacity: 1;
+}
+
+/* If PaginationNumbers is true */
+
+.owl-theme .owl-controls .owl-page span.owl-numbers{
+	height: auto;
+	width: auto;
+	color: #FFF;
+	padding: 2px 10px;
+	font-size: 12px;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	border-radius: 30px;
+}
+
+/* preloading images */
+.owl-item.loading{
+	min-height: 150px;
+	background: url(https://extension.psu.edu/skin/frontend/base/default/css/iwd/autorelatedproducts/AjaxLoader.gif) no-repeat center center
+}
+/* This css file was generate automatically by IWD Auto Related Products extension, please dont change it. File regenerated each time admin IWDAutoRelatedProducts  settings changed */
+/* STORE: default */
+            .default .iwd-auto-related-products-slider .iwd-btn-add-to-cart {color:#FFFFFF !important; background:#3399CC !important;  }
+    .default .iwd-auto-related-products-slider .iwd-btn-add-to-cart:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
+    .default .iwd-auto-related-products-slider .iwd-btn-view-details {color:#FFFFFF !important; background:#3399CC !important;  }
+    .default .iwd-auto-related-products-slider .iwd-btn-view-details:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
+    .default .iwd-auto-related-products-slider .iwd-out-of-stock {background:#FFFFFF !important;  }
+    .default .iwd-auto-related-products-slider .iwd-out-of-stock span {color:#333333 !important; }
+    .default .iwd-auto-related-products-slider .iwd-out-of-stock:hover {background:#FFFFFF !important;}
+    .default .iwd-auto-related-products-slider .iwd-out-of-stock:hover span {color:#333333 !important;}
+    .default .iwd-auto-related-products-slider .iwd-link-wishlist {color:#3399CC !important;  }
+    .default .iwd-auto-related-products-slider .iwd-link-wishlist:hover {color:#2E8AB8 !important;}
+    .default .iwd-auto-related-products-slider .iwd-link-compare {color:#3399CC !important;  }
+    .default .iwd-auto-related-products-slider .iwd-link-compare:hover {color:#2E8AB8 !important;}
+    .default .iwd-auto-related-products-slider .iwd-product-name {color:#636363 !important;  }
+    .default .iwd-auto-related-products-slider .iwd-product-name:hover {color:#3399CC !important;}
+    .default .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
+    .default .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
+    .default .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
+    .default .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
+    .default .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
+    .default .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
+    .default .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
+    .default .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
+    .default .iwd-auto-related-products-block .block-title .title {color:#2B2B2B !important; }
+    .default .iwd-auto-related-products-block .block-title .owl-prev,
+    .default .iwd-auto-related-products-block .block-title .owl-next {color:#2B2B2B !important;}
+    .default .iwd-auto-related-products-block .block-title .owl-prev:hover,
+    .default .iwd-auto-related-products-block .block-title .owl-next:hover {color:#2B2B2B !important;}
+/* STORE: french */
+            .french .iwd-auto-related-products-slider .iwd-btn-add-to-cart {color:#FFFFFF !important; background:#3399CC !important;  }
+    .french .iwd-auto-related-products-slider .iwd-btn-add-to-cart:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
+    .french .iwd-auto-related-products-slider .iwd-btn-view-details {color:#FFFFFF !important; background:#3399CC !important;  }
+    .french .iwd-auto-related-products-slider .iwd-btn-view-details:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
+    .french .iwd-auto-related-products-slider .iwd-out-of-stock {background:#FFFFFF !important;  }
+    .french .iwd-auto-related-products-slider .iwd-out-of-stock span {color:#333333 !important; }
+    .french .iwd-auto-related-products-slider .iwd-out-of-stock:hover {background:#FFFFFF !important;}
+    .french .iwd-auto-related-products-slider .iwd-out-of-stock:hover span {color:#333333 !important;}
+    .french .iwd-auto-related-products-slider .iwd-link-wishlist {color:#3399CC !important;  }
+    .french .iwd-auto-related-products-slider .iwd-link-wishlist:hover {color:#2E8AB8 !important;}
+    .french .iwd-auto-related-products-slider .iwd-link-compare {color:#3399CC !important;  }
+    .french .iwd-auto-related-products-slider .iwd-link-compare:hover {color:#2E8AB8 !important;}
+    .french .iwd-auto-related-products-slider .iwd-product-name {color:#636363 !important;  }
+    .french .iwd-auto-related-products-slider .iwd-product-name:hover {color:#3399CC !important;}
+    .french .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
+    .french .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
+    .french .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
+    .french .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
+    .french .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
+    .french .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
+    .french .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
+    .french .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
+    .french .iwd-auto-related-products-block .block-title .title {color:#2B2B2B !important; }
+    .french .iwd-auto-related-products-block .block-title .owl-prev,
+    .french .iwd-auto-related-products-block .block-title .owl-next {color:#2B2B2B !important;}
+    .french .iwd-auto-related-products-block .block-title .owl-prev:hover,
+    .french .iwd-auto-related-products-block .block-title .owl-next:hover {color:#2B2B2B !important;}
+/* STORE: german */
+            .german .iwd-auto-related-products-slider .iwd-btn-add-to-cart {color:#FFFFFF !important; background:#3399CC !important;  }
+    .german .iwd-auto-related-products-slider .iwd-btn-add-to-cart:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
+    .german .iwd-auto-related-products-slider .iwd-btn-view-details {color:#FFFFFF !important; background:#3399CC !important;  }
+    .german .iwd-auto-related-products-slider .iwd-btn-view-details:hover {color:#FFFFFF !important; background:#2E8AB8 !important;}
+    .german .iwd-auto-related-products-slider .iwd-out-of-stock {background:#FFFFFF !important;  }
+    .german .iwd-auto-related-products-slider .iwd-out-of-stock span {color:#333333 !important; }
+    .german .iwd-auto-related-products-slider .iwd-out-of-stock:hover {background:#FFFFFF !important;}
+    .german .iwd-auto-related-products-slider .iwd-out-of-stock:hover span {color:#333333 !important;}
+    .german .iwd-auto-related-products-slider .iwd-link-wishlist {color:#3399CC !important;  }
+    .german .iwd-auto-related-products-slider .iwd-link-wishlist:hover {color:#2E8AB8 !important;}
+    .german .iwd-auto-related-products-slider .iwd-link-compare {color:#3399CC !important;  }
+    .german .iwd-auto-related-products-slider .iwd-link-compare:hover {color:#2E8AB8 !important;}
+    .german .iwd-auto-related-products-slider .iwd-product-name {color:#636363 !important;  }
+    .german .iwd-auto-related-products-slider .iwd-product-name:hover {color:#3399CC !important;}
+    .german .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
+    .german .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
+    .german .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
+    .german .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
+    .german .iwd-auto-related-products-slider .price-box .label {color:#636363 !important;}
+    .german .iwd-auto-related-products-slider .price-box .price-label {color:#636363 !important;}
+    .german .iwd-auto-related-products-slider .price-box .old-price .price {color:#A0A0A0 !important;}
+    .german .iwd-auto-related-products-slider .price {color:#3399CC !important;  }
+    .german .iwd-auto-related-products-block .block-title .title {color:#2B2B2B !important; }
+    .german .iwd-auto-related-products-block .block-title .owl-prev,
+    .german .iwd-auto-related-products-block .block-title .owl-next {color:#2B2B2B !important;}
+    .german .iwd-auto-related-products-block .block-title .owl-prev:hover,
+    .german .iwd-auto-related-products-block .block-title .owl-next:hover {color:#2B2B2B !important;}
+
+.iwd-auto-related-products-slider .product-info {text-align:center; position:relative; padding-bottom:95px;}
+.iwd-auto-related-products-slider .product-info .actions {padding-top:10px; position:absolute; bottom:0; min-height:85px; width:100%;}
+.iwd-auto-related-products-slider .iwd-out-of-stock {display:inline-block; padding:7px 15px; text-align:center; margin-bottom: 0; font-size: 13px; text-transform: uppercase; }
+
+
+/* DIRECTION CONTROLS (NEXT / PREV) */
+.iwd-control-slider .owl-prev {margin:5px; color:#636363; cursor:pointer;}
+.iwd-control-slider .owl-next {margin:5px; color:#636363; cursor:pointer;}
+.iwd-control-slider .owl-prev:hover {color:#cccccc;}
+.iwd-control-slider .owl-next:hover {color:#cccccc;}
+
+
+.clear {clear:both;}
 /* Old Calendar Styles */
 
 .left {float:left;}
