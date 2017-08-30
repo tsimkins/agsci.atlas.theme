@@ -58,8 +58,14 @@ def VirtualBrainFactory(user_id):
 
     class VirtualBrain(AbstractCatalogBrain):
 
-        def getURL(self):
+        def getPloneURL(self):
             return self.data.get('plone_url', '')
+
+        def getURL(self):
+            url = self.data.get('magento_url', '')
+
+            if url:
+                return u'https://extension.psu.edu/%s' % url
 
         def getObject(self):
             return self
@@ -90,7 +96,7 @@ def VirtualBrainFactory(user_id):
         def getField(self, field_name):
 
             if field_name in ['image', IMAGE_FIELD_NAME]:
-                return leadimage_field(self.getURL(), self.Title)
+                return leadimage_field(self.getPloneURL(), self.Title)
 
         def hasContentLeadImage(self):
             return not not self.data.get(u'has_lead_image', False)
