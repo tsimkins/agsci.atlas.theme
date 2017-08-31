@@ -366,8 +366,10 @@
       #plone .portletWrapper .portletLinkIcon .portletItem span {
         margin-left: 0.25em; }
     #plone .portletWrapper .imagePortlet .portletItem {
-      margin-bottom: 1.25em; }
+      margin-bottom: 1.5em;
+      text-align: center; }
       #plone .portletWrapper .imagePortlet .portletItem img {
+        display: inline;
         max-width: 100%; }
     #plone .portletWrapper .portletLinkButton .portletItem {
       background-color: #006db1;

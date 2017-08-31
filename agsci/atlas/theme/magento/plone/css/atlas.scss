@@ -431,9 +431,12 @@ font-size: 1.125em;
         .imagePortlet {
             .portletItem {
                 
-                margin-bottom: 1.25em;
+                margin-bottom: 1.5em;
+                
+                text-align: center;
                 
                 img {
+                    display: inline;
                     max-width: 100%;
                 }
             }
