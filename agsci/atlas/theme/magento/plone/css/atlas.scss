@@ -428,6 +428,17 @@ font-size: 1.125em;
             }
         }
         
+        .imagePortlet {
+            .portletItem {
+                
+                margin-bottom: 1.25em;
+                
+                img {
+                    max-width: 100%;
+                }
+            }
+        }
+        
         .portletLinkButton {
             .portletItem {
                 background-color: $button_background;
