@@ -198,6 +198,12 @@
     <!-- Drop "Read more" -->
     <drop css:content="#content .tileFooter" />
 
+    <!-- Publication download -->
+
+    <after
+        css:content="#content > .publication"
+        css:theme-children="#plone #content" />
+
     <!-- listing-bar -->
 
     <after

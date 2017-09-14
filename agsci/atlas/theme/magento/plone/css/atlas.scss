@@ -386,6 +386,37 @@ font-size: 1.125em;
                 font-weight: bold;
             }
         }
+        
+        .publication {
+            font-size: 0.875em;
+            border-top: none;
+            margin-bottom: 1.5em;
+            
+            h2 {
+                margin: 1.125em 0 0.375em 0;
+                font-size: 1.375em;
+                padding: 0;
+                border: none;
+                font-weight: 600;
+            }
+    
+            h3 {
+                margin-top: 0;
+            }
+    
+        }
+        
+        h2.inline,
+        h3.inline {
+            font-size: 1em;
+            font-weight: 600;
+            border-bottom-width: 0;
+            display: inline;
+        }
+        
+        h3.inline:after {
+            content: ":";
+        }
 
     }
 

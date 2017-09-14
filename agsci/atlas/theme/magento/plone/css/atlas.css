@@ -333,6 +333,26 @@
       padding-right: 2em; }
     #plone #content .listingBar.pagination .current {
       font-weight: bold; }
+  #plone #content .publication {
+    font-size: 0.875em;
+    border-top: none;
+    margin-bottom: 1.5em; }
+    #plone #content .publication h2 {
+      margin: 1.125em 0 0.375em 0;
+      font-size: 1.375em;
+      padding: 0;
+      border: none;
+      font-weight: 600; }
+    #plone #content .publication h3 {
+      margin-top: 0; }
+  #plone #content h2.inline,
+  #plone #content h3.inline {
+    font-size: 1em;
+    font-weight: 600;
+    border-bottom-width: 0;
+    display: inline; }
+  #plone #content h3.inline:after {
+    content: ":"; }
   #plone #homepageimage {
     display: block;
     text-align: left;
