@@ -13,7 +13,7 @@ function scaleHomepageImage() {
 
 $ji(document).ready(
     function () {
-        
+
         var hpi = $ji('#homepageimage');
         
         if (hpi.size()) {

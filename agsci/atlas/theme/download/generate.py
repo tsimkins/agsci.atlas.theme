@@ -45,23 +45,23 @@ changes = []
 def remove_cdn(url):
 
     parsed_url = urlparse(url)
-    
+
     hostname = parsed_url.netloc
-    
+
     if CDN_HOSTNAME in hostname:
         url = url.replace(hostname, ORIGINAL_HOSTNAME)
-    
+
     return url
 
 def content_type_from_extension(url):
-    
+
     extension = url.split('.')[-1]
-    
+
     content_types = {
         'css' : 'text/css',
         'js' : 'application/javascript',
     }
-    
+
     return content_types.get(extension, '')
 
 def get_css_filename(url):
@@ -102,13 +102,13 @@ for i in data['log']['entries']:
     except OSError:
         #already exists
         pass
-    
+
     if content_type not in ['text/html']:
-    
+
         # Ignore per-product images
         if parsed_url.path.startswith('/media/catalog/product'):
             continue
-    
+
         filename = os.path.basename(parsed_url.path)
         cksum = get_css_filename(parsed_url.path)
 
@@ -203,6 +203,56 @@ head_soup = BeautifulSoup("""
 foot_soup = BeautifulSoup("""
     <script type="text/javascript" src="featherlight/featherlight.min.js"></script>
     <script type="text/javascript" src="plone/js/atlas.js"></script>
+    <script type="text/javascript">
+
+        function do_nothing() {
+            return;
+        }
+
+        var IWD = {
+
+            QuickView : {
+                config: { enable : false }
+            },
+
+            PSU : {
+                Processor :  {
+                    createProductTabs : do_nothing,
+                    init : do_nothing
+                }
+            },
+
+            Featured : {
+                Processor :  {
+                    createProductTabs : do_nothing,
+                    init : do_nothing
+                }
+            },
+
+            Tabs : {
+                 Processor :  {
+                    createProductTabs : do_nothing,
+                    init : do_nothing
+                }
+            },
+
+            Signin : {
+                init : do_nothing
+            },
+
+            StockNotification : {
+                init : do_nothing
+            },
+
+            Publication : {
+                Processor :  {
+                    init : do_nothing
+                }
+            }
+
+        }
+
+    </script>
 """.strip(), 'html.parser').contents
 
 # Append CSS and body content
@@ -213,6 +263,7 @@ for i in content_soup:
     soup.find('div', attrs={'class' : 'main'}).append(i)
 
 # Remove unused stuff
+soup.find('div', attrs={'class' : 'global-site-notice noscript'}).extract()
 soup.find('div', attrs={'class' : 'col-main'}).extract()
 soup.find('div', attrs={'class' : 'col-right sidebar'}).extract()
 
@@ -242,9 +293,11 @@ for body in soup.findAll('body'):
             klass.remove(k)
     body['class'] = " ".join(klass)
 
-# Append
+# Append scripts to body
+body = soup.find('body')
+
 for i in foot_soup:
-    soup.find('body').append(i)
+    body.append(i)
 
 # Fix breadcrumb
 for breadcrumbs in soup.findAll("div", attrs={'class' : 'breadcrumbs'}):
@@ -256,10 +309,10 @@ for breadcrumbs in soup.findAll("div", attrs={'class' : 'breadcrumbs'}):
 for meta in soup.findAll('meta'):
     name = meta.get('name', '')
     property = meta.get('property', '')
-    
+
     if name in ('robots', 'description') or property.startswith('og:'):
         _ = meta.extract()
-        
+
 # Remove script of type application/ld+json contents
 for script in soup.findAll('script', attrs={'type' : 'application/ld+json'}):
     script.contents = []

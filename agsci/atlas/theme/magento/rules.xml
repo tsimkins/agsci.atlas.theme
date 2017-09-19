@@ -209,7 +209,13 @@
     <after
         css:content="#content > .listingBar"
         css:theme-children="#plone #content" />
+        
+    <!-- script application/ld+json data -->
 
+    <replace
+        css:content-children="script[type='application/ld+json']"
+        css:theme-children="script[type='application/ld+json']" />
+        
     <!-- Drop items -->
     <drop css:content="#addthis" />
 
