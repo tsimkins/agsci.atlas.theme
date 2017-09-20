@@ -348,15 +348,18 @@
   #plone #content .documentContributors .documentContributorsItems {
     padding-left: 0.75em; }
     #plone #content .documentContributors .documentContributorsItems .contentLeadImageContainer {
-      max-width: 5em;
+      max-width: 5rem;
       float: left;
-      margin: 0 0.75em 0.75em 0; }
+      margin: 0 0.75em 0.75rem 0; }
     #plone #content .documentContributors .documentContributorsItems .tileHeadline {
-      font-size: 1.125em; }
-    #plone #content .documentContributors .documentContributorsItems .facultyStaffDirectory ul.jobTitle {
-      margin-bottom: 1em; }
-    #plone #content .documentContributors .documentContributorsItems .facultyStaffDirectory > div {
-      color: #575757; }
+      font-size: 1.125em;
+      margin-left: 5.75rem; }
+    #plone #content .documentContributors .documentContributorsItems .facultyStaffDirectory {
+      margin-left: 5.75rem; }
+      #plone #content .documentContributors .documentContributorsItems .facultyStaffDirectory ul.jobTitle {
+        margin-bottom: 1em; }
+      #plone #content .documentContributors .documentContributorsItems .facultyStaffDirectory > div {
+        color: #575757; }
   #plone #content h2.inline,
   #plone #content h3.inline {
     font-size: 1em;
