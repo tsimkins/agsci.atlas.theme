@@ -35,5 +35,17 @@
         permission="zope2.View"
     />
 
+    <!-- Contributors Viewlet -->
+    <configure package="Products.agCommon.browser.viewlets">
+        <browser:viewlet
+            name="agsci.atlas.theme.contributors"
+            for="..interfaces.IContributors"
+            manager="plone.app.layout.viewlets.interfaces.IBelowContentBody"
+            class="agsci.atlas.theme.browser.viewlets.ContributorsViewlet"
+            layer="..interfaces.IThemeSpecific"
+            template="templates/contributors.pt"
+            permission="zope2.View"
+            />
+    </configure>
 
 </configure>

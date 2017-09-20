@@ -5,7 +5,7 @@
         color: $link_color;
         text-decoration: none;
     }
-    
+
     a:hover {
         color: $link_color;
         text-decoration: underline;
@@ -26,11 +26,11 @@
         color: #000000;
 
         @include body-links;
-        
+
         a, a:hover {
             text-decoration: underline;
         }
-        
+
         .product-name h1.documentFirstHeading {
             margin-bottom: 0.375em;
         }
@@ -89,7 +89,7 @@
             width: 100%;
         }
     }
-    
+
     body.section-4-h .main #left-column {
         background-image: none;
         padding-bottom: 0;
@@ -162,16 +162,16 @@ font-size: 1.125em;
         h2 a {
             color: $h2_color !important;
         }
-        
+
         h3 a {
             color: $h3_color !important;
         }
-        
+
         h4 {
             text-transform: none;
             font-size: 17px;
         }
-        
+
         table {
 
             margin-bottom: 1.5em;
@@ -197,7 +197,7 @@ font-size: 1.125em;
 
         .tileItemContainer {
             .portletWrapper {
-                
+
                 h2.portletHeader {
                     margin-bottom: 0.5em;
                 }
@@ -249,7 +249,7 @@ font-size: 1.125em;
                 padding-bottom: 66.6667%;
                 overflow: hidden;
                 position: relative;
-                
+
                 img {
                     max-width: 100%;
                     width: 100%;
@@ -262,13 +262,13 @@ font-size: 1.125em;
                     top: 50%;
                 }
             }
-            
+
             .tileTitle {
                 margin-top: 0.25em;
                 font-size: 1.125em;
                 line-height: 1.125;
             }
-            
+
             .tileDescription,
             .tileBody {
                 font-size: 1em;
@@ -276,14 +276,14 @@ font-size: 1.125em;
             }
         }
 
-        
+
         #content-core {
 
             .tileItemLeadImage,
             .tileSummaryLeadImage {
                 clear: both;
             }
-            
+
             dd {
                 margin-bottom: 2em;
 
@@ -296,7 +296,7 @@ font-size: 1.125em;
         .tileTitle, .tileHeadline {
             font-size: 1.25em;
             font-weight: bold;
-            
+
             @include body-links;
         }
 
@@ -312,7 +312,7 @@ font-size: 1.125em;
             li {
                 margin-left: 2em;
                 margin-bottom: 0.25em;
-                
+
                 p {
                     margin: 0;
                 }
@@ -325,7 +325,7 @@ font-size: 1.125em;
 
         ol {
             list-style-type: roman;
-        }        
+        }
 
         p {
             margin-bottom: 1.375em;
@@ -361,37 +361,37 @@ font-size: 1.125em;
                 content: "\00BB";
             }
         }
-        
+
         .listingBar.pagination {
 
             clear: both;
             margin-top: 2em;
             padding-top: 1em;
             margin-bottom: 1em;
-            
+
             span, a {
                 display: inline;
                 width: auto;
             }
-            
+
             a.next {
                 float: right;
             }
-            
+
             a.previous {
                 padding-right: 2em;
             }
-            
+
             .current {
                 font-weight: bold;
             }
         }
-        
+
         .publication {
             font-size: 0.875em;
             border-top: none;
             margin-bottom: 1.5em;
-            
+
             h2 {
                 margin: 1.125em 0 0.375em 0;
                 font-size: 1.375em;
@@ -399,13 +399,41 @@ font-size: 1.125em;
                 border: none;
                 font-weight: 600;
             }
-    
+
             h3 {
                 margin-top: 0;
             }
-    
+
         }
-        
+
+        .documentContributors {
+            .documentContributorsItems {
+
+                padding-left: 0.75em;
+
+                .contentLeadImageContainer {
+                    max-width: 5em;
+                    float: left;
+                    margin: 0 0.75em 0.75em 0;
+                }
+
+                .tileHeadline {
+                    font-size: 1.125em;
+                }
+
+                .facultyStaffDirectory {
+
+                    ul.jobTitle {
+                        margin-bottom: 1em;
+                    }
+
+                    > div {
+                        color: #575757;
+                    }
+                }
+            }
+        }
+
         h2.inline,
         h3.inline {
             font-size: 1em;
@@ -413,7 +441,7 @@ font-size: 1.125em;
             border-bottom-width: 0;
             display: inline;
         }
-        
+
         h3.inline:after {
             content: ":";
         }
@@ -430,7 +458,7 @@ font-size: 1.125em;
     }
 
     .portletWrapper {
-        
+
         h2.portletHeader {
             margin-bottom: 0.125em;
         }
@@ -448,51 +476,51 @@ font-size: 1.125em;
 
         .portletLinkIcon {
             .portletItem {
-                
+
                 @include body-links;
-                
+
                 margin-bottom: 0.75em;
-                
+
                 span {
                     margin-left: 0.25em;
                 }
             }
         }
-        
+
         .imagePortlet {
             .portletItem {
-                
+
                 margin-bottom: 1.5em;
-                
+
                 text-align: center;
-                
+
                 img {
                     display: inline;
                     max-width: 100%;
                 }
             }
         }
-        
+
         .portletLinkButton {
             .portletItem {
                 background-color: $button_background;
                 padding: 0.75em;
                 margin: 1em 0;
-                
+
                 a {
                     text-decoration: none;
                     color: #FFFFFF;
                 }
             }
-            
+
             .portletItem:hover {
                 background-color: $button_background_hover;
             }
         }
-    
+
         .portletNavigationTree {
             .portletItem {
-                
+
                 @include body-links;
 
                 .navTree {
@@ -506,13 +534,13 @@ font-size: 1.125em;
                         font-weight: bold;
                     }
                 }
-                
+
                 > ul > li {
                     margin-bottom: 0.875em;
                     line-height: 1.125;
-                    
+
                     > ul {
-                        
+
                         margin: 0.25em 0 0.75em 0.5em;
                         padding: 0.25em 0.75em;
                         border: 1px solid #DDDD;
@@ -527,12 +555,12 @@ font-size: 1.125em;
                 }
             }
         }
-    
+
         .portletCollection {
             .portletItem {
-                
+
                 @include body-links;
-                
+
                 margin-bottom: 0.75em;
             }
         }
@@ -553,7 +581,7 @@ font-size: 1.125em;
     }
 
     #center-column {
-        
+
         .portletfeedmixer {
             .portletItem {
 
@@ -576,7 +604,7 @@ font-size: 1.125em;
                     font-size: 0.875em;
                     color: #575757;
                 }
-                
+
                 .portletItemDetails.summary {
                     font-size: 1em;
                 }
