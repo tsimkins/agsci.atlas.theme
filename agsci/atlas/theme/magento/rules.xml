@@ -235,6 +235,8 @@
     <drop css:theme=".subscription > p" />
 
     <drop css:theme="#header-search" />
+    <drop css:theme=".top-header .header-search-block" />
+    <drop css:theme=".top-header .account-cart-wrapper" />
 
     <!-- Subscription empty -->
     <append css:theme=".subscription">
