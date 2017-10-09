@@ -317,6 +317,13 @@ for meta in soup.findAll('meta'):
 for script in soup.findAll('script', attrs={'type' : 'application/ld+json'}):
     script.contents = []
 
+# Remove "Customer Service" item from footer.
+for footer in soup.findAll('div', attrs={'class' : 'footer'}):
+    for item in footer.findAll('div', attrs={'class' : 'item'}):
+        h3 = item.find('h3')
+        if h3 and 'customer service' in h3.text.lower():
+            _ = item.extract()
+
 # Tidy
 html, errors = tidy_document(unicode(soup))
 

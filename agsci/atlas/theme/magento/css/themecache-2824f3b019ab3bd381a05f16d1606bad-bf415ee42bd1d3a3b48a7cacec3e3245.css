@@ -13,4 +13,7 @@ body{-webkit-print-color-adjust:exact}.catalog-product-view .z-block-header,
 address{max-width:1175px;margin:0
 auto;padding:0
 12.5px;color:#a0a0a0;font-size:12px}.footer-container .copyright address
-a{color:#fff;text-decoration:none}
+a{color:#fff;text-decoration:none}table
+th{border:1px
+solid #2d2d2d;padding:5px}.catalog-product-view
+p{font-weight:500}
