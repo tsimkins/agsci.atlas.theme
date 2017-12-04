@@ -310,7 +310,7 @@ for meta in soup.findAll('meta'):
     name = meta.get('name', '')
     property = meta.get('property', '')
 
-    if name in ('robots', 'description') or property.startswith('og:'):
+    if name in ('robots', 'description') or property.startswith('og:') or name.startswith('twitter:'):
         _ = meta.extract()
 
 # Remove script of type application/ld+json contents
