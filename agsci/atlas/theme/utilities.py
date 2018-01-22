@@ -30,10 +30,13 @@ class leadimage_field(object):
         return self
 
     def tag(self, *args, **kwargs):
-        v = u"""
-                    <img class="%s" src="%s/@@images/leadimage/leadimage" alt="%s" />
-                """.strip()
-        return v % (kwargs.get('css_class', ''), self.url, self.alt)
+        if self.url:
+            v = u"""
+                        <img class="%s" src="%s/@@images/leadimage/leadimage" alt="%s" />
+                    """.strip()
+            return v % (kwargs.get('css_class', ''), self.url, self.alt)
+
+        return ''
 
 @ram.cache(vbf_timeout_cachekey)
 def VirtualBrainFactory(user_id):
@@ -93,7 +96,10 @@ def VirtualBrainFactory(user_id):
         def getField(self, field_name):
 
             if field_name in ['image', IMAGE_FIELD_NAME]:
-                return leadimage_field(self.getPloneURL(), self.Title)
+                if self.hasContentLeadImage():
+                    return leadimage_field(self.getPloneURL(), self.Title)
+                else:
+                    return leadimage_field(None, self.Title)
 
         def hasContentLeadImage(self):
             return not not self.data.get(u'has_lead_image', False)
