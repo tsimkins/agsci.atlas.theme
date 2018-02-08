@@ -630,5 +630,10 @@ body.section-4-h #left-column {
     padding-bottom: 150px;
 }
 
+
+#search, .page-header #search_fixed {
+    text-transform: none;
+}
+
 @import 'tile';
 @import 'tile-folder';

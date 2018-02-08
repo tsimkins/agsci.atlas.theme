@@ -479,6 +479,9 @@ body.section-4-h #left-column {
   background-position: center bottom;
   padding-bottom: 150px; }
 
+#search, .page-header #search_fixed {
+  text-transform: none; }
+
 /* Automagically generated tile homepage css */
 /* == Variables == */
 /* == Basic Rules == */

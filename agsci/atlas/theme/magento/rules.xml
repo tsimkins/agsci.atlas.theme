@@ -99,6 +99,11 @@
             <xsl:attribute name="class">col col-md-8</xsl:attribute>
         </before>
 
+        <before css:theme-children="#plone #content-column"
+            css:if-content="#portal-column-content.s0">
+            <xsl:attribute name="class">col col-md-16</xsl:attribute>
+        </before>
+
     </rules>
 
     <!-- homepage content (homepage) -->
