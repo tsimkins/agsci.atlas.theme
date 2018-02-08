@@ -482,6 +482,9 @@ body.section-4-h #left-column {
 #search, .page-header #search_fixed {
   text-transform: none; }
 
+body.template-search_z3 .breadcrumbs {
+  display: none; }
+
 /* Automagically generated tile homepage css */
 /* == Variables == */
 /* == Basic Rules == */

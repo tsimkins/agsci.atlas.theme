@@ -635,5 +635,11 @@ body.section-4-h #left-column {
     text-transform: none;
 }
 
+body.template-search_z3 {
+    .breadcrumbs {
+        display: none;
+    }
+}
+
 @import 'tile';
 @import 'tile-folder';

@@ -36,4 +36,17 @@
         permission="zope2.View"
     />
 
+    <configure package="Products.agCommon.browser.views">
+
+        <browser:page
+            for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+            name="search_z3"
+            class="agsci.atlas.theme.browser.views.SearchView"
+            template="templates/search_z3.pt"
+            layer="Products.agCommon.browser.interfaces.IThemeSpecific"
+            permission="zope2.View"
+        />
+
+    </configure>
+
 </configure>

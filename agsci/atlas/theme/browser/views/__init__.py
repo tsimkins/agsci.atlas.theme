@@ -1,5 +1,7 @@
 from Products.agCommon.browser.views import FolderView
+from Products.agCommon.browser.views import SearchView as _SearchView
 from agsci.atlas.theme.utilities import getPeopleBrains
+from zope.component.hooks import getSite
 
 class PeopleCollection(FolderView):
 
@@ -34,3 +36,28 @@ class PeopleCollection(FolderView):
                     return v
 
         return []
+
+class SearchView(_SearchView):
+    
+    def page_title(self):
+        path = self.request.form.get('path', None)
+        
+        if path:
+            if isinstance(path, (list, tuple)):
+                path = path[0]
+                
+            site = getSite()
+            
+            site_path = '/' + site.virtual_url_path() + '/'
+            
+            if path.startswith(site_path):
+                path = path[len(site_path):]
+                
+                try:
+                    o = site.restrictedTraverse(path)
+                except:
+                    pass
+                else:
+                    return u'Search %s' % o.Title()
+            
+        return u'Search'
