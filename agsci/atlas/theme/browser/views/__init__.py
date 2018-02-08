@@ -38,26 +38,26 @@ class PeopleCollection(FolderView):
         return []
 
 class SearchView(_SearchView):
-    
+
     def page_title(self):
         path = self.request.form.get('path', None)
-        
+
         if path:
             if isinstance(path, (list, tuple)):
                 path = path[0]
-                
+
             site = getSite()
-            
-            site_path = '/' + site.virtual_url_path() + '/'
-            
+
+            site_path = site.absolute_url_path() + '/'
+
             if path.startswith(site_path):
                 path = path[len(site_path):]
-                
+
                 try:
                     o = site.restrictedTraverse(path)
                 except:
                     pass
                 else:
                     return u'Search %s' % o.Title()
-            
+
         return u'Search'
