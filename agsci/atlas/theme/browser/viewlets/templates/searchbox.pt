@@ -1,0 +1,60 @@
+<div 
+    tal:condition="view/show|nothing"
+    id="header-search" 
+    class="skip-content">
+
+    <form 
+        tal:attributes="action string:${here/portal_url}/search"
+        id="search_mini_form" 
+        method="get">
+
+        <div class="input-box">
+            <label for="search">Search:</label> 
+
+            <input 
+                tal:attributes="placeholder view/search_title"
+                id="search" 
+                name="SearchableText" 
+                value=""
+                class="input-text required-entry" 
+                maxlength="128" 
+                autocomplete="off" 
+                type="search" />
+
+            <input 
+                type="hidden" 
+                name="path" 
+                tal:attributes="value view/section_path|nothing"
+                tal:condition="view/section_path|nothing" />
+        </div>
+
+    </form>
+
+    <form 
+        tal:attributes="action string:${here/portal_url}/search"
+        id="search_mini_form_fixed" 
+        method="get">
+        
+        <div class="input-box">
+            <label for="search_fixed">Search:</label> 
+
+            <input 
+                tal:attributes="placeholder view/search_title"
+                id="search_fixed" 
+                class="search" 
+                name="SearchableText" 
+                value="" 
+                maxlength="128" 
+                autocomplete="off" 
+                type="search" />
+
+            <input 
+                type="hidden" 
+                name="path" 
+                tal:attributes="value view/section_path|nothing"
+                tal:condition="view/section_path|nothing" />
+                
+        </div>
+
+    </form>
+</div>

@@ -5,6 +5,11 @@
            xmlns:five="http://namespaces.zope.org/five"
            i18n_domain="agsci.atlas">
 
+    <!-- ISearchSection - Explicitly declaring -->
+
+    <interface
+        interface="..interfaces.ISearchSection" />
+
     <!-- Atlas viewletmanager -->
 
     <browser:viewletManager
@@ -48,4 +53,14 @@
             />
     </configure>
 
+    <!-- The search box -->
+    <browser:viewlet
+        name="agsci.atlas.theme.searchbox"
+        manager="plone.app.layout.viewlets.interfaces.IPortalFooter"
+        class=".SearchViewlet"
+        template="templates/searchbox.pt"
+        layer="Products.agCommon.browser.interfaces.IThemeSpecific"
+        permission="zope2.View"
+    />
+    
 </configure>

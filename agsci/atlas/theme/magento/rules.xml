@@ -222,6 +222,12 @@
         css:content-children="script[type='application/ld+json']"
         css:theme-children="script[type='application/ld+json']" />
 
+    <!-- Search box -->
+
+    <replace
+        css:content="#header-search"
+        css:theme="#header-search" />
+
     <!-- Drop items -->
     <drop css:content="#addthis" />
 
@@ -234,9 +240,9 @@
 
     <drop css:theme=".subscription > p" />
 
-    <drop css:theme="#header-search" />
-    <drop css:theme=".top-header .header-search-block" />
     <drop css:theme=".top-header .account-cart-wrapper" />
+
+    <drop css:theme=".header-nav-block" />
 
     <!-- Subscription empty -->
     <append css:theme=".subscription">

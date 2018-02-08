@@ -230,11 +230,13 @@
       #plone #content .tileItem ul.jobTitle li {
         margin: 0 0 0.125em;
         line-height: 1.125; }
-    #plone #content .tileItem .contentLeadImageContainer {
+    #plone #content .tileItem .contentLeadImageContainer,
+    #plone #content .tileItem .searchLeadImageContainer {
       float: right;
       width: 17.5%;
       margin: 0 0 0.75em 0.75em; }
-      #plone #content .tileItem .contentLeadImageContainer img {
+      #plone #content .tileItem .contentLeadImageContainer img,
+      #plone #content .tileItem .searchLeadImageContainer img {
         width: 100%;
         height: auto; }
     #plone #content .tileItem .tileSubItem {
