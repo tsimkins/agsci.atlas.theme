@@ -23,7 +23,7 @@
 
             <input 
                 type="hidden" 
-                name="path" 
+                name="path:list" 
                 tal:attributes="value view/section_path|nothing"
                 tal:condition="view/section_path|nothing" />
         </div>
@@ -50,7 +50,7 @@
 
             <input 
                 type="hidden" 
-                name="path" 
+                name="path:list" 
                 tal:attributes="value view/section_path|nothing"
                 tal:condition="view/section_path|nothing" />
                 
