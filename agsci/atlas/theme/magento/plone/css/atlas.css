@@ -490,13 +490,17 @@ body.template-event_view .event_add_calendar img {
 body.template-event_view .event_when h3,
 body.template-event_view .event_where h3,
 body.template-event_view .event_add_calendar h3,
-body.template-event_view .event-registration h3 {
+body.template-event_view .event-registration h3,
+body.template-event_view .event_contact h3,
+body.template-event_view .event_phone h3 {
   display: inline;
   font-size: 1em; }
 body.template-event_view .event_when h3:after,
 body.template-event_view .event_where h3:after,
 body.template-event_view .event_add_calendar h3:after,
-body.template-event_view .event-registration h3:after {
+body.template-event_view .event-registration h3:after,
+body.template-event_view .event_contact h3:after,
+body.template-event_view .event_phone h3:after {
   content: ": "; }
 body.template-event_view form.event-registration input[type="submit"] {
   font-size: 1em;
@@ -516,6 +520,7 @@ body.template-event_view form.event-registration input[type="submit"] {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px; }
+body.template-event_view .eventWebsite,
 body.template-event_view .eventBodyText,
 body.template-event_view form.event-registration {
   margin: 1em 0; }

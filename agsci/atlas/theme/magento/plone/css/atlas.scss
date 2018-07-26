@@ -651,7 +651,9 @@ body.template-event_view {
     .event_when,
     .event_where,
     .event_add_calendar,
-    .event-registration {
+    .event-registration,
+    .event_contact,
+    .event_phone {
         h3 {
             display: inline;
             font-size: 1em;
@@ -683,6 +685,7 @@ body.template-event_view {
         }
     }
 
+    .eventWebsite,
     .eventBodyText,
     form.event-registration {
         margin: 1em 0;
