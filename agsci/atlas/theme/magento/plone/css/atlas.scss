@@ -641,7 +641,8 @@ body.template-search_z3 {
     }
 }
 
-body.template-event_view {
+body.template-event_view,
+body.portaltype-formfolder {
     .event_add_calendar {
         img {
             display: none;
@@ -662,7 +663,7 @@ body.template-event_view {
             content: ": ";
         }
     }
-    
+
     form.event-registration {
         input[type="submit"] {
             font-size: 1em;

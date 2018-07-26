@@ -165,6 +165,21 @@
 
     </rules>
 
+    <!-- Form folder -->
+
+    <rules
+        css:if-content="body.portaltype-formfolder">
+
+        <append
+            css:content="#content > h2, #content > div"
+            css:theme="#content" />
+
+        <append
+            css:content="#content"
+            css:theme="#content .formid-register" />
+
+    </rules>
+
     <!-- breadcrumbs -->
 
     <replace
