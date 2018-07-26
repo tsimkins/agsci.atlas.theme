@@ -541,6 +541,35 @@ body.portaltype-formfolder .eventWebsite,
 body.portaltype-formfolder .eventBodyText,
 body.portaltype-formfolder form.event-registration {
   margin: 1em 0; }
+body.template-event_view #content h2,
+body.portaltype-formfolder #content h2 {
+  margin-top: 1em; }
+body.template-event_view #content .formHelp,
+body.portaltype-formfolder #content .formHelp {
+  display: block;
+  line-height: 1.2;
+  color: #575757;
+  font-weight: normal; }
+body.template-event_view #content #pfg-fieldwrapper .field, body.template-event_view #content #pfg-fieldwrapper fieldset,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field,
+body.portaltype-formfolder #content #pfg-fieldwrapper fieldset {
+  margin-top: 1em; }
+  body.template-event_view #content #pfg-fieldwrapper .field legend, body.template-event_view #content #pfg-fieldwrapper fieldset legend,
+  body.portaltype-formfolder #content #pfg-fieldwrapper .field legend,
+  body.portaltype-formfolder #content #pfg-fieldwrapper fieldset legend {
+    font-weight: 600; }
+  body.template-event_view #content #pfg-fieldwrapper .field .formQuestion.label, body.template-event_view #content #pfg-fieldwrapper fieldset .formQuestion.label,
+  body.portaltype-formfolder #content #pfg-fieldwrapper .field .formQuestion.label,
+  body.portaltype-formfolder #content #pfg-fieldwrapper fieldset .formQuestion.label {
+    font-size: 13px;
+    font-weight: 600; }
+body.template-event_view #content #pfg-fieldwrapper select,
+body.portaltype-formfolder #content #pfg-fieldwrapper select {
+  display: block;
+  color: #000000; }
+  body.template-event_view #content #pfg-fieldwrapper select option,
+  body.portaltype-formfolder #content #pfg-fieldwrapper select option {
+    padding: 3px; }
 
 /* Automagically generated tile homepage css */
 /* == Variables == */

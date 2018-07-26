@@ -691,6 +691,44 @@ body.portaltype-formfolder {
     form.event-registration {
         margin: 1em 0;
     }
+    
+    #content {
+        h2 {
+            margin-top: 1em;
+        }
+        
+        .formHelp {
+            display: block;
+            line-height: 1.2;
+            color: #575757;
+            font-weight: normal;
+        }
+        
+        #pfg-fieldwrapper {
+            
+            .field, fieldset {
+                margin-top: 1em;
+                
+                legend {
+                    font-weight: 600;
+                }
+                
+                .formQuestion.label {
+                    font-size: 13px;
+                    font-weight: 600;
+                }
+            }
+            
+            select {
+                display: block;
+                color: #000000;
+                
+                option {
+                    padding: 3px;
+                }
+            }
+        }
+    }
 }
 
 
