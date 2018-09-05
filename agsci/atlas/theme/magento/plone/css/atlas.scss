@@ -691,41 +691,77 @@ body.portaltype-formfolder {
     form.event-registration {
         margin: 1em 0;
     }
-    
+
     #content {
         h2 {
             margin-top: 1em;
         }
-        
+
         .formHelp {
             display: block;
             line-height: 1.2;
             color: #575757;
             font-weight: normal;
         }
-        
+
         #pfg-fieldwrapper {
-            
+
             .field, fieldset {
-                margin-top: 1em;
-                
+
                 legend {
                     font-weight: 600;
+                    font-size: 1.25em;
+                    padding: 0 0.25em;
+                    margin-left: -0.25em;
                 }
-                
+
                 .formQuestion.label {
                     font-size: 13px;
                     font-weight: 600;
                 }
+
+                span.required:after,
+                label.required:after {
+                    font-size: 16px;
+                    font-weight: bold;
+                }
             }
-            
+
+            .field {
+                margin: 0.5em 0 1em;
+            }
+
+            fieldset {
+                border: 1px solid #DDDDDD;
+                padding: 0.5em 1.25em;
+                margin: 2em 0 1em;
+            }
+
+            .field.ArchetypesSelectionWidget,
+            .field.ArchetypesMultiSelectionWidget {
+
+                label {
+                    font-weight: normal;
+                }
+
+                label.formQuestion {
+                    font-weight: 600;
+                }
+
+            }
+
             select {
                 display: block;
                 color: #000000;
-                
+
                 option {
                     padding: 3px;
                 }
+            }
+
+            input[type='checkbox'],
+            input[type='radio'] {
+                margin-left: 1em;
             }
         }
     }

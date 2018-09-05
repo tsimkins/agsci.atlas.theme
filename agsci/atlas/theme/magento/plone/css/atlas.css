@@ -550,19 +550,45 @@ body.portaltype-formfolder #content .formHelp {
   line-height: 1.2;
   color: #575757;
   font-weight: normal; }
-body.template-event_view #content #pfg-fieldwrapper .field, body.template-event_view #content #pfg-fieldwrapper fieldset,
-body.portaltype-formfolder #content #pfg-fieldwrapper .field,
+body.template-event_view #content #pfg-fieldwrapper .field legend, body.template-event_view #content #pfg-fieldwrapper fieldset legend,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field legend,
+body.portaltype-formfolder #content #pfg-fieldwrapper fieldset legend {
+  font-weight: 600;
+  font-size: 1.25em;
+  padding: 0 0.25em;
+  margin-left: -0.25em; }
+body.template-event_view #content #pfg-fieldwrapper .field .formQuestion.label, body.template-event_view #content #pfg-fieldwrapper fieldset .formQuestion.label,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field .formQuestion.label,
+body.portaltype-formfolder #content #pfg-fieldwrapper fieldset .formQuestion.label {
+  font-size: 13px;
+  font-weight: 600; }
+body.template-event_view #content #pfg-fieldwrapper .field span.required:after,
+body.template-event_view #content #pfg-fieldwrapper .field label.required:after, body.template-event_view #content #pfg-fieldwrapper fieldset span.required:after,
+body.template-event_view #content #pfg-fieldwrapper fieldset label.required:after,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field span.required:after,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field label.required:after,
+body.portaltype-formfolder #content #pfg-fieldwrapper fieldset span.required:after,
+body.portaltype-formfolder #content #pfg-fieldwrapper fieldset label.required:after {
+  font-size: 16px;
+  font-weight: bold; }
+body.template-event_view #content #pfg-fieldwrapper .field,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field {
+  margin: 0.5em 0 1em; }
+body.template-event_view #content #pfg-fieldwrapper fieldset,
 body.portaltype-formfolder #content #pfg-fieldwrapper fieldset {
-  margin-top: 1em; }
-  body.template-event_view #content #pfg-fieldwrapper .field legend, body.template-event_view #content #pfg-fieldwrapper fieldset legend,
-  body.portaltype-formfolder #content #pfg-fieldwrapper .field legend,
-  body.portaltype-formfolder #content #pfg-fieldwrapper fieldset legend {
-    font-weight: 600; }
-  body.template-event_view #content #pfg-fieldwrapper .field .formQuestion.label, body.template-event_view #content #pfg-fieldwrapper fieldset .formQuestion.label,
-  body.portaltype-formfolder #content #pfg-fieldwrapper .field .formQuestion.label,
-  body.portaltype-formfolder #content #pfg-fieldwrapper fieldset .formQuestion.label {
-    font-size: 13px;
-    font-weight: 600; }
+  border: 1px solid #DDDDDD;
+  padding: 0.5em 1.25em;
+  margin: 2em 0 1em; }
+body.template-event_view #content #pfg-fieldwrapper .field.ArchetypesSelectionWidget label,
+body.template-event_view #content #pfg-fieldwrapper .field.ArchetypesMultiSelectionWidget label,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field.ArchetypesSelectionWidget label,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field.ArchetypesMultiSelectionWidget label {
+  font-weight: normal; }
+body.template-event_view #content #pfg-fieldwrapper .field.ArchetypesSelectionWidget label.formQuestion,
+body.template-event_view #content #pfg-fieldwrapper .field.ArchetypesMultiSelectionWidget label.formQuestion,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field.ArchetypesSelectionWidget label.formQuestion,
+body.portaltype-formfolder #content #pfg-fieldwrapper .field.ArchetypesMultiSelectionWidget label.formQuestion {
+  font-weight: 600; }
 body.template-event_view #content #pfg-fieldwrapper select,
 body.portaltype-formfolder #content #pfg-fieldwrapper select {
   display: block;
@@ -570,6 +596,11 @@ body.portaltype-formfolder #content #pfg-fieldwrapper select {
   body.template-event_view #content #pfg-fieldwrapper select option,
   body.portaltype-formfolder #content #pfg-fieldwrapper select option {
     padding: 3px; }
+body.template-event_view #content #pfg-fieldwrapper input[type='checkbox'],
+body.template-event_view #content #pfg-fieldwrapper input[type='radio'],
+body.portaltype-formfolder #content #pfg-fieldwrapper input[type='checkbox'],
+body.portaltype-formfolder #content #pfg-fieldwrapper input[type='radio'] {
+  margin-left: 1em; }
 
 /* Automagically generated tile homepage css */
 /* == Variables == */
