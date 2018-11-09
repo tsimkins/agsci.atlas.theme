@@ -204,6 +204,10 @@
         css:content-children="#content > .contentLeadImageContainer"
         css:theme-children="#content-column .leadimage" />
 
+    <drop
+        css:if-not-content="#content > .contentLeadImageContainer"
+        css:theme="#content-column .leadimage" />
+
     <!-- content -->
 
     <replace
