@@ -300,7 +300,7 @@
   #plone #content ul {
     list-style-type: disc; }
   #plone #content ol {
-    list-style-type: roman; }
+    list-style-type: decimal; }
   #plone #content p {
     margin-bottom: 1.375em; }
   #plone #content .listingBar {
