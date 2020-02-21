@@ -131,6 +131,9 @@ font-size: 1.125em;
     .visualClear {
         clear: both;
         display: block;
+    }
+
+    div.visualClear {
         font-size: 0;
     }
 
@@ -170,6 +173,16 @@ font-size: 1.125em;
         h4 {
             text-transform: none;
             font-size: 17px;
+        }
+
+        .image-right {
+            float: right;
+            padding: 0 0 1em 1em;
+        }
+
+        .image-left {
+            float: left;
+            padding: 0 1em 1em 0;
         }
 
         table {
