@@ -13,6 +13,15 @@
         css:theme="body"
         attributes="class" />
 
+    <!-- COVID-19 -->
+    <drop
+        css:theme="a.warning-extension"
+        css:if-content="body.section-4-h" />
+
+    <drop
+        css:theme="a.warning-4-h"
+        css:if-not-content="body.section-4-h" />
+
     <!-- title -->
     <replace
         css:content-children="title"
