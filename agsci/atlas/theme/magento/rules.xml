@@ -22,6 +22,11 @@
         css:theme="a.warning-4-h"
         css:if-not-content="body.section-4-h" />
 
+    <!-- Don't show COVID-19 warning on BKC -->
+    <drop
+        css:theme="#covid-19-warning"
+        css:if-content="body.section-betterkidcare" />
+
     <!-- title -->
     <replace
         css:content-children="title"
