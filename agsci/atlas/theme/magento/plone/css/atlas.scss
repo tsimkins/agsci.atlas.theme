@@ -44,6 +44,12 @@
 .discreet {
     color: #575757;
     font-size: 0.9375em;
+
+    br {
+        display: block;
+        font-size: 1px;
+        line-height: 1px;
+    }
 }
 
 .section:after {
