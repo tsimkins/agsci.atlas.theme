@@ -6,6 +6,7 @@ import logging
 import pickle
 import urllib2
 
+from base64 import b64decode
 from zope.component.hooks import getSite
 from Products.CMFCore.utils import getToolByName
 from Products.ZCatalog.CatalogBrains import AbstractCatalogBrain
@@ -130,6 +131,7 @@ def VirtualBrainFactory(user_id):
     brain_data = data.get('brain', None)
 
     if brain_data:
+        brain_data = b64decode(brain_data)
         brain_data = pickle.loads(brain_data)
         return VirtualBrain(brain_data)
 
